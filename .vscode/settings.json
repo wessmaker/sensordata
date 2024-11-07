@@ -1,0 +1,15 @@
+{
+	"[java]": {
+		"editor.formatOnSave": true,
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4,
+		"editor.useTabStops": true,
+		"editor.formatOnSaveMode": "file"
+	},
+	"java.format.enabled": true,
+	"java.format.settings.url": ".vscode/java-formatter.xml",
+	"java.debug.settings.onBuildFailureProceed": true,
+	"java.configuration.updateBuildConfiguration": "disabled",
+	"editor.fontFamily": "Jetbrains Mono",
+	"java.compile.nullAnalysis.mode": "disabled"
+}
