@@ -17,6 +17,18 @@ public class MQTTHandeler {
 		return MQTTHandeler.mqttHandeler == null ? new MQTTHandeler() : MQTTHandeler.mqttHandeler;
 	}
 	
+	public String getBrokerIP () {
+		return mqttClient != null ? this.brokerIp : "";
+	}
+	
+	public boolean hasConnection () {
+		return this.connection;
+	}
+	
+	public ArrayList<CustomTopic> getCustomTopics () {
+		return this.customTopics;
+	}
+	
 	public MQTTOutcome createClient (String brokerIP) {
 		try {
 			this.brokerIp = brokerIP;
@@ -27,11 +39,6 @@ public class MQTTHandeler {
 			return MQTTOutcome.CREATE_CLIENT_FAILED;
 		}
 	}
-	
-	public String getBrokerIP () {
-		return mqttClient != null ? this.brokerIp : "";
-	}
-	
 	
 	public MQTTOutcome connectMQTT () {
 		if (this.mqttClient == null) {
@@ -45,15 +52,6 @@ public class MQTTHandeler {
 		this.connection = mqttClient.isConnected();
 		return this.hasConnection() ? MQTTOutcome.CONNECTION_SUCCESS
 				: MQTTOutcome.CONNECTION_FAILED;
-	}
-	
-	
-	public boolean hasConnection () {
-		return this.connection;
-	}
-	
-	public ArrayList<CustomTopic> getCustomTopics () {
-		return this.customTopics;
 	}
 	
 	private CustomTopic getCustomTopic (String searchTopicPath) {

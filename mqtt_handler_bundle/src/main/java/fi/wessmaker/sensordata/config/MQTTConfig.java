@@ -15,6 +15,9 @@ public class MQTTConfig {
 	private ArrayList<String> knownTopicPaths = new ArrayList<>();
 	private String lastUpdated;
 	
+	public static MQTTConfig getConfig () {
+		return MQTTConfig.mqttConfig;
+	}
 	
 	private MQTTConfig() {}
 	
@@ -38,10 +41,6 @@ public class MQTTConfig {
 		handleConfigChange();
 	}
 	
-	public static MQTTConfig getConfig () {
-		return MQTTConfig.mqttConfig;
-	}
-	
 	/**
 	 * TODO: Make this write a JSON file which can be used by REST
 	 */
@@ -49,7 +48,5 @@ public class MQTTConfig {
 		lastUpdated = LocalDateTime.now().toString();
 		ObjectMapper objectMapper = new ObjectMapper();
 	}
-	
-	
 	
 }
