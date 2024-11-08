@@ -14,16 +14,28 @@
  */
 package fi.wessmaker.sensordata;
 
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import fi.wessmaker.sensordata.mqttconfig.MQTTConfigApi;
 
 public class Activator implements BundleActivator {
+    Server server;
     
     public void start (BundleContext context) {
-        System.out.println("Starting the bundle");
+        System.out.println("STARTING REST API BUNDLE");
+        JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
+        factoryBean.setResourceClasses(MQTTConfigApi.class);
+        factoryBean.setAddress("http://localhost:8080/");
+        server = factoryBean.create();
+        System.out.println("Server: " + server.toString());
     }
     
     public void stop (BundleContext context) {
         System.out.println("Stopping the bundle");
+        if (server != null) {
+            server.destroy();
+        }
     }
 }

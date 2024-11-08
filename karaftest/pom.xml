@@ -22,62 +22,27 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fi.wessmaker.sensordata</groupId>
-    <artifactId>restapibundle</artifactId>
-    <version>1.0.4</version>
+    <groupId>fi.wessmaker.karaftest</groupId>
+    <artifactId>karaftest</artifactId>
+    <version>1.0.0</version>
     <packaging>bundle</packaging>
 
-    <name>restapibundle</name>
+    <name>karaftest Bundle</name>
     <description>
-        restapibundle OSGi bundle project.
+        karaftest OSGi bundle project.
     </description>
 
     <properties>
-        <osgi.version>5.0.0</osgi.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
-        <jackson.version>2.18.0</jackson.version>
-        <cxf.version>4.0.5</cxf.version>
+        <osgi.version>8.0.0</osgi.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-core</artifactId>
-            <version>${cxf.version}</version>
-            <scope>compile</scope>
+            <artifactId>osgi.core</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -92,22 +57,13 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
+                        <Bundle-Activator>fi.wessmaker.karaftest.Activator</Bundle-Activator>
                         <Export-Package>
-                            fi.wessmaker.sensordata.*
+                            fi.wessmaker.karaftest*;version=${project.version}
                         </Export-Package>
                         <Import-Package>
-                            java.nio.file.spi; version="[1.0,2.0)"
                             *
                         </Import-Package>
-                        <Embed-Dependency>
-                            cxf-core;scope=compile|runtime,
-                            cxf-rt-frontend-jaxrs;scope=compile|runtime,
-                            jackson-core;scope=compile|runtime,
-                            jackson-databind;scope=compile|runtime,
-                            jackson-annotations;scope=compile|runtime
-                        </Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>
@@ -120,6 +76,8 @@
                     <maxmem>256M</maxmem>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
+
 </project>

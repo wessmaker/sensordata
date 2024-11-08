@@ -10,10 +10,7 @@ public class MQTTHandeler {
 	private MqttClient mqttClient;
 	private boolean connection;
 	private ArrayList<CustomTopic> customTopics = new ArrayList<>();
-	
-	private enum TopicType {
-		NUMERIC, TEXT
-	}
+	private boolean autoReconnect;
 	
 	
 	
@@ -36,6 +33,14 @@ public class MQTTHandeler {
 	
 	public ArrayList<CustomTopic> getCustomTopics () {
 		return this.customTopics;
+	}
+	
+	public boolean isAutoReconnect () {
+		return autoReconnect;
+	}
+	
+	public void setAutoReconnect (boolean autoReconnect) {
+		this.autoReconnect = autoReconnect;
 	}
 	
 	public MQTTCallOutcome createClient (String brokerIP) {
@@ -78,41 +83,6 @@ public class MQTTHandeler {
 				: MQTTCallOutcome.DISCONNECTION_FAILED;
 	}
 	
-	public class CustomTopic {
-		private String path;
-		private Object defaultValue;
-		private TopicType topicType;
-		
-		
-		
-		public CustomTopic(String path, String defaultValue) {
-			this.path = path;
-			this.defaultValue = defaultValue;
-		}
-		
-		public CustomTopic(String path, int defaultValue) {
-			this.path = path;
-			this.defaultValue = defaultValue;
-		}
-		
-		
-		public String getPath () {
-			return path;
-		}
-		
-		public Object getDefaultValue () {
-			return defaultValue;
-		}
-		
-		public TopicType getTopicType () {
-			return topicType;
-		}
-		
-		private void setTopicType (TopicType topicType) {
-			this.topicType = topicType;
-		}
-	}
-	
 	
 	
 	private CustomTopic getCustomTopic (String searchPath) {
@@ -131,7 +101,6 @@ public class MQTTHandeler {
 	 *         ALREADY_SUBSCRIBED if the topicValue is already subscribed.
 	 */
 	public MQTTCallOutcome subscribeTopic (CustomTopic topic) {
-		
 		if (getCustomTopic(topic.getPath()) != null) {
 			return MQTTCallOutcome.ALREADY_SUBSCRIBED;
 		}
@@ -156,7 +125,7 @@ public class MQTTHandeler {
 			return MQTTCallOutcome.ALREADY_UNSUBSCRIBED;
 		}
 		try { // First test to unsub it and then remove to the topicList
-			this.mqttClient.unsubscribe(topic.path());
+			this.mqttClient.unsubscribe(topic.getPath());
 		} catch (MqttException e) {
 			e.printStackTrace();
 			return MQTTCallOutcome.UNSUBSCRIBE_FAILED;

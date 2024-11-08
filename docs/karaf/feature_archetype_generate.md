@@ -57,8 +57,21 @@ START LEVEL 100 , List Threshold: 50
  39 │ Active │  80 │ 4.4.6   │ Apache Karaf :: OSGi Services :: Event
  74 │ Active │  80 │ 3.6.4   │ Apache CXF JAX-RS Client
 114 │ Active │  80 │ 1.3.5   │ Jakarta Annotations API
+
 karaf@root()>
 ```
 
 
 https://stackoverflow.com/questions/70368831/karaf-assembly-and-features-new-and-old-method
+
+
+
+#### Exposing REST API in Karaf
+
+```xml
+<dependency>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-rt-transports-http</artifactId>
+    <version>${cxf.version}</version>
+</dependency>
+```
