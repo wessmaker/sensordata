@@ -11,14 +11,19 @@ public class MQTTHandeler {
 	private boolean connection;
 	private ArrayList<CustomTopic> customTopics = new ArrayList<>();
 	
-	private record CustomTopic (String path, Object initValue, TopicType topicType) {
+	private enum TopicType {
+		NUMERIC, TEXT
 	}
+	
 	
 	
 	private MQTTHandeler() {}
 	
-	public MQTTHandeler get () {
-		return MQTTHandeler.mqttHandeler == null ? new MQTTHandeler() : MQTTHandeler.mqttHandeler;
+	public synchronized MQTTHandeler get () {
+		if (MQTTHandeler.mqttHandeler == null) {
+			MQTTHandeler.mqttHandeler = new MQTTHandeler();
+		}
+		return MQTTHandeler.mqttHandeler;
 	}
 	
 	public String getBrokerIP () {
@@ -33,73 +38,131 @@ public class MQTTHandeler {
 		return this.customTopics;
 	}
 	
-	public MQTTOutcome createClient (String brokerIP) {
+	public MQTTCallOutcome createClient (String brokerIP) {
 		try {
 			this.brokerIp = brokerIP;
 			this.mqttClient = new MqttClient(brokerIP, MqttClient.generateClientId());
-			return MQTTOutcome.CREATE_CLIENT_SUCCESS;
+			return MQTTCallOutcome.CREATE_CLIENT_SUCCESS;
 		} catch (MqttException e) {
 			e.printStackTrace();
-			return MQTTOutcome.CREATE_CLIENT_FAILED;
+			return MQTTCallOutcome.CREATE_CLIENT_FAILED;
 		}
 	}
 	
-	public MQTTOutcome connectMQTT () {
+	public MQTTCallOutcome connect () {
 		if (this.mqttClient == null) {
-			return MQTTOutcome.MQTTCLIENT_DOESNT_EXIST;
+			return MQTTCallOutcome.MQTTCLIENT_DOESNT_EXIST;
 		}
 		try {
 			mqttClient.connect();
-		} catch (MqttException me) {
-			me.printStackTrace();
+		} catch (MqttException e) {
+			e.printStackTrace();
 		}
 		this.connection = mqttClient.isConnected();
-		return this.hasConnection() ? MQTTOutcome.CONNECTION_SUCCESS
-				: MQTTOutcome.CONNECTION_FAILED;
+		return this.hasConnection() ? MQTTCallOutcome.CONNECTION_SUCCESS
+				: MQTTCallOutcome.CONNECTION_FAILED;
 	}
 	
-	private CustomTopic getCustomTopic (String searchTopicPath) {
+	public MQTTCallOutcome disconnect () {
+		if (this.mqttClient == null) {
+			return MQTTCallOutcome.MQTTCLIENT_DOESNT_EXIST;
+		}
+		try {
+			mqttClient.disconnect();
+		} catch (MqttException e) {
+			e.printStackTrace();
+			
+		}
+		this.connection = mqttClient.isConnected();
+		return !this.hasConnection() ? MQTTCallOutcome.DISCONNECTION_SUCCESS
+				: MQTTCallOutcome.DISCONNECTION_FAILED;
+	}
+	
+	public class CustomTopic {
+		private String path;
+		private Object defaultValue;
+		private TopicType topicType;
+		
+		
+		
+		public CustomTopic(String path, String defaultValue) {
+			this.path = path;
+			this.defaultValue = defaultValue;
+		}
+		
+		public CustomTopic(String path, int defaultValue) {
+			this.path = path;
+			this.defaultValue = defaultValue;
+		}
+		
+		
+		public String getPath () {
+			return path;
+		}
+		
+		public Object getDefaultValue () {
+			return defaultValue;
+		}
+		
+		public TopicType getTopicType () {
+			return topicType;
+		}
+		
+		private void setTopicType (TopicType topicType) {
+			this.topicType = topicType;
+		}
+	}
+	
+	
+	
+	private CustomTopic getCustomTopic (String searchPath) {
 		for (CustomTopic loopedTopic : getCustomTopics()) {
-			if (loopedTopic.path().equals(searchTopicPath)) {
+			if (loopedTopic.getPath().equals(searchPath)) {
 				return loopedTopic;
 			}
 		}
 		return null;
 	}
 	
+	
+	
 	/**
 	 * @return SUBSCRIBE_SUCCESS if topic was able to be subscribed, SUBSCRIBE_FAILED if not.
 	 *         ALREADY_SUBSCRIBED if the topicValue is already subscribed.
 	 */
-	public MQTTOutcome subscribeTopicValue (CustomTopic topic) {
-		if (getCustomTopic(topic.path()) != null) {
-			return MQTTOutcome.ALREADY_SUBSCRIBED;
+	public MQTTCallOutcome subscribeTopic (CustomTopic topic) {
+		
+		if (getCustomTopic(topic.getPath()) != null) {
+			return MQTTCallOutcome.ALREADY_SUBSCRIBED;
 		}
 		try { // First test to sub it and then add to the topicList
-			this.mqttClient.subscribe(topic.path());
+			this.mqttClient.subscribe(topic.getPath());
 		} catch (MqttException e) {
 			e.printStackTrace();
-			return MQTTOutcome.SUBSCRIBE_FAILED;
+			return MQTTCallOutcome.SUBSCRIBE_FAILED;
 		}
 		this.customTopics.add(topic);
-		return MQTTOutcome.SUBSCRIBE_SUCCESS;
+		return MQTTCallOutcome.SUBSCRIBE_SUCCESS;
 	}
+	
 	
 	/**
 	 * @return UNSUBSCRIBE_SUCCESS if topic was able to be unsubscribed, UNSUBSCRIBE_FAILED if not.
 	 *         UNALREADY_SUBSCRIBED if the topicValue is already unsubscribed.
 	 */
-	public MQTTOutcome unsubscribeTopicValue (CustomTopic topicValue) {
-		if (getCustomTopic(topicValue.path()) != null) {
-			return MQTTOutcome.ALREADY_UNSUBSCRIBED;
+	public MQTTCallOutcome unsubscribeTopic (CustomTopic topic) {
+		
+		if (getCustomTopic(topic.getPath()) == null) {
+			return MQTTCallOutcome.ALREADY_UNSUBSCRIBED;
 		}
 		try { // First test to unsub it and then remove to the topicList
-			this.mqttClient.unsubscribe(topicValue.path());
+			this.mqttClient.unsubscribe(topic.path());
 		} catch (MqttException e) {
 			e.printStackTrace();
-			return MQTTOutcome.UNSUBSCRIBE_FAILED;
+			return MQTTCallOutcome.UNSUBSCRIBE_FAILED;
 		}
-		this.customTopics.remove(topicValue);
-		return MQTTOutcome.UNSUBSCRIBE_SUCCESS;
+		this.customTopics.remove(topic);
+		return MQTTCallOutcome.UNSUBSCRIBE_SUCCESS;
 	}
+	
 }

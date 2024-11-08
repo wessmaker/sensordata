@@ -81,6 +81,7 @@
                         <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
                         <Export-Package>
                         </Export-Package>
+                            fi.wessmaker.sensordata.mqtt.*;
                         <Import-Package>
                         </Import-Package>
                         <Embed-Dependency>
