@@ -2,6 +2,8 @@ package fi.wessmaker.sensordata.config;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Box;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,5 +50,21 @@ public class MQTTConfig {
 		lastUpdated = LocalDateTime.now().toString();
 		ObjectMapper objectMapper = new ObjectMapper();
 	}
+	
+	public record Pair (Object s, Object t) {
+	}
+	
+	public void testingMethod (Object obj) {
+		switch (obj) {
+			case null -> System.out.println("null");
+			case String s -> System.out.println("String");
+			case Pair p -> System.out.println("Pair");
+			default -> System.out.println("Not known");
+		
+		
+		
+		}
+	}
+	
 	
 }

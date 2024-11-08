@@ -11,6 +11,10 @@ public class MQTTHandeler {
 	private boolean connection;
 	private ArrayList<CustomTopic> customTopics = new ArrayList<>();
 	
+	private record CustomTopic (String path, Object initValue, TopicType topicType) {
+	}
+	
+	
 	private MQTTHandeler() {}
 	
 	public MQTTHandeler get () {
@@ -56,7 +60,7 @@ public class MQTTHandeler {
 	
 	private CustomTopic getCustomTopic (String searchTopicPath) {
 		for (CustomTopic loopedTopic : getCustomTopics()) {
-			if (loopedTopic.getPath().equals(searchTopicPath)) {
+			if (loopedTopic.path().equals(searchTopicPath)) {
 				return loopedTopic;
 			}
 		}
@@ -68,11 +72,11 @@ public class MQTTHandeler {
 	 *         ALREADY_SUBSCRIBED if the topicValue is already subscribed.
 	 */
 	public MQTTOutcome subscribeTopicValue (CustomTopic topic) {
-		if (getCustomTopic(topic.getPath()) != null) {
+		if (getCustomTopic(topic.path()) != null) {
 			return MQTTOutcome.ALREADY_SUBSCRIBED;
 		}
 		try { // First test to sub it and then add to the topicList
-			this.mqttClient.subscribe(topic.getPath());
+			this.mqttClient.subscribe(topic.path());
 		} catch (MqttException e) {
 			e.printStackTrace();
 			return MQTTOutcome.SUBSCRIBE_FAILED;
@@ -86,11 +90,11 @@ public class MQTTHandeler {
 	 *         UNALREADY_SUBSCRIBED if the topicValue is already unsubscribed.
 	 */
 	public MQTTOutcome unsubscribeTopicValue (CustomTopic topicValue) {
-		if (getCustomTopic(topicValue.getPath()) != null) {
+		if (getCustomTopic(topicValue.path()) != null) {
 			return MQTTOutcome.ALREADY_UNSUBSCRIBED;
 		}
 		try { // First test to unsub it and then remove to the topicList
-			this.mqttClient.unsubscribe(topicValue.getPath());
+			this.mqttClient.unsubscribe(topicValue.path());
 		} catch (MqttException e) {
 			e.printStackTrace();
 			return MQTTOutcome.UNSUBSCRIBE_FAILED;
