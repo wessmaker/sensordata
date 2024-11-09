@@ -38,6 +38,22 @@
         <osgi.version>8.0.0</osgi.version>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
+        <bundle.dynamicImport.package>
+            jakarta.annotation;version,
+            jakarta.servlet,
+            jakarta.servlet.descriptor,
+            jakarta.servlet.http,
+            jakarta.validation,
+            jakarta.ws.rs,
+            jakarta.ws.rs.client,
+            jakarta.ws.rs.container,
+            jakarta.ws.rs.core,
+            jakarta.ws.rs.ext,
+            jakarta.xml.bind,
+            jakarta.xml.bind.annotation,
+            jakarta.xml.bind.annotation.adapters,
+            jakarta.xml.bind.attachment
+        </bundle.dynamicImport.package>
     </properties>
 
     <dependencies>
@@ -84,6 +100,7 @@
                             fi.wessmaker.sensordata.mqtt.*;
                         <Import-Package>
                         </Import-Package>
+						<DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>
                         <Embed-Dependency>
                             org.eclipse.paho.client.mqttv3;scope=compile|runtime
                             jackson-core;scope=compile|runtime

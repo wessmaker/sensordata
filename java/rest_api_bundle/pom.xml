@@ -24,7 +24,7 @@
 
     <groupId>fi.wessmaker.sensordata</groupId>
     <artifactId>restapibundle</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.8</version>
     <packaging>bundle</packaging>
 
     <name>restapibundle</name>
@@ -33,18 +33,34 @@
     </description>
 
     <properties>
-        <osgi.version>5.0.0</osgi.version>
+        <osgi.version>6.0.0</osgi.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <jackson.version>2.18.0</jackson.version>
         <cxf.version>4.0.5</cxf.version>
+        <bundle.dynamicImport.package>
+            jakarta.annotation;version,
+            jakarta.servlet,
+            jakarta.servlet.descriptor,
+            jakarta.servlet.http,
+            jakarta.validation,
+            jakarta.ws.rs,
+            jakarta.ws.rs.client,
+            jakarta.ws.rs.container,
+            jakarta.ws.rs.core,
+            jakarta.ws.rs.ext,
+            jakarta.xml.bind,
+            jakarta.xml.bind.annotation,
+            jakarta.xml.bind.annotation.adapters,
+            jakarta.xml.bind.attachment
+        </bundle.dynamicImport.package>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
-            <scope>compile</scope>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
         </dependency>
                 <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
@@ -73,12 +89,6 @@
             <version>${cxf.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-core</artifactId>
-            <version>${cxf.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -97,11 +107,10 @@
                             fi.wessmaker.sensordata.*
                         </Export-Package>
                         <Import-Package>
-                            java.nio.file.spi; version="[1.0,2.0)"
                             *
                         </Import-Package>
+						<DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>
                         <Embed-Dependency>
-                            cxf-core;scope=compile|runtime,
                             cxf-rt-frontend-jaxrs;scope=compile|runtime,
                             jackson-core;scope=compile|runtime,
                             jackson-databind;scope=compile|runtime,
@@ -114,9 +123,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>21</source>
+                    <target>21</target>
                     <maxmem>256M</maxmem>
                 </configuration>
             </plugin>

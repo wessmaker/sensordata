@@ -17,6 +17,14 @@ mvn archetype:generate `
   Executing task: "mvn org.apache.maven.plugins:maven-archetype-plugin:3.1.2:generate -DarchetypeArtifactId="karaf-feature-archetype" -DarchetypeGroupId="org.apache.karaf.archetypes" -DarchetypeVersion="4.4.6" -DgroupId="fi.wessmaker" -DartifactId="testinkaraffeaturearchtype"" 
 ```
 
+#### Check all headers (dependencies)
+```powershell
+headers [bundleID]
+```
+- It will show all missing packages
+
+
+
 #### Get cxf repo and feature
 (used for cxf REST api implemntation)
 ```powershell
@@ -75,3 +83,5 @@ https://stackoverflow.com/questions/70368831/karaf-assembly-and-features-new-and
     <version>${cxf.version}</version>
 </dependency>
 ```
+
+
