@@ -24,12 +24,20 @@ public class Activator implements BundleActivator {
     Server server;
     
     public void start (BundleContext context) {
-        System.out.println("STARTING REST API BUNDLE");
-        JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
-        factoryBean.setResourceClasses(MQTTConfigApi.class);
-        factoryBean.setAddress("http://localhost:8080/");
-        server = factoryBean.create();
-        System.out.println("Server: " + server.toString());
+        try {
+            System.out.println("STARTING REST API BUNDLE");
+            JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
+            factoryBean.setResourceClasses(MQTTConfigApi.class);
+            factoryBean.setAddress("http://localhost:8080/");
+            server = factoryBean.create();
+            System.out.println("Server: " + server.toString());
+            System.out.println("\n" + "DESTINATION: " + server.getDestination().getAddress());
+            System.out.println(
+                    "\n" + "ENDPOINT: " + server.getEndpoint().getEndpointInfo().getAddress());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     public void stop (BundleContext context) {

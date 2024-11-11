@@ -85,3 +85,10 @@ https://stackoverflow.com/questions/70368831/karaf-assembly-and-features-new-and
 ```
 
 
+
+
+#### Karaf bundle webconsole installation
+```powershell
+feature:install webconsole
+```
+Then go to http://localhost:8181/system/console

@@ -24,7 +24,7 @@
 
     <groupId>fi.wessmaker.sensordata</groupId>
     <artifactId>restapibundle</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.10</version>
     <packaging>bundle</packaging>
 
     <name>restapibundle</name>
@@ -36,23 +36,7 @@
         <osgi.version>6.0.0</osgi.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <jackson.version>2.18.0</jackson.version>
-        <cxf.version>4.0.5</cxf.version>
-        <bundle.dynamicImport.package>
-            jakarta.annotation;version,
-            jakarta.servlet,
-            jakarta.servlet.descriptor,
-            jakarta.servlet.http,
-            jakarta.validation,
-            jakarta.ws.rs,
-            jakarta.ws.rs.client,
-            jakarta.ws.rs.container,
-            jakarta.ws.rs.core,
-            jakarta.ws.rs.ext,
-            jakarta.xml.bind,
-            jakarta.xml.bind.annotation,
-            jakarta.xml.bind.annotation.adapters,
-            jakarta.xml.bind.attachment
-        </bundle.dynamicImport.package>
+        <cxf.version>3.6.4</cxf.version>
     </properties>
 
     <dependencies>
@@ -87,7 +71,13 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>${cxf.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -109,12 +99,12 @@
                         <Import-Package>
                             *
                         </Import-Package>
-						<DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>
                         <Embed-Dependency>
                             cxf-rt-frontend-jaxrs;scope=compile|runtime,
                             jackson-core;scope=compile|runtime,
                             jackson-databind;scope=compile|runtime,
-                            jackson-annotations;scope=compile|runtime
+                            jackson-annotations;scope=compile|runtime,
+                            javax.servlet.*;scope=compile|runtime
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
