@@ -2,6 +2,7 @@
 
 ```powershell
 feature:repo-add cxf;
+feature:install -s cxf
 feature:install -s cxf-jaxrs;
 feature:install -s http;
 feature:install -s webconsole;
@@ -12,8 +13,7 @@ feature:install -s webconsole;
    karaf = karaf,_g_:admingroup
    _g_\:admingroup = group,admin,manager,viewer,systembundles,ssh
    ```
-mvn:org.glassfish.jersey.core/jersey-common/2.30.1
-mvn:org.glassfish.jersey.core/jersey-client/2.30.1
+
 
 - Add missing packages **"java.nio."** to **KARAF_HOME/etc/jre.properties** jre-base
    ```properties
