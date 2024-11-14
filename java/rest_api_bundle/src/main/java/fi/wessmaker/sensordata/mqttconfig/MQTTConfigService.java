@@ -12,13 +12,11 @@ import javax.ws.rs.core.Response;
 @Path("/mqtt/config")
 public interface MQTTConfigService {
 	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response configPOST (MQTTConfig config);
-	
-	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	Response configGET ();
+	// @Produces(MediaType.APPLICATION_JSON)
+	String configGET ();
 	
+	@POST
+	// @Consumes(MediaType.TEXT_PLAIN)
+	String configPOST (MQTTConfig config);
 }

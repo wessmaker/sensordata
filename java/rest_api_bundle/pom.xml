@@ -24,7 +24,7 @@
 
     <groupId>fi.wessmaker.sensordata</groupId>
     <artifactId>restapibundle</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11</version>
     <packaging>bundle</packaging>
 
     <name>restapibundle</name>
@@ -79,6 +79,20 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.27</version>
+            <scope>compile</scope>
+        </dependency>
+                <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>12.0.15</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -97,6 +111,7 @@
                             fi.wessmaker.sensordata.*
                         </Export-Package>
                         <Import-Package>
+                            javax.ws.rs.*,
                             *
                         </Import-Package>
                         <Embed-Dependency>
@@ -104,7 +119,10 @@
                             jackson-core;scope=compile|runtime,
                             jackson-databind;scope=compile|runtime,
                             jackson-annotations;scope=compile|runtime,
-                            javax.servlet.*;scope=compile|runtime
+                            jackson-jaxrs-json-provider;scope=compile|runtime,
+                            javax.servlet.*;scope=compile|runtime,
+                            jersey-server;scope=compile|runtime,
+                            jetty-util;scope=compile|runtime
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>

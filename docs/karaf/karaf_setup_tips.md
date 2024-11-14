@@ -92,3 +92,11 @@ https://stackoverflow.com/questions/70368831/karaf-assembly-and-features-new-and
 feature:install webconsole
 ```
 Then go to http://localhost:8181/system/console
+
+
+#### Fixing "java.lang.ClassNotFoundException: org.glassfish.jersey.internal.RuntimeDelegateImpl not found by org.eclipse.jetty.util"
+
+```java
+javax.ws.rs.ext.RuntimeDelegate.setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
+// This explicitly sets the RunTimeDelegate
+```
