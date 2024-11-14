@@ -13,10 +13,10 @@ import javax.ws.rs.core.Response;
 public interface MQTTConfigService {
 	
 	@GET
-	// @Produces(MediaType.APPLICATION_JSON)
-	String configGET ();
+	@Produces(MediaType.APPLICATION_JSON)
+	Response configGET ();
 	
 	@POST
-	// @Consumes(MediaType.TEXT_PLAIN)
-	String configPOST (MQTTConfig config);
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response configPOST (MQTTConfig config);
 }

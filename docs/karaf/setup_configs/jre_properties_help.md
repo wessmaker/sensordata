@@ -6,11 +6,14 @@ that its ```java.nio.file.spi -- Cannot be resolved and overwritten by Boot Dele
 - Basically below configuration was missing and this made the karaf install the package as "default"
 
 (in /etc/jre.properties)
-```
+```properties
 jre-base= \
-.
-.
+ java.applet, \
+ java.awt, \
+ .
+ .
  java.nio.file, \
-.
-.
+ java.nio.file.spi, \
+ .
+ .
 ```

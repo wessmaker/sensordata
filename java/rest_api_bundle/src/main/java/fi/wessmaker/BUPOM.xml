@@ -21,18 +21,16 @@
     -->
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>fi.wessmaker.sensordata</groupId>
     <artifactId>restapibundle</artifactId>
     <version>1.0.11</version>
     <packaging>bundle</packaging>
 
-
     <name>restapibundle</name>
     <description>
         restapibundle OSGi bundle project.
     </description>
-
-
 
     <properties>
         <osgi.version>6.0.0</osgi.version>
@@ -42,30 +40,28 @@
         <jersey.version>2.30.1</jersey.version>
     </properties>
 
-
-
     <dependencies>
-    <!--MANDATORY DEPENDENCIES-->
-    <!--MANDATORY DEPENDENCIES-->
-    <!--MANDATORY DEPENDENCIES-->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>
             <scope>provided</scope>
         </dependency>
+                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
+                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
+                <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -78,12 +74,13 @@
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-base -->
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-base</artifactId>
             <version>${jackson.version}</version>
-            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
@@ -91,17 +88,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.hk2.external</groupId>
-            <artifactId>jakarta.inject</artifactId>
-            <version>2.6.1</version>
-            <scope>compile</scope>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
+                <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util -->
         <dependency>
-            <groupId>org.glassfish.hk2</groupId>
-            <artifactId>osgi-resource-locator</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>12.0.15</version>
             <scope>compile</scope>
         </dependency>
+
+
+        <!--MANDATORY DEPENDENCIES-->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
@@ -114,12 +115,8 @@
             <version>${jersey.version}</version>
             <scope>compile</scope>
         </dependency>
-    <!--MANDATORY DEPENDENCIES-->
-    <!--MANDATORY DEPENDENCIES-->
-    <!--MANDATORY DEPENDENCIES-->
     </dependencies>
     
-
     <build>
         <plugins>
             <plugin>
@@ -136,6 +133,7 @@
                             fi.wessmaker.sensordata.*
                         </Export-Package>
                         <Import-Package>
+                            javax.ws.rs.*,
                             *
                         </Import-Package>
                         <Embed-Dependency>
@@ -145,8 +143,9 @@
                             jackson-annotations;scope=compile|runtime,
                             jackson-jaxrs-json-provider;scope=compile|runtime,
                             jackson-jaxrs-base;scope=compile|runtime,
-                            jakarta.inject;scope=compile|runtime,
-                            osgi-resource-locator;scope=compile|runtime,
+                            javax.servlet.*;scope=compile|runtime,
+                            jersey-server;scope=compile|runtime,
+                            jetty-util;scope=compile|runtime,
                             jersey-client;scope=compile|runtime,
                             jersey-common;scope=compile|runtime
                         </Embed-Dependency>

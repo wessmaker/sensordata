@@ -19,6 +19,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import fi.wessmaker.sensordata.mqttconfig.MQTTConfigApi;
 
 public class Activator implements BundleActivator {
@@ -27,16 +28,31 @@ public class Activator implements BundleActivator {
     public void start (BundleContext context) {
         System.out.println("STARTING REST API BUNDLE");
         JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
+        System.out.println("2");
+        
         factoryBean.setResourceClasses(MQTTConfigApi.class);
+        System.out.println("3");
+        
         factoryBean.setResourceProvider(new SingletonResourceProvider(new MQTTConfigApi()));
+        System.out.println("4");
         
         factoryBean.setAddress("http://localhost:8080/");
+        System.out.println("5");
+        
+        factoryBean.setProvider(new JacksonJsonProvider());
+        System.out.println("6");
+        
         server = factoryBean.create();
+        System.out.println("7");
+        
         javax.ws.rs.ext.RuntimeDelegate
                 .setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
+        System.out.println("8");
+        
         System.out.println(javax.ws.rs.ext.RuntimeDelegate.getInstance());
+        System.out.println("9");
+        
     }
-    
     
     public void stop (BundleContext context) {
         System.out.println("Stopping the bundle");
