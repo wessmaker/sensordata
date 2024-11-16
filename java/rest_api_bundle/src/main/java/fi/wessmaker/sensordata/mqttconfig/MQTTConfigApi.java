@@ -17,4 +17,5 @@ public class MQTTConfigApi implements MQTTConfigService {
 		MQTTConfig.set(config);
 		return Response.status(Status.OK).entity(MQTTConfig.get()).build();
 	}
+	
 }

@@ -19,4 +19,5 @@ public interface MQTTConfigService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response configPOST (MQTTConfig config);
+	
 }
