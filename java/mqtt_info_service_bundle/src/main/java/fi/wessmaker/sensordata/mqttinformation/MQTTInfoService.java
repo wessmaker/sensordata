@@ -24,6 +24,6 @@ public interface MQTTInfoService {
 	@GET
 	@Path("/topicCount")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response topicCount ();
+	Response topicCountGET ();
 	
 }

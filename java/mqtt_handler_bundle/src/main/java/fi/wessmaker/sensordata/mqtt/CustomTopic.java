@@ -1,5 +1,8 @@
 package fi.wessmaker.sensordata.mqtt;
 
+/**
+ * Backend doesn't store the unsubscribed topics
+ */
 public class CustomTopic {
 	private String path;
 	private Object defaultValue;
@@ -33,7 +36,6 @@ public class CustomTopic {
 	public TopicType getTopicType () {
 		return topicType;
 	}
-	
 	
 }
 
