@@ -29,7 +29,7 @@
 
     <name>restapibundle</name>
     <description>
-        restapibundle OSGi bundle project.
+        REST api service which gives information about the status of mqtt
     </description>
 
     <properties>

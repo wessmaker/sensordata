@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class MQTTHandeler {
-	private static MQTTHandeler mqttHandeler;
+public class MQTTHandler {
+	
+	private static MQTTHandler mqttHandeler;
 	private String brokerIp;
 	private MqttClient mqttClient;
 	private boolean connection;
@@ -13,14 +14,13 @@ public class MQTTHandeler {
 	private boolean autoReconnect;
 	
 	
+	private MQTTHandler() {}
 	
-	private MQTTHandeler() {}
-	
-	public synchronized MQTTHandeler get () {
-		if (MQTTHandeler.mqttHandeler == null) {
-			MQTTHandeler.mqttHandeler = new MQTTHandeler();
+	public synchronized MQTTHandler get () {
+		if (MQTTHandler.mqttHandeler == null) {
+			MQTTHandler.mqttHandeler = new MQTTHandler();
 		}
-		return MQTTHandeler.mqttHandeler;
+		return MQTTHandler.mqttHandeler;
 	}
 	
 	public String getBrokerIP () {
@@ -62,6 +62,7 @@ public class MQTTHandeler {
 			mqttClient.connect();
 		} catch (MqttException e) {
 			e.printStackTrace();
+			return MQTTCallOutcome.CONNECTION_FAILED;
 		}
 		this.connection = mqttClient.isConnected();
 		return this.hasConnection() ? MQTTCallOutcome.CONNECTION_SUCCESS
@@ -76,7 +77,7 @@ public class MQTTHandeler {
 			mqttClient.disconnect();
 		} catch (MqttException e) {
 			e.printStackTrace();
-			
+			return MQTTCallOutcome.DISCONNECTION_FAILED;
 		}
 		this.connection = mqttClient.isConnected();
 		return !this.hasConnection() ? MQTTCallOutcome.DISCONNECTION_SUCCESS

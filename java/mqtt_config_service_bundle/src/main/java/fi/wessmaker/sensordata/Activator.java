@@ -30,7 +30,7 @@ public class Activator implements BundleActivator {
         javax.ws.rs.ext.RuntimeDelegate
                 .setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
         bean.setResourceClasses(MQTTConfigApi.class);
-        bean.setAddress("http://localhost:8080/");
+        bean.setAddress("http://localhost:8085/");
         bean.setProvider(new JacksonJsonProvider());
         server = bean.create();
     }
