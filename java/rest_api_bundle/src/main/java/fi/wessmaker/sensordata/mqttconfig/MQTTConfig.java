@@ -66,5 +66,4 @@ public class MQTTConfig {
 		MQTTConfig.nonProcessedData = nonProcessedData;
 	}
 	
-	
 }

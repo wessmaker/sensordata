@@ -16,7 +16,6 @@ package fi.wessmaker.sensordata;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -34,7 +33,6 @@ public class Activator implements BundleActivator {
         bean.setAddress("http://localhost:8080/");
         bean.setProvider(new JacksonJsonProvider());
         server = bean.create();
-        
     }
     
     public void stop (BundleContext context) {
@@ -43,4 +41,5 @@ public class Activator implements BundleActivator {
             server.destroy();
         }
     }
+    
 }

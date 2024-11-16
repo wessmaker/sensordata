@@ -11,5 +11,6 @@
 	"java.debug.settings.onBuildFailureProceed": true,
 	"java.configuration.updateBuildConfiguration": "disabled",
 	"editor.fontFamily": "Jetbrains Mono",
-	"java.compile.nullAnalysis.mode": "disabled"
+	"java.compile.nullAnalysis.mode": "disabled",
+	"explorer.compactFolders": false
 }
