@@ -82,6 +82,12 @@
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>fi.wessmaker.sensordata</groupId>
+            <artifactId>mqtt_handler_bundle</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

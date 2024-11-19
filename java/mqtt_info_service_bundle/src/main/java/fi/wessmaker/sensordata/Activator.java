@@ -19,7 +19,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import fi.wessmaker.sensordata.mqttinformation.MQTTInfoApi;
+import fi.wessmaker.sensordata.mqttinfo.MQTTInfoApi;
 
 public class Activator implements BundleActivator {
     Server server;

@@ -1,15 +1,30 @@
-package fi.wessmaker.sensordata.mqtt;
+package fi.wessmaker.sensordata.handler;
 
 /**
  * Backend doesn't store the unsubscribed topics
  */
 public class CustomTopic {
+	
 	private String path;
 	private Object defaultValue;
+	private boolean isRetained;
 	private TopicType topicType;
 	
 	private enum TopicType {
-		NUMERIC, TEXT
+		
+		NUMERIC("numeric"), TEXT("text");
+		
+		private String typeString;
+		
+		private TopicType(String typeString) {
+			this.typeString = typeString;
+		}
+		
+		@Override
+		public String toString () {
+			return this.typeString;
+		}
+		
 	}
 	
 	public CustomTopic(String path, String defaultValue) {
@@ -37,5 +52,12 @@ public class CustomTopic {
 		return topicType;
 	}
 	
+	public boolean isRetained () {
+		return isRetained;
+	}
+	
+	public void setRetained (boolean isRetained) {
+		this.isRetained = isRetained;
+	}
 }
 

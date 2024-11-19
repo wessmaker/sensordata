@@ -19,12 +19,16 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
     
-    public void start (BundleContext context) {
-        System.out.println("Starting the bundle");
+    @Override
+    public void start (BundleContext context) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
     
-    public void stop (BundleContext context) {
-        System.out.println("Stopping the bundle");
+    @Override
+    public void stop (BundleContext context) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'stop'");
     }
     
 }

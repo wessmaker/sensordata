@@ -1,4 +1,4 @@
-package fi.wessmaker.sensordata.mqtt;
+package fi.wessmaker.sensordata.handler;
 
 /**
  * Used to simplify methods, method can return MQTTOutcome but it's not neccessary to be used in

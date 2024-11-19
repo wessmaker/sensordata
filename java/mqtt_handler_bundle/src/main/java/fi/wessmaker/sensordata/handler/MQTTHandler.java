@@ -1,4 +1,4 @@
-package fi.wessmaker.sensordata.mqtt;
+package fi.wessmaker.sensordata.handler;
 
 import java.util.ArrayList;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -7,16 +7,16 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class MQTTHandler {
 	
 	private static MQTTHandler mqttHandeler;
-	private String brokerIp;
-	private MqttClient mqttClient;
-	private boolean connection;
+	private String brokerIp = "";
+	private MqttClient mqttClient = null;
+	private boolean connection = false;
 	private ArrayList<CustomTopic> customTopics = new ArrayList<>();
-	private boolean autoReconnect;
+	private boolean autoReconnect = false;
 	
 	
 	private MQTTHandler() {}
 	
-	public synchronized MQTTHandler get () {
+	public static MQTTHandler get () {
 		if (MQTTHandler.mqttHandeler == null) {
 			MQTTHandler.mqttHandeler = new MQTTHandler();
 		}
@@ -121,7 +121,6 @@ public class MQTTHandler {
 	 *         UNALREADY_SUBSCRIBED if the topicValue is already unsubscribed.
 	 */
 	public MQTTCallOutcome unsubscribeTopic (CustomTopic topic) {
-		
 		if (getCustomTopic(topic.getPath()) == null) {
 			return MQTTCallOutcome.ALREADY_UNSUBSCRIBED;
 		}
