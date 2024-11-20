@@ -2,23 +2,13 @@ package fi.wessmaker.sensordata.mqttconfig;
 
 
 public class MQTTConfig {
-	private static String brokerIp;
-	private static boolean autoReconnect;
-	private static boolean nonProcessedData;
-	private static MQTTConfig mqttConfig;
+	private static String brokerIp = "";
+	private static boolean autoReconnect = false;
+	private static boolean nonProcessedData = false;
+	private static MQTTConfig mqttConfig = new MQTTConfig();
 	
 	
 	private MQTTConfig() {}
-	
-	
-	public static MQTTConfig create (String brokerIp, boolean autoReconnect,
-			boolean nonProcessedData) {
-		MQTTConfig.mqttConfig = new MQTTConfig();
-		MQTTConfig.brokerIp = brokerIp;
-		MQTTConfig.autoReconnect = autoReconnect;
-		MQTTConfig.nonProcessedData = nonProcessedData;
-		return MQTTConfig.get();
-	}
 	
 	
 	public static MQTTConfig set (MQTTConfig mqttConfig) {
@@ -28,13 +18,10 @@ public class MQTTConfig {
 	
 	
 	/**
-	 * This method should always be used to get the instance so that furute modifications can be
+	 * This method should always be used to get the instance so that future modifications can be
 	 * easily implemented here
 	 */
 	public static MQTTConfig get () {
-		if (mqttConfig == null) {
-			MQTTConfig.mqttConfig = MQTTConfig.create(null, false, false);
-		}
 		return MQTTConfig.mqttConfig;
 	}
 	

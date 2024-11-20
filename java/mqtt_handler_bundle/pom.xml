@@ -33,11 +33,10 @@
     </description>
 
     <properties>
+        <osgi.version>6.0.0</osgi.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <jackson.version>2.18.0</jackson.version>
-        <osgi.version>6.0.0</osgi.version>
-        <bundle.dynamicImport.package>
-        </bundle.dynamicImport.package>
+        <cxf.version>3.6.4</cxf.version> 
     </properties>
 
     <dependencies>
@@ -82,7 +81,7 @@
                         <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
                         <Export-Package>
                         </Export-Package>
-                            *
+                            fi.wessmaker.*
                         <Import-Package>
                             *
                         </Import-Package>
@@ -91,6 +90,7 @@
                             jackson-core;scope=compile|runtime
                             jackson-databind;scope=compile|runtime
                         </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
             </plugin>

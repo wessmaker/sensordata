@@ -20,19 +20,22 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import fi.wessmaker.sensordata.mqttinfo.MQTTInfoApi;
+import fi.wessmaker.sensordata.handler.CustomTopic;
 
 public class Activator implements BundleActivator {
     Server server;
     JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
+    CustomTopic customTopics = new customTopic();
     
     @Override
     public void start (BundleContext context) {
+        String testing = customTopics.getPath();
         try {
             System.out.println("STARTING REST API BUNDLE");
             javax.ws.rs.ext.RuntimeDelegate
                     .setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
             bean.setResourceClasses(MQTTInfoApi.class);
-            bean.setAddress("http://localhost:8080/");
+            bean.setAddress("http://localhost:8084/");
             bean.setProvider(new JacksonJsonProvider());
             server = bean.create();
             System.out.println(server.getEndpoint());

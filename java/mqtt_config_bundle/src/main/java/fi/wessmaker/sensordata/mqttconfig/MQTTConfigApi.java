@@ -8,7 +8,6 @@ public class MQTTConfigApi implements MQTTConfigService {
 	
 	@Override
 	public Response configGET () {
-		MQTTConfig.get().setBrokerIp(String.valueOf(Math.random()));
 		return Response.status(Status.OK).entity(MQTTConfig.get()).build();
 	}
 	

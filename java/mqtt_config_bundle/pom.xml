@@ -22,14 +22,14 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.wessmaker.sensordata</groupId>
-    <artifactId>mqtt_info_service_bundle</artifactId>
+    <artifactId>config_service_bundle</artifactId>
     <version>1.0.11</version>
     <packaging>bundle</packaging>
 
 
-    <name>mqtt_info_service_bundle</name>
+    <name>config_service_bundle</name>
     <description>
-        REST api service which gives information about the status of mqtt
+        Config service REST which gives information about the status of mqtt
     </description>
 
     <properties>
@@ -82,18 +82,6 @@
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>fi.wessmaker.sensordata</groupId>
-            <artifactId>mqtt_handler_bundle</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.paho</groupId>
-            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.5</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -109,10 +97,10 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
                         <Export-Package>
-                            *
+                            fi.wessmaker
                         </Export-Package>
                         <Import-Package>
-                            *;scope=provided,
+                            *
                         </Import-Package>
                         <Embed-Dependency>
                             cxf-rt-frontend-jaxrs;scope=compile|runtime,
@@ -121,7 +109,6 @@
                             jackson-annotations;scope=compile|runtime,
                             jackson-jaxrs-json-provider;scope=compile|runtime,
                             jackson-jaxrs-base;scope=compile|runtime,
-                            org.eclipse.paho.client.mqttv3;scope=compile|runtime,
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
