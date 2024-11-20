@@ -84,8 +84,8 @@
                         </Export-Package>
                             *
                         <Import-Package>
+                            *
                         </Import-Package>
-						<DynamicImport-Package>${bundle.dynamicImport.package}</DynamicImport-Package>
                         <Embed-Dependency>
                             org.eclipse.paho.client.mqttv3;scope=compile|runtime
                             jackson-core;scope=compile|runtime

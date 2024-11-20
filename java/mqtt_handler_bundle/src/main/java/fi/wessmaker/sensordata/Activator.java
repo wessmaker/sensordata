@@ -20,15 +20,13 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
     
     @Override
-    public void start (BundleContext context) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'start'");
+    public void start (BundleContext context) {
+        System.out.println("Started bundle:  mqtt_handle_bundle");
     }
     
     @Override
-    public void stop (BundleContext context) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stop'");
+    public void stop (BundleContext context) {
+        System.out.println("Stopped bundle:  mqtt_handle_bundle");
     }
     
 }

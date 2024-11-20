@@ -25,16 +25,24 @@ public class Activator implements BundleActivator {
     Server server;
     JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
     
+    @Override
     public void start (BundleContext context) {
-        System.out.println("STARTING REST API BUNDLE");
-        javax.ws.rs.ext.RuntimeDelegate
-                .setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
-        bean.setResourceClasses(MQTTInfoApi.class);
-        bean.setAddress("http://localhost:8086/");
-        bean.setProvider(new JacksonJsonProvider());
-        server = bean.create();
+        try {
+            System.out.println("STARTING REST API BUNDLE");
+            javax.ws.rs.ext.RuntimeDelegate
+                    .setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
+            bean.setResourceClasses(MQTTInfoApi.class);
+            bean.setAddress("http://localhost:8080/");
+            bean.setProvider(new JacksonJsonProvider());
+            server = bean.create();
+            System.out.println(server.getEndpoint());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
     
+    @Override
     public void stop (BundleContext context) {
         System.out.println("Stopping the bundle");
         if (server != null) {
