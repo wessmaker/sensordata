@@ -25,11 +25,9 @@ import fi.wessmaker.sensordata.handler.CustomTopic;
 public class Activator implements BundleActivator {
     Server server;
     JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
-    CustomTopic customTopics = new customTopic();
-    
+
     @Override
-    public void start (BundleContext context) {
-        String testing = customTopics.getPath();
+    public void start(BundleContext context) {
         try {
             System.out.println("STARTING REST API BUNDLE");
             javax.ws.rs.ext.RuntimeDelegate
@@ -42,15 +40,15 @@ public class Activator implements BundleActivator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     @Override
-    public void stop (BundleContext context) {
+    public void stop(BundleContext context) {
         System.out.println("Stopping the bundle");
         if (server != null) {
             server.destroy();
         }
     }
-    
+
 }

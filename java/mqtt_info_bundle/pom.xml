@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.wessmaker.sensordata</groupId>
     <artifactId>mqtt_info_service_bundle</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.0</version>
     <packaging>bundle</packaging>
 
 

@@ -80,8 +80,8 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
                         <Export-Package>
+                            fi.wessmaker.sensordata.handler
                         </Export-Package>
-                            fi.wessmaker.*
                         <Import-Package>
                             *
                         </Import-Package>

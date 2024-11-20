@@ -10,35 +10,34 @@ import javax.ws.rs.core.Response;
 @Path("/info")
 public interface MQTTInfoService {
 	String topicsPath = "/topic";
-	
+
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getAllInfo ();
-	
-	
-	
+	Response getAllInfo();
+
 	/**
-	 * topic info includes: topicPath, subscriptionDate, defaultValue, isRetained, topicType
+	 * topic info includes: topicPath, subscriptionDate, defaultValue, isRetained,
+	 * topicType, defaultValue
 	 */
 	@GET
 	@Path(topicsPath + "/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getTopic (@PathParam("path")
-	String path);
-	
+	Response getTopic(@PathParam("path") String path);
+
 	@GET
 	@Path(topicsPath + "/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getAllTopics (@PathParam("path")
-	String path);
-	
-	
+	Response getAllTopics();
+
 	@GET
 	@Path(topicsPath + "/count")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getTopicCount ();
-	
-	
-	
+	Response getTopicCount();
+
+	@GET
+	@Path("/connection")
+	@Produces(MediaType.APPLICATION_JSON)
+	Response getConnection();
+
 }
