@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class MQTTInfo {
 	private String brokerIp = "http://localhost:1883";
 	private boolean connection = false;
-	private ArrayList<CustomTopic> customTopics = new ArrayList<>();;
 	private boolean autoReconnect = false;
+	private ArrayList<CustomTopic> customTopics = new ArrayList<>();
 	
 	protected MQTTInfo() {}
 	
