@@ -16,3 +16,6 @@ Fixing common errors in REST implementation
    ```java
    customBean.setProvider(new JacksonJsonProvider());
    ```
+
+> **Postman call: "java.lang.NoSuchMethodError"**
+- Fixed by restarting karaf and reinstalling bundles. Doing `bundle:update <bundle>` & `bundle:refresh <bundle>` works also

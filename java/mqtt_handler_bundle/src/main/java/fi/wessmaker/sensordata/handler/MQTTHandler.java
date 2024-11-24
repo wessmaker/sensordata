@@ -7,6 +7,15 @@ public class MQTTHandler {
 	
 	private MQTTInfo mqttInfo = new MQTTInfo();
 	private MqttClient mqttClient = null;
+	private static MQTTHandler mqttHandler = new MQTTHandler();
+	
+	public static MQTTHandler get () {
+		return MQTTHandler.mqttHandler;
+	}
+	
+	public MQTTInfo getMQTTInfo () {
+		return this.mqttInfo;
+	}
 	
 	public MQTTCallOutcome createClient (String brokerIP) {
 		MQTTCallOutcome outcome;
