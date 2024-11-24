@@ -77,9 +77,8 @@ public class MQTTHandler {
 		return null;
 	}
 	
-	
 	public MQTTCallOutcome subscribeTopic (CustomTopic topic) {
-		if (getCustomTopic(topic.getPath()) != null) {
+		if (mqttClient.getTopic(topic.getPath()) != null) {
 			return MQTTCallOutcome.ALREADY_SUBSCRIBED;
 		}
 		MQTTCallOutcome outcome;
@@ -87,7 +86,7 @@ public class MQTTHandler {
 			mqttClient.subscribe(topic.getPath());
 			mqttInfo.getCustomTopics().add(topic);
 			outcome = MQTTCallOutcome.SUBSCRIBE_SUCCESS;
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			outcome = MQTTCallOutcome.SUBSCRIBE_FAILED;
 		}
@@ -95,7 +94,7 @@ public class MQTTHandler {
 	}
 	
 	public MQTTCallOutcome unSubscribeTopic (CustomTopic topic) {
-		if (getCustomTopic(topic.getPath()) != null) {
+		if (mqttClient.getTopic(topic.getPath()) == null) {
 			return MQTTCallOutcome.ALREADY_UNSUBSCRIBED;
 		}
 		MQTTCallOutcome outcome;
@@ -103,7 +102,7 @@ public class MQTTHandler {
 			mqttClient.unsubscribe(topic.getPath());
 			mqttInfo.getCustomTopics().remove(topic);
 			outcome = MQTTCallOutcome.UNSUBSCRIBE_SUCCESS;
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			outcome = MQTTCallOutcome.UNSUBSCRIBE_FAILED;
 		}
