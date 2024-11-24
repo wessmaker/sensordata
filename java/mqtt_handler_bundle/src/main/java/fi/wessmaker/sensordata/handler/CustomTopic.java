@@ -12,7 +12,7 @@ public class CustomTopic {
 	
 	private enum TopicType {
 		
-		NUMERIC("numeric"), TEXT("text");
+		NUMERIC("numeric"), STRING("text");
 		
 		private String typeString;
 		
@@ -30,7 +30,7 @@ public class CustomTopic {
 	public CustomTopic(String path, String defaultValue) {
 		this.path = path;
 		this.defaultValue = defaultValue;
-		this.topicType = TopicType.TEXT;
+		this.topicType = TopicType.STRING;
 	}
 	
 	public CustomTopic(String path, int defaultValue) {
@@ -38,7 +38,6 @@ public class CustomTopic {
 		this.defaultValue = defaultValue;
 		this.topicType = TopicType.NUMERIC;
 	}
-	
 	
 	public String getPath () {
 		return path;
@@ -60,4 +59,3 @@ public class CustomTopic {
 		this.isRetained = isRetained;
 	}
 }
-

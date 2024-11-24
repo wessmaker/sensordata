@@ -1,15 +1,10 @@
 package fi.wessmaker.sensordata.mqttinfo;
 
-import java.util.ArrayList;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.*;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.osgi.dto.DTO;
-
-import fi.wessmaker.sensordata.handler.CustomTopic;
 import fi.wessmaker.sensordata.handler.MQTTHandler;
+import fi.wessmaker.sensordata.handler.OuterPOJO;
 
 public class MQTTInfoApi implements MQTTInfoService {
 
@@ -17,7 +12,8 @@ public class MQTTInfoApi implements MQTTInfoService {
 
 	@Override
 	public Response getAllInfo() {
-		return Response.status(Status.OK).entity(MQTTHandler.getAsString()).build();
+
+		return Response.status(Status.OK).entity(new OuterPOJO()).build();
 	}
 
 	@Override

@@ -16,7 +16,6 @@ public class MQTTConfig {
 		return MQTTConfig.get();
 	}
 	
-	
 	/**
 	 * This method should always be used to get the instance so that future modifications can be
 	 * easily implemented here
@@ -24,8 +23,6 @@ public class MQTTConfig {
 	public static MQTTConfig get () {
 		return MQTTConfig.mqttConfig;
 	}
-	
-	
 	
 	public String getBrokerIp () {
 		return MQTTConfig.brokerIp;
@@ -38,8 +35,6 @@ public class MQTTConfig {
 	public boolean isNonProcessedData () {
 		return MQTTConfig.nonProcessedData;
 	}
-	
-	
 	
 	public void setAutoReconnect (boolean autoReconnect) {
 		MQTTConfig.autoReconnect = autoReconnect;
