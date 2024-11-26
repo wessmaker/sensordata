@@ -21,15 +21,15 @@
     -->
 
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>fi.wessmaker.sensordata</groupId>
-    <artifactId>mqtt_handler_bundle</artifactId>
-    <version>1.0.0</version>
+    <artifactId>config_service_bundle</artifactId>
+    <version>1.0.11</version>
     <packaging>bundle</packaging>
 
-    <name>mqtt_handler_bundle Bundle</name>
+
+    <name>config_service_bundle</name>
     <description>
-        Handles MQTT connections
+        Config service REST which gives information about the status of mqtt
     </description>
 
     <properties>
@@ -42,18 +42,17 @@
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
+            <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
         <dependency>
-            <groupId>org.eclipse.paho</groupId>
-            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.5</version>
-            <scope>compile</scope>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
+         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
@@ -62,6 +61,24 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-base</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -80,15 +97,18 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Bundle-Activator>fi.wessmaker.sensordata.Activator</Bundle-Activator>
                         <Export-Package>
-                            fi.wessmaker.sensordata.handler
+                            fi.wessmaker
                         </Export-Package>
                         <Import-Package>
                             *
                         </Import-Package>
                         <Embed-Dependency>
-                            org.eclipse.paho.client.mqttv3;scope=compile|runtime
-                            jackson-core;scope=compile|runtime
-                            jackson-databind;scope=compile|runtime
+                            cxf-rt-frontend-jaxrs;scope=compile|runtime,
+                            jackson-core;scope=compile|runtime,
+                            jackson-databind;scope=compile|runtime,
+                            jackson-annotations;scope=compile|runtime,
+                            jackson-jaxrs-json-provider;scope=compile|runtime,
+                            jackson-jaxrs-base;scope=compile|runtime,
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
@@ -97,14 +117,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>21</source>
                     <target>21</target>
                     <maxmem>256M</maxmem>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
 </project>
