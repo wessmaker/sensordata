@@ -1,11 +1,10 @@
 #pragma once 
-#ifndef BUZZER_H
-#define BUZZER_H
+#ifndef BUTTONS_H
+#define BUTTONS_H
 
-namespace Buzzer{
+namespace Buttons{
    void init();
    void loop();
-   
 }
 
 

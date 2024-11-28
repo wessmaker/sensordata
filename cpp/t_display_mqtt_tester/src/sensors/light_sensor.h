@@ -3,6 +3,8 @@
 #define LIGHT_SENSOR_H
 
 namespace LightSensor{
+   void init();
+   void loop();
    
 }
 
