@@ -6,8 +6,6 @@
       void start();
       void stop();
       bool isRunning();
-      u_long getStartTime();
-      u_long getStopTime();
    }
 
 #endif
