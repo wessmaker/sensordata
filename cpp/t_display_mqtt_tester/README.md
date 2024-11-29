@@ -22,3 +22,12 @@ flowchart TB
       .-> H
    end
 ```
+#### TTGO T-Display GPIO pinout
+
+![ttgo_tdispaly_gpio.jpg](/img/ttgo_tdispaly_gpio.jpg)
+
+
+#### ESP32 GPIO 34-39 are input only 
+> Note! On Lilygo TTGO T-Display there are only pins 36-39 
+
+![ttgo_gpio_34-39.png](/img/ttgo_gpio_34-39.png)

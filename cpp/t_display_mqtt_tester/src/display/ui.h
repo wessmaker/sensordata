@@ -1,15 +1,13 @@
 #pragma once 
 #ifndef UI_H
 #define UI_H
-#include <TFT_eSPI.h>
-
+#include "TFT_eSPI.h"
 namespace UI{
 
    enum Direction{
       UP,
       DOWN
    };
-
 
    enum State{
       SELECTING,
@@ -24,7 +22,7 @@ namespace UI{
    void move(Direction);
    void toggleFullScreen();
    State getState();
-   TFT_eSPI getTFT();
+   void setState(State);
 
 }
 

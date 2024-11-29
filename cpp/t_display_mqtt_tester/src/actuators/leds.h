@@ -8,9 +8,9 @@
 namespace LEDS{
 
    enum LED{
-      BLUE = 27,
-      RED = 25,
-      WHITE = 26,
+      BLUE = 25,
+      RED = 26,
+      WHITE = 27,
       YELLOW = 33,
       LAST
    };
@@ -20,8 +20,5 @@ namespace LEDS{
    void ON(LED);
    void OFF(LED);
 }
-
-
-
 
 #endif
