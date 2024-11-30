@@ -5,6 +5,7 @@
 namespace Buttons{
    void init();
    void loop();
+   void _offLoop();
 }
 
 

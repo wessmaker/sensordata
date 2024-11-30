@@ -3,6 +3,7 @@
 #include <Arduino.h>
    namespace Board{
       void init();
+      void loop();
       void start();
       void stop();
       bool isRunning();
