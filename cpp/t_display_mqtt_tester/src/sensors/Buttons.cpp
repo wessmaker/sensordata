@@ -36,13 +36,14 @@ void handleLeftRightDoublePress(){
 
 void leftButtonClick(Button2& b){
    Debugging::debug("Left button tap");
+   UI::menuMove(UI::DOWN);
 }
 
 
 
 void rightButtonClick(Button2& b){
    Debugging::debug("Right button tap");
-
+   UI::menuMove(UI::UP);
 }
 
 void extButton1Click(Button2& b){

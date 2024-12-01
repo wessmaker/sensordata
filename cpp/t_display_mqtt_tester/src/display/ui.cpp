@@ -4,11 +4,11 @@
 #include "communication/debug.h"
 #include "board/board.h"
 
-void defaultScreen();
-void clearScreen();
+void changeMenuTexts(String, String, String);
+void createMenu();
+void drawMenuRect(int);
 void drawMenu(int);
-void initItems();
-
+void clearScreen();
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
 TFT_eSprite menuSprite = TFT_eSprite(&tft);
@@ -23,86 +23,119 @@ TFT_eSprite itemSprites[3] = {itemSprite1, itemSprite2, itemSprite3};
 
 struct Item {
    int position;
+   String text;
 };
-
 Item wifiItem;
 Item mqttItem;
 Item settingsItem;
 Item voltageItem;
-Item items[] = {wifiItem, mqttItem, settingsItem, voltageItem};
+Item items[4];
+int focusedIndex = 1;
+int lastSpriteIndex = 2;
+int lastItemIndex = 3;
 
 
-void initItems(){
-   for (int i = 0; i < 5; i++)
+void changeMenuTexts(String t1, String t2, String t3){
+   String texts[3] = {t1, t2, t3};
+   for (int i = 0; i <= lastSpriteIndex; i++)
    {
-      if (i < 3)
+      itemSprites[i].fillSprite(TFT_BLACK);
+      if (texts[i] != "")
       {
-         itemSprites[i].createSprite(
-                           UI_MENU_ITEM_WIDTH, 
-                           UI_MENU_ITEM_HEIGHT - 100
-                        );
-         itemSprites[i].setRotation(DISPLAY_ROTATION);
-         itemSprites[i].fillSprite(TFT_CYAN);
-         itemSprites[i].drawRect(   // Rectangle 1px
-                           0, 
-                           0, 
-                           UI_MENU_ITEM_WIDTH, 
-                           UI_MENU_ITEM_HEIGHT, 
-                           TFT_RED
-                        );
-         itemSprites[i].drawRect(   // Double rectangle widht
-                           1, 
-                           1, 
-                           UI_MENU_WIDTH - (2 * UI_CONNECTION_ITEM_WIDTH) - 1, 
-                           UI_MENU_ITEM_HEIGHT - 1, 
-                           TFT_RED
-                        );
+         itemSprites[i].drawString(
+               texts[i],
+               7,
+               7,
+               UI_MENU_ITEM_FONT_SIZE
+            );
       }
    }
 }
 
-void drawMenu(int hidePos = -1){
-   for (int i = 0; i < 3; i++)
-   {
-      switch (i)
-      {
-      case 1:
-         itemSprites[i].fillSprite(TFT_YELLOW);
-         break;
-      case 2:
-         itemSprites[i].fillSprite(TFT_ORANGE);
-         break;
-      case 3:
-         itemSprites[i].fillSprite(TFT_BLUE);
-         break;
-            
-      default:
-         break;
-      }
 
+
+
+void createMenu() {
+   wifiItem.text = "WIFI";
+   mqttItem.text = "MQTT";
+   settingsItem.text = "Settings";
+   voltageItem.text = "Voltage";
+   for (int i = 0; i < 3; i++){ items[i].position = i; }
+   items[0] = wifiItem;
+   items[1] = mqttItem;
+   items[2] = settingsItem;
+   items[3] = voltageItem;
+   for (int i = 0; i <= lastSpriteIndex; i++)
+   {
+      itemSprites[i].createSprite(
+                        UI_MENU_ITEM_WIDTH, 
+                        UI_MENU_ITEM_HEIGHT
+                     );
+      itemSprites[i].fillSprite(UI_TRANSPARENCY_COLOR);
+   }
+
+   changeMenuTexts(items[0].text, items[1].text, items[2].text);
+}
+
+
+
+
+
+void drawMenuRect(int hidePos){
+   for (int i = 0; i <= lastSpriteIndex; i++)
+   {
       if (i != hidePos)
       {
-         if (i != 2)    // Top and bottom sprites without indentation
-         {
-            itemSprites[i].pushSprite(
-                           UI_MENU_ITEM_DEFAULT_X,
-                           UI_MENU_HEIGHT - UI_MENU_ITEM_SPACING - (50 * (2 + i))
-                        );
-         }
-         else           // Middle sprite with indentation
-         {
-            itemSprites[i].pushSprite(
-                           UI_MENU_ITEM_DEFAULT_X + UI_MENU_ITEM_FOCUS_TRAVERSE,
-                           UI_MENU_HEIGHT - UI_MENU_ITEM_SPACING - (50 * (1 + i))
-                        );
-         }
-      }
-      else  // Push sprite to 2x the screen dimensions to hide it
-      {
-         itemSprites[i].pushSprite(TFT_WIDTH * 2, TFT_HEIGHT * 2, UI_TRANSPARENCY_COLOR);
+         itemSprites[i].drawRoundRect(   // Rectangle 1px
+            0, 
+            0, 
+            UI_MENU_ITEM_WIDTH,
+            UI_MENU_ITEM_HEIGHT,
+            UI_MENU_ITEM_ROUNDNESS,
+            TFT_RED
+         );
+         itemSprites[i].drawRoundRect(   // Double rectangle widht
+            1, 
+            1, 
+            UI_MENU_ITEM_WIDTH - 1,
+            UI_MENU_ITEM_HEIGHT - 1,
+            UI_MENU_ITEM_ROUNDNESS,
+            TFT_RED
+         );
       }
    }
 }
+
+
+void drawMenu(int hidePos){
+   for (int i = 0; i <= lastSpriteIndex; i++)
+   {
+      if (items[i].text == "")
+      {
+         int x = i == 1 ? UI_MENU_ITEM_FOCUS_X : UI_MENU_ITEM_DEFAULT_X;
+         int y = (UI_MENU_ITEM_SPACING * (i + 1)) + (UI_MENU_ITEM_HEIGHT * i);
+         itemSprites[i].pushSprite(
+            x,
+            y,
+            UI_TRANSPARENCY_COLOR
+         );
+         Debugging::debug("DRAWING");
+         Debugging::debug(i);
+
+      }
+      else
+      {
+         hidePos = i;
+         itemSprites[hidePos].pushSprite(TFT_HEIGHT * 10, TFT_WIDTH * 10); //Push sprite outside screen to hide it
+         itemSprites[hidePos].fillSprite(TFT_BLACK);
+         Debugging::debug("HIDING");
+         Debugging::debug(i);
+      }
+   }
+   drawMenuRect(hidePos); // Recreate rectangles to 
+}
+
+
 
 
 
@@ -111,48 +144,60 @@ void clearScreen(){
    tft.fillScreen(TFT_BLACK);
 }
 
-void defaultScreen(){
-   // clear_screen();
-}
-
-
-
-
-
-
-
-
-
-
-int s;
-
 
 namespace UI{
    State state;
 
    void init(){
       tft.init();
-      tft.setRotation(DISPLAY_ROTATION);  // 1 = position (0, 0) is at the bottom left when buttons are on right (horizontal)
+      tft.setRotation(DISPLAY_ROTATION);  // 1 = position (0, 0) is at the top left when buttons are on right (horizontal)
+      tft.setTextColor(TFT_WHITE, TFT_ORANGE);
       clearScreen();
-      initItems();
-      drawMenu();
-      defaultScreen();
+      createMenu();
+      drawMenu(-1);
    }
    
+
+
    void loop(){
-      drawMenu();  
    };
+
 
 
    State getState(){
       return state;
    }   
 
+
+
+   void menuMove(Direction direction){
+      int hidePos = -1;
+      int prvFocusedIndex = focusedIndex;
+      if (focusedIndex > 0             && direction == UP)     { focusedIndex--; }
+      if (focusedIndex < lastItemIndex && direction == DOWN)   { focusedIndex++; }
+
+
+      if (focusedIndex != prvFocusedIndex)
+      {
+         if (focusedIndex == 0 )             hidePos = 1;
+         if (focusedIndex == lastItemIndex ) hidePos = 2;
+         changeMenuTexts(
+            focusedIndex <= 0 ? "" : items[focusedIndex - 1].text,
+            items[focusedIndex].text,
+            focusedIndex >= lastItemIndex ? "" : items[focusedIndex + 1].text
+         );
+         drawMenu(hidePos);
+      }
+   }
+
+
+
    void setState(State nextState){
       state = nextState;
       switch (state){
          case SELECTING:
-            defaultScreen();
+            clearScreen();
+            drawMenu(-1);
             break;
          case FULL_SCREEN:
             break;
