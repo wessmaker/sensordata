@@ -6,32 +6,19 @@
 #include "communication/debug.h"
 
 
-#define EXT_BUTTON 37
-
-Button2 left_button;
-Button2 right_button;
+Button2 leftButton;
+Button2 rightButton;
 Button2 extButton1;
-
-u_long currentTime = 0;
-u_long timePassed = 0;
-
+u_long timer = 0;
 u_int16_t startPressTime = 1000;
 u_int16_t stopPressTime = 1500;
+bool runAfter = false;
 
 
-void handleLeftRightDoublePress(){
-   if (left_button.isPressed() && right_button.isPressed())
-   {
-      if (!currentTime) currentTime = millis();
-      timePassed = millis() - currentTime;
-      if (timePassed >= stopPressTime) Board::stop();
-   }
-   else 
-   {
-      currentTime = 0;
-      timePassed = 0;
-   }
-}
+#define EXT_BUTTON 37
+
+
+void _noneHandler(Button2& b){};
 
 
 void leftButtonClick(Button2& b){
@@ -40,47 +27,76 @@ void leftButtonClick(Button2& b){
 }
 
 
-
 void rightButtonClick(Button2& b){
    Debugging::debug("Right button tap");
    UI::menuMove(UI::UP);
 }
+
 
 void extButton1Click(Button2& b){
    Debugging::debug("External button tap");
 }
 
 
+// Handles double press of 2 onboard buttons
+// Handled only when board is started eg. running
+void handleDoublePress(){
+   if (leftButton.isPressed() && rightButton.isPressed() && Board::isRunning())
+   {
+      if (!timer) timer = millis();  
+      if (millis() - timer >= stopPressTime) runAfter = true;
+   }
+   else if (!(leftButton.isPressed() || rightButton.isPressed()) && runAfter)   // Stopping after releasing both buttons
+   {
+      runAfter = false;
+      timer = 0;
+      Board::stop();
+   }
+   else timer = 0;   // Reset timer
+}
+
 namespace Buttons{
    void init(){
-      left_button.begin(LEFT_BUTTON);
-      right_button.begin(RIGHT_BUTTON);
+      leftButton.begin(LEFT_BUTTON);
+      rightButton.begin(RIGHT_BUTTON);
       extButton1.begin(EXT_BUTTON);
-      left_button.setTapHandler(leftButtonClick);
-      right_button.setTapHandler(rightButtonClick);
+      leftButton.setTapHandler(leftButtonClick);
+      rightButton.setTapHandler(rightButtonClick);
       extButton1.setTapHandler(extButton1Click);
    }
 
    void loop(){
-      left_button.loop();  
-      right_button.loop();  
+      leftButton.loop();  
+      rightButton.loop();  
       extButton1.loop();
-      handleLeftRightDoublePress();
+      handleDoublePress();
    }
 
+   /**
+    * Only handle pressing of both buttons at the same time for given time
+    * Start board if pressed long enough
+    */
    void _offLoop(){
-      left_button.loop();  
-      right_button.loop();
-      if (left_button.isPressed() && right_button.isPressed())
+      leftButton.loop();  
+      rightButton.loop();
+      if (leftButton.isPressed() && rightButton.isPressed() && !Board::isRunning())
       {
-         if (!currentTime) currentTime = millis();
-         timePassed = millis() - currentTime;
-         if (timePassed >= startPressTime) Board::start();
+         UI::setState(UI::STARTING);
+         if (!timer) timer = millis();  
+         if (millis() - timer >= startPressTime) runAfter = true;
       }
-      else 
+      else if (!(leftButton.isPressed() || rightButton.isPressed()) && runAfter)   // Starting after releasing both buttons
       {
-         currentTime = 0;
-         timePassed = 0;
+         runAfter = false;
+         timer = 0;
+         Board::start();
+      }
+      else {
+         UI::setState(UI::OFF);   // Display "STARTING"
+         timer = 0;    // Reset timer
+         leftButton.setTapHandler(_noneHandler);
+         rightButton.setTapHandler(_noneHandler);
+         extButton1.setTapHandler(_noneHandler);
       }
    }
 }

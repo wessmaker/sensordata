@@ -6,6 +6,7 @@
       void loop();
       void start();
       void stop();
+      void backLight(bool);
       bool isRunning();
    }
 

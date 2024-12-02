@@ -12,22 +12,27 @@ bool running;
 namespace Board {
 
    void init(){
-      start();
+      start(true);
    }   
 
    void loop(){
-
    }
 
+   void backLight(bool status){
+      digitalWrite(TFT_BL, status);
+   }
 
-   void start(){
+   void start(bool firstRun = false){
+      if (!firstRun) Buttons::init();  //
+      
+
       Debugging::debug("Starting board!");
-      digitalWrite(TFT_BL, HIGH);  //Backlight ON
+      UI::setState(UI::MENU);
       running = true;
    }
+   
    void stop(){
       Debugging::debug("Stopping board!");
-      digitalWrite(TFT_BL, LOW);  //Backlight off
       UI::setState(UI::OFF);
       running = false;
       while (!running)
@@ -36,9 +41,8 @@ namespace Board {
          if (millis() % STOPPED_SERIAL_INFO_INTERVAL == 0 ) Serial.println("BOARD IS STOPPED!");
       }
    }
+
    bool isRunning(){
       return running;
    }
-
-   
 }

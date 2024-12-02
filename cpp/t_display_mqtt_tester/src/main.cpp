@@ -29,8 +29,8 @@ void setup() {
   Buttons       ::init();
   Switch        ::init();
   WifiClient    ::init();
-  Board         ::init();
   UI            ::init();
+  Board         ::init();
 }
 
 

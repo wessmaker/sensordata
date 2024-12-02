@@ -22,14 +22,12 @@
 #define UI_MENU_ITEM_ROUNDNESS 10
 #define UI_MENU_ITEM_RECT_COLOR TFT_RED
 namespace UI{
-   
-
-
 
    enum State{
-      SELECTING,
+      MENU,
       FULL_SCREEN,
-      SCREEN_SAVER,
+      STARTING,
+      STOPPING,
       OFF
    };
 
@@ -40,13 +38,9 @@ namespace UI{
 
    void init();
    void loop();
-   void refresh();
-   void toggleFullScreen();
    State getState();
    void setState(State);
    void menuMove(Direction);
-   TFT_eSPI* getTFT();
-
 }
 
 #endif

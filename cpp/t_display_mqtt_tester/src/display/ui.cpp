@@ -4,17 +4,17 @@
 #include "communication/debug.h"
 #include "board/board.h"
 
-void changeMenuTexts(String, String, String);
-void createMenu();
-void drawMenuRect(int);
-void drawMenu(int);
-void clearScreen();
+
+void drawMenu(String, String, String);
+void clearScreen(u_int8_t, u_int8_t, u_int8_t, u_int8_t);
+
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
 TFT_eSprite menuSprite = TFT_eSprite(&tft);
 TFT_eSprite menuItemTemplate = TFT_eSprite(&tft);
 TFT_eSprite mqttSprite = TFT_eSprite(&tft);
 TFT_eSprite wifiSprite = TFT_eSprite(&tft);
+
 
 TFT_eSprite itemSprite1 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite2 = TFT_eSprite(&tft);
@@ -35,27 +35,7 @@ int lastSpriteIndex = 2;
 int lastItemIndex = 3;
 
 
-void changeMenuTexts(String t1, String t2, String t3){
-   String texts[3] = {t1, t2, t3};
-   for (int i = 0; i <= lastSpriteIndex; i++)
-   {
-      itemSprites[i].fillSprite(TFT_BLACK);
-      if (texts[i] != "")
-      {
-         itemSprites[i].drawString(
-               texts[i],
-               7,
-               7,
-               UI_MENU_ITEM_FONT_SIZE
-            );
-      }
-   }
-}
-
-
-
-
-void createMenu() {
+void initMenu() {
    wifiItem.text = "WIFI";
    mqttItem.text = "MQTT";
    settingsItem.text = "Settings";
@@ -65,7 +45,7 @@ void createMenu() {
    items[1] = mqttItem;
    items[2] = settingsItem;
    items[3] = voltageItem;
-   for (int i = 0; i <= lastSpriteIndex; i++)
+   for (int i = 0; i <= lastSpriteIndex; i++)   // Sprite templates are created here
    {
       itemSprites[i].createSprite(
                         UI_MENU_ITEM_WIDTH, 
@@ -73,20 +53,30 @@ void createMenu() {
                      );
       itemSprites[i].fillSprite(UI_TRANSPARENCY_COLOR);
    }
-
-   changeMenuTexts(items[0].text, items[1].text, items[2].text);
 }
 
 
-
-
-
-void drawMenuRect(int hidePos){
+void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = items[2].text){
+   Debugging::debug("DRAWING MENU");
+   String texts[3] = {t1, t2, t3};
+   clearScreen(   // Clear screen menu propotion of screen
+      0,
+      0,
+      UI_MENU_WIDTH,
+      UI_MENU_HEIGHT
+   );
    for (int i = 0; i <= lastSpriteIndex; i++)
    {
-      if (i != hidePos)
+      if (texts[i] != "")  // First draw existing texts
       {
-         itemSprites[i].drawRoundRect(   // Rectangle 1px
+         itemSprites[i].fillSprite(UI_TRANSPARENCY_COLOR); // Bottom color (purple) which will be filtered out when pushing
+         itemSprites[i].drawString(
+            texts[i],
+            7,
+            7,
+            UI_MENU_ITEM_FONT_SIZE
+         );
+         itemSprites[i].drawRoundRect(       // Rectangles 2px
             0, 
             0, 
             UI_MENU_ITEM_WIDTH,
@@ -94,56 +84,37 @@ void drawMenuRect(int hidePos){
             UI_MENU_ITEM_ROUNDNESS,
             TFT_RED
          );
-         itemSprites[i].drawRoundRect(   // Double rectangle widht
-            1, 
-            1, 
-            UI_MENU_ITEM_WIDTH - 1,
-            UI_MENU_ITEM_HEIGHT - 1,
-            UI_MENU_ITEM_ROUNDNESS,
-            TFT_RED
-         );
-      }
-   }
-}
-
-
-void drawMenu(int hidePos){
-   for (int i = 0; i <= lastSpriteIndex; i++)
-   {
-      if (items[i].text == "")
-      {
          int x = i == 1 ? UI_MENU_ITEM_FOCUS_X : UI_MENU_ITEM_DEFAULT_X;
          int y = (UI_MENU_ITEM_SPACING * (i + 1)) + (UI_MENU_ITEM_HEIGHT * i);
-         itemSprites[i].pushSprite(
+         itemSprites[i].pushSprite(          // Show rectangles
             x,
             y,
-            UI_TRANSPARENCY_COLOR
+            UI_TRANSPARENCY_COLOR            // Filter bottom color (purple) out
          );
-         Debugging::debug("DRAWING");
-         Debugging::debug(i);
-
-      }
-      else
-      {
-         hidePos = i;
-         itemSprites[hidePos].pushSprite(TFT_HEIGHT * 10, TFT_WIDTH * 10); //Push sprite outside screen to hide it
-         itemSprites[hidePos].fillSprite(TFT_BLACK);
-         Debugging::debug("HIDING");
-         Debugging::debug(i);
       }
    }
-   drawMenuRect(hidePos); // Recreate rectangles to 
 }
 
 
-
-
-
-
-void clearScreen(){
-   tft.fillScreen(TFT_BLACK);
+void clearScreen(u_int8_t xs = 0, u_int8_t ys = 0, u_int8_t xe = TFT_HEIGHT, u_int8_t ye = TFT_WIDTH){
+   tft.fillRect(  // By default will clear whole screen
+      xs,
+      ys,
+      xe,
+      ye,
+      TFT_BLACK
+   );
 }
 
+
+void drawFullScreenText(const String text){
+   tft.drawCentreString(
+      text, 
+      TFT_HEIGHT / 2, 
+      TFT_WIDTH / 2, 
+      4
+   );
+}
 
 namespace UI{
    State state;
@@ -151,66 +122,71 @@ namespace UI{
    void init(){
       tft.init();
       tft.setRotation(DISPLAY_ROTATION);  // 1 = position (0, 0) is at the top left when buttons are on right (horizontal)
-      tft.setTextColor(TFT_WHITE, TFT_ORANGE);
       clearScreen();
-      createMenu();
-      drawMenu(-1);
+      initMenu();
+      setState(MENU);
    }
-   
-
 
    void loop(){
    };
 
-
-
    State getState(){
       return state;
    }   
-
-
 
    void menuMove(Direction direction){
       int hidePos = -1;
       int prvFocusedIndex = focusedIndex;
       if (focusedIndex > 0             && direction == UP)     { focusedIndex--; }
       if (focusedIndex < lastItemIndex && direction == DOWN)   { focusedIndex++; }
-
-
       if (focusedIndex != prvFocusedIndex)
       {
+         Debugging::debug("MOVING IN MENU");
          if (focusedIndex == 0 )             hidePos = 1;
          if (focusedIndex == lastItemIndex ) hidePos = 2;
-         changeMenuTexts(
+         drawMenu(
             focusedIndex <= 0 ? "" : items[focusedIndex - 1].text,
             items[focusedIndex].text,
             focusedIndex >= lastItemIndex ? "" : items[focusedIndex + 1].text
          );
-         drawMenu(hidePos);
       }
    }
-
-
+   
 
    void setState(State nextState){
-      state = nextState;
-      switch (state){
-         case SELECTING:
-            clearScreen();
-            drawMenu(-1);
-            break;
-         case FULL_SCREEN:
-            break;
-         case SCREEN_SAVER:
-            break;
-         case OFF:
-            Debugging::debug("Set UI OFF");
-            clearScreen();
-            break;
-         default:
-            break;
+      if (state != nextState)
+      {
+         switch (nextState){
+            case MENU:
+               Board::backLight(true);
+               clearScreen();
+               drawMenu();
+               Debugging::debug("UI STATE: MENU");
+               break;
+            case FULL_SCREEN:
+               Debugging::debug("UI STATE: FULL_SCREEN");
+               break;
+            case STARTING:
+               clearScreen();
+               Board::backLight(true);
+               drawFullScreenText("STARTING");
+               Debugging::debug("UI STATE: STARTING");
+               break;
+            case STOPPING:
+               clearScreen();
+               Board::backLight(true);
+               drawFullScreenText("STOPPING");
+               Debugging::debug("UI STATE: STOPPING");
+               break;
+            case OFF:
+               clearScreen();
+               Board::backLight(false);
+               Debugging::debug("UI STATE: OFF");
+               break;
+            default:
+               break;
+         }
+         state = nextState; // Finally set internal state
       }
    }
-   void refresh(){};
-   void toggleFullScreen(){};
 }
