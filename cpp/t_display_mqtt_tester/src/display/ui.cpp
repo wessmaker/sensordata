@@ -8,14 +8,7 @@
 void drawMenu(String, String, String);
 void clearScreen(u_int8_t, u_int8_t, u_int8_t, u_int8_t);
 
-
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
-TFT_eSprite menuSprite = TFT_eSprite(&tft);
-TFT_eSprite menuItemTemplate = TFT_eSprite(&tft);
-TFT_eSprite mqttSprite = TFT_eSprite(&tft);
-TFT_eSprite wifiSprite = TFT_eSprite(&tft);
-
-
 TFT_eSprite itemSprite1 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite2 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite3 = TFT_eSprite(&tft);
@@ -25,6 +18,7 @@ struct Item {
    int position;
    String text;
 };
+
 Item item1;
 Item item2;
 Item item3;
@@ -36,11 +30,11 @@ int lastItemIndex = 3;
 
 
 void initMenu() {
+   for (int i = 0; i < 3; i++) items[i].position = i; 
    item1.text = "WIFI";
    item2.text = "MQTT";
    item3.text = "Settings";
    item4.text = "Board";
-   for (int i = 0; i < 3; i++){ items[i].position = i; }
    items[0] = item1;
    items[1] = item2;
    items[2] = item3;
@@ -72,8 +66,8 @@ void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = 
          itemSprites[i].fillSprite(UI_TRANSPARENCY_COLOR); // Bottom color (purple) which will be filtered out when pushing
          itemSprites[i].drawString(
             texts[i],
-            7,
-            7,
+            6,
+            6,
             UI_MENU_ITEM_FONT_SIZE
          );
          itemSprites[i].drawRoundRect(       // Rectangles 2px
@@ -82,6 +76,14 @@ void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = 
             UI_MENU_ITEM_WIDTH,
             UI_MENU_ITEM_HEIGHT,
             UI_MENU_ITEM_ROUNDNESS,
+            TFT_RED
+         );
+         itemSprites[i].drawRoundRect(       // Rectangles 2px
+            1, 
+            1, 
+            UI_MENU_ITEM_WIDTH - 1,
+            UI_MENU_ITEM_HEIGHT - 1,
+            UI_MENU_ITEM_ROUNDNESS - 1,
             TFT_RED
          );
          int x = i == 1 ? UI_MENU_ITEM_FOCUS_X : UI_MENU_ITEM_DEFAULT_X;
