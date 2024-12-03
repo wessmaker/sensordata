@@ -1,9 +1,9 @@
   // #include "testing/testing.h"
 
   #include <Arduino.h>
-  #include "actuators/buzzer.h"
+  // #include "actuators/buzzer.h"
   #include "actuators/leds.h"
-  #include "board/board.h"
+  #include "controller/controller.h"
   #include "communication/communication.h"
   #include "communication/debug.h"
   #include "display/ui.h"
@@ -20,7 +20,7 @@
 void setup() {
   // Testing     ::init();
   Debugging     ::init();
-  Buzzer        ::init();
+  // Buzzer        ::init();
   LEDS          ::init();
   Communication ::init();
   MQTTClient    ::init();
@@ -30,14 +30,14 @@ void setup() {
   Switch        ::init();
   WifiClient    ::init();
   UI            ::init();
-  Board         ::init();
+  Controller    ::init();
 }
 
 
 void loop() {
   // Testing     ::loop();
   Debugging     ::loop();
-  Buzzer        ::loop();
+  // Buzzer        ::loop();
   LEDS          ::loop();
   Communication ::loop();
   MQTTClient    ::loop();

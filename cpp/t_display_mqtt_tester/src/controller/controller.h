@@ -1,10 +1,10 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <Arduino.h>
-   namespace Board{
+   namespace Controller{
       void init();
       void loop();
-      void start();
+      void start(bool firstRun = false);
       void stop();
       void backLight(bool);
       bool isRunning();

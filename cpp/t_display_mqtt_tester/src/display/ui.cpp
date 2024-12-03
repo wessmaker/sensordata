@@ -2,7 +2,7 @@
 #include <TFT_eSPI.h>
 #include "communication/communication.h"
 #include "communication/debug.h"
-#include "board/board.h"
+#include "controller/controller.h"
 
 
 void drawMenu(String, String, String);
@@ -25,10 +25,10 @@ struct Item {
    int position;
    String text;
 };
-Item wifiItem;
-Item mqttItem;
-Item settingsItem;
-Item voltageItem;
+Item item1;
+Item item2;
+Item item3;
+Item item4;
 Item items[4];
 int focusedIndex = 1;
 int lastSpriteIndex = 2;
@@ -36,15 +36,15 @@ int lastItemIndex = 3;
 
 
 void initMenu() {
-   wifiItem.text = "WIFI";
-   mqttItem.text = "MQTT";
-   settingsItem.text = "Settings";
-   voltageItem.text = "Voltage";
+   item1.text = "WIFI";
+   item2.text = "MQTT";
+   item3.text = "Settings";
+   item4.text = "Board";
    for (int i = 0; i < 3; i++){ items[i].position = i; }
-   items[0] = wifiItem;
-   items[1] = mqttItem;
-   items[2] = settingsItem;
-   items[3] = voltageItem;
+   items[0] = item1;
+   items[1] = item2;
+   items[2] = item3;
+   items[3] = item4;
    for (int i = 0; i <= lastSpriteIndex; i++)   // Sprite templates are created here
    {
       itemSprites[i].createSprite(
@@ -59,7 +59,7 @@ void initMenu() {
 void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = items[2].text){
    Debugging::debug("DRAWING MENU");
    String texts[3] = {t1, t2, t3};
-   clearScreen(   // Clear screen menu propotion of screen
+   clearScreen(            // Clear screen menu propotion of screen
       0,
       0,
       UI_MENU_WIDTH,
@@ -117,14 +117,12 @@ void drawFullScreenText(const String text){
 }
 
 namespace UI{
-   State state;
+   State state = OFF;   //This HAS to be initialized to OFF
 
    void init(){
       tft.init();
       tft.setRotation(DISPLAY_ROTATION);  // 1 = position (0, 0) is at the top left when buttons are on right (horizontal)
-      clearScreen();
       initMenu();
-      setState(MENU);
    }
 
    void loop(){
@@ -158,29 +156,31 @@ namespace UI{
       {
          switch (nextState){
             case MENU:
-               Board::backLight(true);
+               Controller::backLight(true);
+               focusedIndex = 1;
                clearScreen();
                drawMenu();
                Debugging::debug("UI STATE: MENU");
                break;
             case FULL_SCREEN:
                Debugging::debug("UI STATE: FULL_SCREEN");
+               Controller::backLight(true);
                break;
             case STARTING:
                clearScreen();
-               Board::backLight(true);
+               Controller::backLight(true);
                drawFullScreenText("STARTING");
                Debugging::debug("UI STATE: STARTING");
                break;
             case STOPPING:
                clearScreen();
-               Board::backLight(true);
+               Controller::backLight(true);
                drawFullScreenText("STOPPING");
                Debugging::debug("UI STATE: STOPPING");
                break;
             case OFF:
                clearScreen();
-               Board::backLight(false);
+               Controller::backLight(false);
                Debugging::debug("UI STATE: OFF");
                break;
             default:
