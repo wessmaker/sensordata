@@ -25,7 +25,7 @@ namespace UI{
 
    enum State{
       MENU,
-      FULL_SCREEN,
+      ITEM,
       STARTING,
       STOPPING,
       OFF
@@ -35,6 +35,7 @@ namespace UI{
       UP,
       DOWN
    };
+
 
    void init();
    void loop();

@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include "communication.h"
+#include "rxtx.h"
 #include "display/ui.h"
+#include "communication.h"
 
-namespace Communication{
+namespace RXTX{
    void init(){
       Serial.begin(SERIAL_SPEED);
    };

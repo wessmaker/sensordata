@@ -1,44 +1,140 @@
 #include "ui.h"
 #include <TFT_eSPI.h>
-#include "communication/communication.h"
+#include "communication/rxtx.h"
 #include "communication/debug.h"
 #include "controller/controller.h"
-
-
+#include "communication/wifi.h"
+#include "communication/mqtt.h"
 void drawMenu(String, String, String);
 void clearScreen(u_int8_t, u_int8_t, u_int8_t, u_int8_t);
-
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
 TFT_eSprite itemSprite1 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite2 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite3 = TFT_eSprite(&tft);
 TFT_eSprite itemSprites[3] = {itemSprite1, itemSprite2, itemSprite3};
 
-struct Item {
-   int position;
-   String text;
-};
+TFT_eSprite itemLabel1 = TFT_eSprite(&tft);
+TFT_eSprite itemLabel2 = TFT_eSprite(&tft);
+TFT_eSprite itemLabel3 = TFT_eSprite(&tft);
 
-Item item1;
-Item item2;
-Item item3;
-Item item4;
-Item items[4];
-int focusedIndex = 1;
-int lastSpriteIndex = 2;
-int lastItemIndex = 3;
+struct Item {int position; String menuText;};
+Item wifiItem, mqttItem, settingsItem, boardItem, items[4];
+int focusedIndex = 1, lastSpriteIndex = 2, lastItemIndex = 3;
+
+void clearScreen(
+   u_int8_t xs = 0, 
+   u_int8_t ys = 0, 
+   u_int8_t xe = TFT_HEIGHT, 
+   u_int8_t ye = TFT_WIDTH
+){
+   tft.fillRect(  // By default will clear whole screen
+      xs,
+      ys,
+      xe,
+      ye,
+      TFT_BLACK
+   );
+}
+
+void openItem(const int index){
+   Debugging::debug("Focused index in openitem: ");
+   Debugging::debug(index);
+   clearScreen();
+   if (index < 0)
+   {
+      Debugging::debug("Incorrect index in openItem!");
+      return;
+   }
+   switch (index)
+   {
+      case 0: {
+         Debugging::debug("Set item WIFIITEM");
+         String wifiStatus;
+         switch (Wifi::getStatus())
+         {
+            case Communication::CONNECTED:      { wifiStatus = "Connected"; break; }
+            case Communication::DISCONNECTED:   { wifiStatus = "Disconnected"; break; }
+            default:                            { wifiStatus = "Unknown"; break; }
+         }
+         itemLabel1.drawString("WIFI", 0, 0, 4);
+         itemLabel2.drawString("Status:", 0, 0, 4);
+         itemLabel3.drawString(wifiStatus, 0, 0, 4);
+         break;
+      }
+         
+      case 1: {
+         Debugging::debug("Set item MQTTITEM");
+         String mqttStatus;
+         switch (MQTT::getStatus())
+         {
+            case Communication::CONNECTED:      { mqttStatus = "Connected"; break; }
+            case Communication::DISCONNECTED:   { mqttStatus = "Disconnected"; break; }
+            default:                            { mqttStatus = "Unknown"; break; }
+         }
+         itemLabel1.drawString("MQTT", 0, 0, 4);
+         itemLabel2.drawString("Status:", 0, 0, 4);
+         itemLabel3.drawString(mqttStatus, 0, 0, 4);
+         break;
+      }
+
+      case 2: {
+         Debugging::debug("Set item SETTINGS");
+         String status;
+         switch (Wifi::getStatus())
+         {
+            case Communication::CONNECTED:      { status = ""; break; }
+            case Communication::DISCONNECTED:   { status = ""; break; }
+            default:                            { status = ""; break; }
+         }
+         itemLabel1.drawString("WIFI", 0, 0, 4);
+         itemLabel2.drawString("Status:", 0, 0, 4);
+         itemLabel3.drawString(status, 0, 0, 4);
+         break;
+      }
+
+      case 3: {
+         Debugging::debug("Set item BOARD");
+         String status;
+         switch (Wifi::getStatus())
+         {
+            case Communication::CONNECTED:      { status = ""; break; }
+            case Communication::DISCONNECTED:   { status = ""; break; }
+            default:                            { status = ""; break; }
+         }
+         itemLabel1.drawString("", 0, 0, 4);
+         itemLabel2.drawString(":", 0, 0, 4);
+         itemLabel3.drawString(status, 0, 0, 4);
+         break;
+      }
+
+      default: {
+         break;
+      }
+   }
+   int x = UI_MENU_ITEM_DEFAULT_X;
+   int y1 = UI_MENU_ITEM_HEIGHT;
+   int y2 = y1 * 2;
+   int y3 = y1 * 3;
+   itemLabel1.pushSprite(x, y1, UI_TRANSPARENCY_COLOR);
+   itemLabel2.pushSprite(x, y2, UI_TRANSPARENCY_COLOR);
+   itemLabel3.pushSprite(x, y3, UI_TRANSPARENCY_COLOR);
+}
+
+
+
+
 
 
 void initMenu() {
    for (int i = 0; i < 3; i++) items[i].position = i; 
-   item1.text = "WIFI";
-   item2.text = "MQTT";
-   item3.text = "Settings";
-   item4.text = "Board";
-   items[0] = item1;
-   items[1] = item2;
-   items[2] = item3;
-   items[3] = item4;
+   wifiItem.menuText = "WIFI";
+   mqttItem.menuText = "MQTT";
+   settingsItem.menuText = "Settings";
+   boardItem.menuText = "Board";
+   items[0] = wifiItem;
+   items[1] = mqttItem;
+   items[2] = settingsItem;
+   items[3] = boardItem;
    for (int i = 0; i <= lastSpriteIndex; i++)   // Sprite templates are created here
    {
       itemSprites[i].createSprite(
@@ -49,8 +145,11 @@ void initMenu() {
    }
 }
 
-
-void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = items[2].text){
+void drawMenu(
+   String t1 = items[0].menuText, 
+   String t2 = items[1].menuText, 
+   String t3 = items[2].menuText
+){
    Debugging::debug("DRAWING MENU");
    String texts[3] = {t1, t2, t3};
    clearScreen(            // Clear screen menu propotion of screen
@@ -97,18 +196,6 @@ void drawMenu(String t1 = items[0].text, String t2 = items[1].text, String t3 = 
    }
 }
 
-
-void clearScreen(u_int8_t xs = 0, u_int8_t ys = 0, u_int8_t xe = TFT_HEIGHT, u_int8_t ye = TFT_WIDTH){
-   tft.fillRect(  // By default will clear whole screen
-      xs,
-      ys,
-      xe,
-      ye,
-      TFT_BLACK
-   );
-}
-
-
 void drawFullScreenText(const String text){
    tft.drawCentreString(
       text, 
@@ -145,13 +232,12 @@ namespace UI{
          if (focusedIndex == 0 )             hidePos = 1;
          if (focusedIndex == lastItemIndex ) hidePos = 2;
          drawMenu(
-            focusedIndex <= 0 ? "" : items[focusedIndex - 1].text,
-            items[focusedIndex].text,
-            focusedIndex >= lastItemIndex ? "" : items[focusedIndex + 1].text
+            focusedIndex <= 0 ? "" : items[focusedIndex - 1].menuText,              //String 1
+            items[focusedIndex].menuText,                                           //String 2
+            focusedIndex >= lastItemIndex ? "" : items[focusedIndex + 1].menuText   //String 3
          );
       }
    }
-   
 
    void setState(State nextState){
       if (state != nextState)
@@ -160,13 +246,13 @@ namespace UI{
             case MENU:
                Controller::backLight(true);
                focusedIndex = 1;
-               clearScreen();
                drawMenu();
                Debugging::debug("UI STATE: MENU");
                break;
-            case FULL_SCREEN:
-               Debugging::debug("UI STATE: FULL_SCREEN");
+            case ITEM:
                Controller::backLight(true);
+               Debugging::debug("UI STATE: ITEM");
+               openItem(focusedIndex);
                break;
             case STARTING:
                clearScreen();
