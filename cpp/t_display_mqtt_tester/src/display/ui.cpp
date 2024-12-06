@@ -5,6 +5,7 @@
 #include "controller/controller.h"
 #include "communication/wifi.h"
 #include "communication/mqtt.h"
+#include "util/assertion.h"
 void drawMenu(String, String, String);
 void clearScreen(u_int8_t, u_int8_t, u_int8_t, u_int8_t);
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
@@ -111,9 +112,9 @@ void openItem(const int index){
          break;
       }
    }
-   int x = UI_MENU_ITEM_DEFAULT_X;
-   int y1 = UI_MENU_ITEM_HEIGHT;
-   int y2 = y1 * 2;
+   int x = UI_MENU_ITEM_DEFAULT_X;  //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
+   int y1 = UI_MENU_ITEM_HEIGHT;    //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
+   int y2 = y1 * 2;                 //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
    int y3 = y1 * 3;
    itemLabel1.pushSprite(x, y1, UI_TRANSPARENCY_COLOR);
    itemLabel2.pushSprite(x, y2, UI_TRANSPARENCY_COLOR);

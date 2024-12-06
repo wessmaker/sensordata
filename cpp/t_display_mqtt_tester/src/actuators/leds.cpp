@@ -1,13 +1,15 @@
 #include "leds.h"
 #include <Arduino.h>
 
-
 namespace LEDS{
    void init(){
-      for (int loopLED = BLUE; loopLED != LAST; loopLED++)
-      {
-         pinMode(loopLED, OUTPUT);
-      }
+      pinMode(LED::BLUE, OUTPUT);
+      pinMode(LED::RED, OUTPUT);
+      pinMode(LED::WHITE, OUTPUT);
+      pinMode(LED::YELLOW, OUTPUT);
+      #ifdef ASSERT_ENABLED
+         pinMode(LED::ASSERT, OUTPUT);
+      #endif
    }
 
    void loop() {}
@@ -19,5 +21,9 @@ namespace LEDS{
    void OFF(LED led){
       digitalWrite(led, LOW);
    }
-}
 
+   void modeChange(LED led){
+      digitalWrite(led, !digitalRead(led));
+   }
+
+}

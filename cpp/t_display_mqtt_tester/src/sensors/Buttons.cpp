@@ -4,7 +4,7 @@
 #include "display/ui.h"
 #include "communication/rxtx.h"
 #include "communication/debug.h"
-
+#include "util/assertion.h"
 
 #define EXT_BUTTON 37
 
@@ -34,6 +34,7 @@ void buttonClickLeft(Button2& b){
 
 void buttonClickRight(Button2& b){
    Debugging::debug("Right button tap");
+   ASSERT(leftButton.isPressed(), "LEFT BUTTON IS NOT PRESSED");
    if (UI::getState() == UI::State::MENU) UI::menuMove(UI::Direction::UP);
 }
 

@@ -1,6 +1,7 @@
 #pragma once 
 #ifndef LEDS_H
 #define LEDS_H
+#include "util/assertion.h"
 
 
 
@@ -12,6 +13,7 @@ namespace LEDS{
       RED = 26,
       WHITE = 27,
       YELLOW = 33,
+      ASSERT = 2,
       LAST
    };
 
@@ -19,6 +21,6 @@ namespace LEDS{
    void loop();
    void ON(LED);
    void OFF(LED);
+   void modeChange(LED);
 }
-
 #endif
