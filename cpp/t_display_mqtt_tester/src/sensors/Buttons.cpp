@@ -22,7 +22,6 @@ u_int16_t timeToStop = 1000;  // 1s
 u_int16_t timeToStart = 1500; // 1.5s
 u_int16_t timeToItem = 50;
 
-
 void _emptyHandler(Button2& b){};
 
 void buttonClickLeft(Button2& b){
@@ -34,7 +33,6 @@ void buttonClickLeft(Button2& b){
 
 void buttonClickRight(Button2& b){
    Debugging::debug("Right button tap");
-   ASSERT(leftButton.isPressed(), "LEFT BUTTON IS NOT PRESSED");
    if (UI::getState() == UI::State::MENU) UI::menuMove(UI::Direction::UP);
 }
 

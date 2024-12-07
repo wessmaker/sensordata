@@ -14,9 +14,6 @@
 ** Function name:           TFT_eSprite
 ** Description:             Class constructor
 ***************************************************************************************/
-TFT_eSPI* TFT_eSprite::getTFT(){
-  return _tft;
-}
 
 TFT_eSprite::TFT_eSprite(TFT_eSPI *tft)
 {

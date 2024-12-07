@@ -22,7 +22,7 @@ namespace LEDS{
       digitalWrite(led, LOW);
    }
 
-   void modeChange(LED led){
+   void invert(LED led){
       digitalWrite(led, !digitalRead(led));
    }
 

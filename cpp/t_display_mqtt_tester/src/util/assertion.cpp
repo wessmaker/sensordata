@@ -23,7 +23,7 @@
          
          if (millis() % ASSERT_LED_INTERVAL == 0) {
             if (!ledSet) {
-               LEDS::modeChange(LEDS::LED::ASSERT);
+               LEDS::invert(LEDS::LED::ASSERT);
                ledSet = true;
             }
          } else ledSet = false;

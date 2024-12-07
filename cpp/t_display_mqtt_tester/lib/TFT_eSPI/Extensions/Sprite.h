@@ -9,8 +9,6 @@ class TFT_eSprite : public TFT_eSPI {
 
  public:
 
-  TFT_eSPI* getTFT();
-
   explicit TFT_eSprite(TFT_eSPI *tft);
   ~TFT_eSprite(void);
 

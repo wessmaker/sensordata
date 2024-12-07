@@ -21,6 +21,6 @@ namespace LEDS{
    void loop();
    void ON(LED);
    void OFF(LED);
-   void modeChange(LED);
+   void invert(LED);
 }
 #endif

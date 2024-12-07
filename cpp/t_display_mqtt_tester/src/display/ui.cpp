@@ -35,46 +35,59 @@ void clearScreen(
       ye,
       TFT_BLACK
    );
+   Debugging::debug(
+      "Cleared screen: " + 
+      (String)xs + ", " + 
+      (String)ys + ", " + 
+      (String)xe + ", " + 
+      (String)ye
+   );
 }
 
 void openItem(const int index){
-   Debugging::debug("Focused index in openitem: ");
-   Debugging::debug(index);
-   clearScreen();
    if (index < 0)
    {
       Debugging::debug("Incorrect index in openItem!");
       return;
    }
+   String debugString = "Focused index in openitem: " + index;
+   Debugging::debug(debugString);
+   clearScreen();
+
+   itemLabel1.fillSprite(UI_TRANSPARENCY_COLOR);
+   itemLabel2.fillSprite(UI_TRANSPARENCY_COLOR);
+   itemLabel3.fillSprite(UI_TRANSPARENCY_COLOR);
+   /* Decide what to draw depending on the selected item */
    switch (index)
    {
       case 0: {
          Debugging::debug("Set item WIFIITEM");
-         String wifiStatus;
+         String status;
+         ASSERT((Wifi::getStatus() == Communication::UNKNOWN), "COmmunication didnt match");
          switch (Wifi::getStatus())
          {
-            case Communication::CONNECTED:      { wifiStatus = "Connected"; break; }
-            case Communication::DISCONNECTED:   { wifiStatus = "Disconnected"; break; }
-            default:                            { wifiStatus = "Unknown"; break; }
+            case Communication::CONNECTED:      { status = "Connected"; break; }
+            case Communication::DISCONNECTED:   { status = "Disconnected"; break; }
+            default:                            { status = "Unknown"; break; }
          }
          itemLabel1.drawString("WIFI", 0, 0, 4);
          itemLabel2.drawString("Status:", 0, 0, 4);
-         itemLabel3.drawString(wifiStatus, 0, 0, 4);
+         itemLabel3.drawString(status, 0, 0, 4);
          break;
       }
          
       case 1: {
          Debugging::debug("Set item MQTTITEM");
-         String mqttStatus;
+         String status;
          switch (MQTT::getStatus())
          {
-            case Communication::CONNECTED:      { mqttStatus = "Connected"; break; }
-            case Communication::DISCONNECTED:   { mqttStatus = "Disconnected"; break; }
-            default:                            { mqttStatus = "Unknown"; break; }
+            case Communication::CONNECTED:      { status = "Connected"; break; }
+            case Communication::DISCONNECTED:   { status = "Disconnected"; break; }
+            default:                            { status = "Unknown"; break; }
          }
          itemLabel1.drawString("MQTT", 0, 0, 4);
          itemLabel2.drawString("Status:", 0, 0, 4);
-         itemLabel3.drawString(mqttStatus, 0, 0, 4);
+         itemLabel3.drawString(status, 0, 0, 4);
          break;
       }
 
@@ -87,8 +100,8 @@ void openItem(const int index){
             case Communication::DISCONNECTED:   { status = ""; break; }
             default:                            { status = ""; break; }
          }
-         itemLabel1.drawString("WIFI", 0, 0, 4);
-         itemLabel2.drawString("Status:", 0, 0, 4);
+         itemLabel1.drawString("", 0, 0, 4);
+         itemLabel2.drawString(":", 0, 0, 4);
          itemLabel3.drawString(status, 0, 0, 4);
          break;
       }
@@ -103,19 +116,19 @@ void openItem(const int index){
             default:                            { status = ""; break; }
          }
          itemLabel1.drawString("", 0, 0, 4);
-         itemLabel2.drawString(":", 0, 0, 4);
+         itemLabel2.drawString("", 0, 0, 4);
          itemLabel3.drawString(status, 0, 0, 4);
          break;
       }
-
       default: {
          break;
       }
    }
-   int x = UI_MENU_ITEM_DEFAULT_X;  //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
-   int y1 = UI_MENU_ITEM_HEIGHT;    //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
-   int y2 = y1 * 2;                 //TODO FIX this not showing in UI, maybe gets cleared when pressing buttons
-   int y3 = y1 * 3;
+   Debugging::debug("Drawing item labels ");
+   int x = UI_MENU_ITEM_DEFAULT_X;
+   int y1 = UI_MENU_ITEM_SPACING;
+   int y2 = y1 + UI_MENU_ITEM_SPACING + UI_MENU_ITEM_HEIGHT;
+   int y3 = y2 + UI_MENU_ITEM_SPACING + UI_MENU_ITEM_HEIGHT;
    itemLabel1.pushSprite(x, y1, UI_TRANSPARENCY_COLOR);
    itemLabel2.pushSprite(x, y2, UI_TRANSPARENCY_COLOR);
    itemLabel3.pushSprite(x, y3, UI_TRANSPARENCY_COLOR);
@@ -125,8 +138,8 @@ void openItem(const int index){
 
 
 
-
 void initMenu() {
+   //--------- Initializing menu sprites ---------//
    for (int i = 0; i < 3; i++) items[i].position = i; 
    wifiItem.menuText = "WIFI";
    mqttItem.menuText = "MQTT";
@@ -144,6 +157,15 @@ void initMenu() {
                      );
       itemSprites[i].fillSprite(UI_TRANSPARENCY_COLOR);
    }
+
+
+   //--------- Initializing item label sprites ---------//
+   itemLabel1.createSprite(UI_MENU_ITEM_WIDTH, UI_MENU_ITEM_HEIGHT);
+   itemLabel2.createSprite(UI_MENU_ITEM_WIDTH, UI_MENU_ITEM_HEIGHT);
+   itemLabel3.createSprite(UI_MENU_ITEM_WIDTH, UI_MENU_ITEM_HEIGHT);
+   itemLabel1.fillSprite(UI_TRANSPARENCY_COLOR);
+   itemLabel2.fillSprite(UI_TRANSPARENCY_COLOR);
+   itemLabel3.fillSprite(UI_TRANSPARENCY_COLOR);
 }
 
 void drawMenu(
@@ -212,6 +234,7 @@ namespace UI{
    void init(){
       tft.init();
       tft.setRotation(DISPLAY_ROTATION);  // 1 = position (0, 0) is at the top left when buttons are on right (horizontal)
+      clearScreen();
       initMenu();
    }
 
@@ -246,7 +269,7 @@ namespace UI{
          switch (nextState){
             case MENU:
                Controller::backLight(true);
-               focusedIndex = 1;
+               focusedIndex = 1; //This could be done better, for now cannot go to last focused index
                drawMenu();
                Debugging::debug("UI STATE: MENU");
                break;
