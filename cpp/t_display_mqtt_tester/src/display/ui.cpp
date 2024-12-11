@@ -9,18 +9,35 @@
 void drawMenu(String, String, String);
 void clearScreen(u_int8_t, u_int8_t, u_int8_t, u_int8_t);
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
+
+
+
+
+
 TFT_eSprite itemSprite1 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite2 = TFT_eSprite(&tft);
 TFT_eSprite itemSprite3 = TFT_eSprite(&tft);
 TFT_eSprite itemSprites[3] = {itemSprite1, itemSprite2, itemSprite3};
 
+
+
+
+
 TFT_eSprite itemLabel1 = TFT_eSprite(&tft);
 TFT_eSprite itemLabel2 = TFT_eSprite(&tft);
 TFT_eSprite itemLabel3 = TFT_eSprite(&tft);
 
+
+
+
+
 struct Item {int position; String menuText;};
 Item wifiItem, mqttItem, settingsItem, boardItem, items[4];
 int focusedIndex = 1, lastSpriteIndex = 2, lastItemIndex = 3;
+
+
+
+
 
 void clearScreen(
    u_int8_t xs = 0, 
@@ -44,16 +61,15 @@ void clearScreen(
    );
 }
 
+
+
+
+
 void openItem(const int index){
-   if (index < 0)
-   {
-      Debugging::debug("Incorrect index in openItem!");
-      return;
-   }
+   ASSERT(index >= 0, "index was less than 0, in openItem()");
    String debugString = "Focused index in openitem: " + index;
    Debugging::debug(debugString);
    clearScreen();
-
    itemLabel1.fillSprite(UI_TRANSPARENCY_COLOR);
    itemLabel2.fillSprite(UI_TRANSPARENCY_COLOR);
    itemLabel3.fillSprite(UI_TRANSPARENCY_COLOR);
@@ -61,9 +77,7 @@ void openItem(const int index){
    switch (index)
    {
       case 0: {
-         Debugging::debug("Set item WIFIITEM");
          String status;
-         ASSERT((Wifi::getStatus() == Communication::UNKNOWN), "COmmunication didnt match");
          switch (Wifi::getStatus())
          {
             case Communication::CONNECTED:      { status = "Connected"; break; }
@@ -77,7 +91,6 @@ void openItem(const int index){
       }
          
       case 1: {
-         Debugging::debug("Set item MQTTITEM");
          String status;
          switch (MQTT::getStatus())
          {
@@ -92,7 +105,6 @@ void openItem(const int index){
       }
 
       case 2: {
-         Debugging::debug("Set item SETTINGS");
          String status;
          switch (Wifi::getStatus())
          {
@@ -101,13 +113,12 @@ void openItem(const int index){
             default:                            { status = ""; break; }
          }
          itemLabel1.drawString("", 0, 0, 4);
-         itemLabel2.drawString(":", 0, 0, 4);
+         itemLabel2.drawString("", 0, 0, 4);
          itemLabel3.drawString(status, 0, 0, 4);
          break;
       }
 
       case 3: {
-         Debugging::debug("Set item BOARD");
          String status;
          switch (Wifi::getStatus())
          {
@@ -124,7 +135,6 @@ void openItem(const int index){
          break;
       }
    }
-   Debugging::debug("Drawing item labels ");
    int x = UI_MENU_ITEM_DEFAULT_X;
    int y1 = UI_MENU_ITEM_SPACING;
    int y2 = y1 + UI_MENU_ITEM_SPACING + UI_MENU_ITEM_HEIGHT;
@@ -167,6 +177,10 @@ void initMenu() {
    itemLabel2.fillSprite(UI_TRANSPARENCY_COLOR);
    itemLabel3.fillSprite(UI_TRANSPARENCY_COLOR);
 }
+
+
+
+
 
 void drawMenu(
    String t1 = items[0].menuText, 
@@ -219,6 +233,10 @@ void drawMenu(
    }
 }
 
+
+
+
+
 void drawFullScreenText(const String text){
    tft.drawCentreString(
       text, 
@@ -227,6 +245,10 @@ void drawFullScreenText(const String text){
       4
    );
 }
+
+
+
+
 
 namespace UI{
    State state = OFF;   //This HAS to be initialized to OFF
@@ -240,10 +262,37 @@ namespace UI{
 
    void loop(){
    };
+   
+
+
+
+
+   void refresh(){
+      State currentState = UI::getState();
+      switch (currentState)
+      {
+      case ITEM:
+         openItem(focusedIndex);
+         break;
+      // case MENU:  //This would reset to default index
+      //    drawMenu();
+      //    break;
+      default:
+         break;
+      }
+   }
+
+
+
+
 
    State getState(){
       return state;
    }   
+
+
+
+
 
    void menuMove(Direction direction){
       int hidePos = -1;
@@ -262,6 +311,10 @@ namespace UI{
          );
       }
    }
+
+
+
+
 
    void setState(State nextState){
       if (state != nextState)

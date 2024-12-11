@@ -39,6 +39,7 @@ namespace UI{
 
    void init();
    void loop();
+   void refresh();
    State getState();
    void setState(State);
    void menuMove(Direction);

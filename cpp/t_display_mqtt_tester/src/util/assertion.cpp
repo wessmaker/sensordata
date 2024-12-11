@@ -14,19 +14,25 @@
       String debugString = "Assert! " + msg;
       while (1)
       {
-         if (millis() % ASSERT_LOOP_MSG_INTERVAL == 0) {
-            if (!msgSent) {
+         if (millis() % ASSERT_LOOP_MSG_INTERVAL == 0) 
+         {
+            if (!msgSent) 
+            {
                Debugging::debug(debugString);
                msgSent = true;
             }
-         } else msgSent = false;
+         } 
+         else msgSent = false;
          
-         if (millis() % ASSERT_LED_INTERVAL == 0) {
-            if (!ledSet) {
+         if (millis() % ASSERT_LED_INTERVAL == 0) 
+         {
+            if (!ledSet) 
+            {
                LEDS::invert(LEDS::LED::ASSERT);
                ledSet = true;
             }
-         } else ledSet = false;
+         } 
+         else ledSet = false;
       }
    }
    

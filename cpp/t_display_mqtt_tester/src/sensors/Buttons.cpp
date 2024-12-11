@@ -16,6 +16,7 @@ Button2 extButton1;
 bool stopOnRelease = false;
 bool startOnRelease = false;
 bool itemOnRelease = false;
+bool singleHandlers = false;
 
 u_long timer = 0;
 u_int16_t timeToStop = 1000;  // 1s
@@ -40,52 +41,74 @@ void buttonClickExt1(Button2& b){
    Debugging::debug("External button tap");
 }
 
-void removeHandlers(){
-   leftButton.setTapHandler(_emptyHandler);
-   rightButton.setTapHandler(_emptyHandler);
-   extButton1.setTapHandler(_emptyHandler);
+
+
+void setSingleHandlers(bool mode){
+   if (mode)
+   {
+      leftButton.setTapHandler(buttonClickLeft);
+      rightButton.setTapHandler(buttonClickRight);
+      extButton1.setTapHandler(buttonClickExt1);
+   }
+   else
+   {
+      leftButton.setTapHandler(_emptyHandler);
+      rightButton.setTapHandler(_emptyHandler);
+      extButton1.setTapHandler(_emptyHandler);
+   }
 }
+
+
+
+
+
+
 
 
 
 // Handles double press of 2 onboard buttons with varying presstimes
 // Handled only when board is started eg. running
 void handleDoublePress(){
-   if (leftButton.isPressed() && rightButton.isPressed() && Controller::isRunning())
+   if (UI::getState() == UI::MENU)
    {
-      if (!timer) timer = millis();
-      if ((millis() - timer >= timeToItem) && (millis() - timer <= timeToStart))
+      if (leftButton.isPressed() && rightButton.isPressed() && Controller::isRunning())
       {
-         itemOnRelease = true;
+         setSingleHandlers(false);
+         if (!timer) timer = millis();
+         if ((millis() - timer >= timeToItem) && (millis() - timer <= timeToStart))
+         {
+            itemOnRelease = true;
+         }
+         if (millis() - timer >= timeToStart)
+         {
+            itemOnRelease = false;
+            stopOnRelease = true;
+            UI::setState(UI::STOPPING);
+         }
       }
-      if (millis() - timer >= timeToStart)
+      else if (!(leftButton.isPressed() || rightButton.isPressed()))   // Stopping after releasing both buttons
       {
-         itemOnRelease = false;
-         stopOnRelease = true;
-         removeHandlers();
-         UI::setState(UI::STOPPING);
+         if (itemOnRelease)
+         {
+            itemOnRelease = false;
+            timer = 0;
+            UI::setState(UI::State::ITEM);
+         }
+         else if (stopOnRelease)
+         {
+            stopOnRelease = false;
+            timer = 0;
+            Controller::stop();
+         }
+         else if (timer) 
+         {
+            startOnRelease = false;
+            itemOnRelease = false;
+            timer = 0; // Reset timer
+            setSingleHandlers(true);
+         }
+         else setSingleHandlers(true);
       }
-   }
-   else if (!(leftButton.isPressed() || rightButton.isPressed()))   // Stopping after releasing both buttons
-   {
-      if (itemOnRelease)
-      {
-         itemOnRelease = false;
-         timer = 0;
-         UI::setState(UI::State::ITEM);
-      }
-      else if (stopOnRelease)
-      {
-         stopOnRelease = false;
-         timer = 0;
-         Controller::stop();
-      }
-      else if (timer) 
-      {
-         startOnRelease = false;
-         itemOnRelease = false;
-         timer = 0; // Reset timer
-      } 
    }
 }
 
@@ -96,9 +119,7 @@ namespace Buttons{
       leftButton.begin(LEFT_BUTTON);
       rightButton.begin(RIGHT_BUTTON);
       extButton1.begin(EXT_BUTTON);
-      leftButton.setTapHandler(buttonClickLeft);
-      rightButton.setTapHandler(buttonClickRight);
-      extButton1.setTapHandler(buttonClickExt1);
+      addSingleHandlers();
    }
 
    void loop(){
