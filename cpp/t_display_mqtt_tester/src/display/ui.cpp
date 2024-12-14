@@ -66,9 +66,11 @@ void clearScreen(
 
 
 void openItem(const int index){
-   ASSERT(index >= 0, "index was less than 0, in openItem()");
+   ASSERT(!(index < 0), "index was less than 0, in openItem()");
    String debugString = "Focused index in openitem: " + index;
    Debugging::debug(debugString);
+
+
    clearScreen();
    itemLabel1.fillSprite(UI_TRANSPARENCY_COLOR);
    itemLabel2.fillSprite(UI_TRANSPARENCY_COLOR);
@@ -274,10 +276,8 @@ namespace UI{
       case ITEM:
          openItem(focusedIndex);
          break;
-      // case MENU:  //This would reset to default index
-      //    drawMenu();
-      //    break;
       default:
+         Debugging::debug("UI refresh refreshed nothing!");
          break;
       }
    }

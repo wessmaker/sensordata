@@ -3,7 +3,6 @@
 
 
 namespace Debugging{
-  bool isOn();
   void init();
   void loop();
   void debug(const String);

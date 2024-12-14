@@ -59,56 +59,47 @@ void setSingleHandlers(bool mode){
 }
 
 
-
-
-
-
-
-
-
 // Handles double press of 2 onboard buttons with varying presstimes
 // Handled only when board is started eg. running
 void handleDoublePress(){
-   if (UI::getState() == UI::MENU)
+   if (leftButton.isPressed() && rightButton.isPressed() && Controller::isRunning())
    {
-      if (leftButton.isPressed() && rightButton.isPressed() && Controller::isRunning())
+      setSingleHandlers(false);
+      if (!timer) timer = millis();
+      if ((millis() - timer >= timeToItem) && (millis() - timer <= timeToStart))
       {
-         setSingleHandlers(false);
-         if (!timer) timer = millis();
-         if ((millis() - timer >= timeToItem) && (millis() - timer <= timeToStart))
-         {
-            itemOnRelease = true;
-         }
-         if (millis() - timer >= timeToStart)
-         {
-            itemOnRelease = false;
-            stopOnRelease = true;
-            UI::setState(UI::STOPPING);
-         }
+         itemOnRelease = true;
       }
-      else if (!(leftButton.isPressed() || rightButton.isPressed()))   // Stopping after releasing both buttons
+      if (millis() - timer >= timeToStop)
       {
-         if (itemOnRelease)
-         {
-            itemOnRelease = false;
-            timer = 0;
-            UI::setState(UI::State::ITEM);
-         }
-         else if (stopOnRelease)
-         {
-            stopOnRelease = false;
-            timer = 0;
-            Controller::stop();
-         }
-         else if (timer) 
-         {
-            startOnRelease = false;
-            itemOnRelease = false;
-            timer = 0; // Reset timer
-            setSingleHandlers(true);
-         }
-         else setSingleHandlers(true);
+         itemOnRelease = false;
+         stopOnRelease = true;
+         UI::setState(UI::STOPPING);
       }
+   }
+   else if (!(leftButton.isPressed() || rightButton.isPressed()))   // Stopping after releasing both buttons
+   {
+      if (itemOnRelease)
+      {
+         itemOnRelease = false;
+         timer = 0;
+         UI::setState(UI::State::ITEM);
+         setSingleHandlers(true);
+      }
+      else if (stopOnRelease)
+      {
+         stopOnRelease = false;
+         timer = 0;
+         Controller::stop();
+      }
+      else if (timer) 
+      {
+         stopOnRelease = false;
+         itemOnRelease = false;
+         timer = 0; // Reset timer
+         setSingleHandlers(true);
+      }
+      else setSingleHandlers(true);
    }
 }
 
@@ -119,7 +110,7 @@ namespace Buttons{
       leftButton.begin(LEFT_BUTTON);
       rightButton.begin(RIGHT_BUTTON);
       extButton1.begin(EXT_BUTTON);
-      addSingleHandlers();
+      setSingleHandlers(true);
    }
 
    void loop(){
@@ -139,7 +130,7 @@ namespace Buttons{
       if (leftButton.isPressed() && rightButton.isPressed() && !Controller::isRunning())
       {
          if (!timer) timer = millis();  
-         if (millis() - timer >= timeToStop)
+         if (millis() - timer >= timeToStart)
          {
             startOnRelease = true;
             UI::setState(UI::STARTING);
