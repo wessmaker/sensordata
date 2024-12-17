@@ -4,14 +4,10 @@
 #include "util/credentials.h"
 
 #define WIFI_CONNECTION_INTERVAL 2500
-
 Communication::Status status = Communication::UNKNOWN;
-
 bool infoSent = false;
 bool triedConnection = false;
-
 WiFiClient wificlient;
-
 
 void wifiSerialInfo(){
    if (millis() % WIFI_CONNECTION_INTERVAL <= 50 && !infoSent)
@@ -24,7 +20,6 @@ void wifiSerialInfo(){
    }
    else if (infoSent) infoSent = false;
 }
-
 
 namespace Wifi{
 
@@ -46,6 +41,11 @@ namespace Wifi{
 
    Communication::Status getStatus(){
       return status;
+   }
+
+   void _offLoop(){ 
+      if (WiFi.isConnected()) WiFi.disconnect(); 
+      else if (status != Communication::DISCONNECTED) status = Communication::DISCONNECTED;
    }
 
    // WiFiClient* getClient(){   //TODO FIX THIS GETTER FOR MQTT CLIENT, IF NOTHING WORKS USE GLOBAL VARIABLE

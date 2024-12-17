@@ -8,6 +8,7 @@ namespace Wifi{
    void loop();
    // WiFiClient* getClient();
    Communication::Status getStatus();
+   void _offLoop();
 }
 
 
