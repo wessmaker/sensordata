@@ -5,7 +5,7 @@
 namespace Debugging{
   void init();
   void loop();
-  void debug(String...);
+  void debug(const String);
   void debug(const int);
 }
 

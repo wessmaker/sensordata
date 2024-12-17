@@ -3,11 +3,28 @@
 #include "debug.h"
 #include "util/credentials.h"
 
+#define WIFI_CONNECTION_INTERVAL 2500
+
 Communication::Status status = Communication::UNKNOWN;
 
 bool infoSent = false;
+bool triedConnection = false;
 
-#define WIFI_CONNECTION_INTERVAL 1000
+WiFiClient wificlient;
+
+
+void wifiSerialInfo(){
+   if (millis() % WIFI_CONNECTION_INTERVAL <= 50 && !infoSent)
+   {
+      String msg = WiFi.isConnected() ? 
+                     "WIFI CONNECTED: " + (String)WIFI_SSID + ", " + "IP: " + (String)WiFi.localIP() :   //TODO FIX IP PRINTING FORMAT 
+                     "CONNECTING WIFI: " + (String)WIFI_SSID;
+      Debugging::debug(msg);
+      infoSent = true;
+   }
+   else if (infoSent) infoSent = false;
+}
+
 
 namespace Wifi{
 
@@ -16,34 +33,23 @@ namespace Wifi{
 
    void loop(){
       wifiSerialInfo();
-      if (WiFi.isConnected())
-      {
-         status = Communication::CONNECTED;
-      }
-      else
+      status = WiFi.isConnected() ? 
+                  Communication::CONNECTED : 
+                  Communication::DISCONNECTED;
+      if (!WiFi.isConnected() && !triedConnection && millis() % WIFI_CONNECTION_INTERVAL < 50)
       {
          status = Communication::DISCONNECTED;
          WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
       }
+      else if (triedConnection) triedConnection = false;
    }
 
    Communication::Status getStatus(){
       return status;
    }
-}
 
+   // WiFiClient* getClient(){   //TODO FIX THIS GETTER FOR MQTT CLIENT, IF NOTHING WORKS USE GLOBAL VARIABLE
+   //    return &wificlient;
+   // }
 
-void wifiSerialInfo(){
-   if (millis() % WIFI_CONNECTION_INTERVAL == 0)
-   {  //.begin() will take some time so no need to prevent multiple runs per interval
-      if (!WiFi.isConnected())
-      {
-         Debugging::debug("CONNECTING WIFI : ", WIFI_SSID);
-      }
-      else if (!infoSent)
-      {
-         Debugging::debug("WIFI CONNECTED: ", WIFI_SSID, ", ", "IP: ", WiFi.localIP());
-         infoSent = true;
-      }
-   } infoSent = false;
 }

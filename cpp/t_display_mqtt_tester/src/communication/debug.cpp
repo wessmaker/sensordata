@@ -12,7 +12,7 @@ namespace Debugging{
 
    }
 
-   void debug(const String& input...){
+   void debug(const String input){
       if (debugging){
          String output;
          for (auto& looped : input)
