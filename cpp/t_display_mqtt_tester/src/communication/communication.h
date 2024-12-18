@@ -5,9 +5,9 @@
 
 namespace Communication {
    enum Status{
-      CONNECTED,
+      UNKNOWN,
       DISCONNECTED,
-      UNKNOWN
+      CONNECTED
    };
 }
 #endif
