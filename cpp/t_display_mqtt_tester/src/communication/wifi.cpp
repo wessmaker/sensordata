@@ -9,12 +9,15 @@ bool infoSent = false;
 bool triedWifi = false;
 
 void wifiSerialInfo(){
-   if (millis() % WIFI_CONNECTION_INTERVAL <= 50 && !infoSent)
+   if (millis() % WIFI_CONNECTION_INTERVAL <= 50)
    {
-      String msg = WiFi.isConnected() ? 
-                     "WIFI CONNECTED: " + (String)WIFI_SSID + ", " + "IP: " + (String)WiFi.localIP() :   //TODO FIX IP PRINTING FORMAT 
-                     "CONNECTING WIFI: " + (String)WIFI_SSID;
-      Debugging::debug(msg);
+      if (!infoSent)
+      {
+         String msg = WiFi.isConnected() ? 
+                        "WIFI CONNECTED: " + (String)WIFI_SSID + ", " + "IP: " + WiFi.localIP().toString() :   //TODO FIX IP PRINTING FORMAT 
+                        "CONNECTING WIFI: " + (String)WIFI_SSID;
+         Debugging::debug(msg);
+      }
       infoSent = true;
    }
    else if (infoSent) infoSent = false;

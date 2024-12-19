@@ -11,9 +11,9 @@
    #include <Arduino.h>
     
    #ifdef ASSERT_ENABLED
-      #define ASSERT(expression, msg)        \
+      #define ASSERT(statement, msg)        \
       do {                                   \
-         if (!expression)                    \
+         if (!statement)                    \
          {                                   \
             assertLoop(msg);                 \
          }                                   \

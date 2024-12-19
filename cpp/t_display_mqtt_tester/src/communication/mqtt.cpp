@@ -4,42 +4,42 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "debug.h"
+#include "util/assertion.h"
 
-#define MQTT_CONNECTION_INTERVAL 2000
-#define MQTT_DISCONNECTED_INFO_INTERVAL 3000
+#define MQTT_CONNECTION_INTERVAL 2500
 
-/* Note: 
-   When using WiFiClient there is no reason to set the client of PubSubClient.
-   There is no way to automaticly make PubSubClient connect to wifi according to it's constructor implementation
-*/
-PubSubClient mqttClient = PubSubClient();
+WiFiClient wifiClient;
+PubSubClient mqttClient = PubSubClient(wifiClient);
 bool mqttInterval = false;
 bool disconnectedInfoSent = false;
-Communication::Status mqttStatus;
+bool subscriptionsSet = false;
+String debugMsg = "";
+Communication::Status mqttStatus = Communication::UNKNOWN;
+char* subdTopics[4] = {
+                        "/devices/esp32/leds/white",
+                        "/devices/esp32/leds/yellow",
+                        "/devices/esp32/leds/green",
+                        "/devices/esp32/leds/red"
+                     };
 
-/* Note:
-         mqttClient tries to connect to broker in the if-statement.
-         If already connected then returns true and does nothing (PubSubClient implementation)
 
-         this loop function will only set the debug msg when connection status changes 
-         (Communication's mqttStatus doesn't match mqttclient's connection status)
-*/
-void wifiConnectedLoop(){
-   if (millis() % MQTT_CONNECTION_INTERVAL < 50)
+
+void connectBroker(){
+   if (millis() % MQTT_CONNECTION_INTERVAL < 20)
    {
-      String msg;
-      if (mqttInterval){/*Do nothing until next interval*/}
-      else if (mqttClient.connect(MQTT_ID, MQTT_USER, MQTT_PASSWORD) && mqttStatus != Communication::CONNECTED)
+      ASSERT(MQTT_ID && MQTT_USER && MQTT_PASSWORD, "Missing MQTT credential in connectBroker()");
+      if (mqttClient.connected())
       {
-         msg = "Broker: " + MQTT_BROKER_IP.toString() + " is connected";
-         mqttStatus = Communication::CONNECTED;
+         if (mqttStatus != Communication::CONNECTED) mqttStatus = Communication::CONNECTED;
+         debugMsg = "MQTT broker connected: " + (String)MQTT_BROKER_IP + ":" + MQTT_BROKER_PORT;
       }
-      else if (mqttStatus != Communication::DISCONNECTED)
+      else
       {
-         msg = "Connecting to MQTT broker: " + MQTT_BROKER_IP.toString();
-         mqttStatus = Communication::DISCONNECTED;
+         if (mqttStatus != Communication::DISCONNECTED) mqttStatus = Communication::CONNECTED;
+         mqttClient.connect(MQTT_ID, MQTT_USER, MQTT_PASSWORD);
+         debugMsg = "Connecting to MQTT broker: " + (String)MQTT_BROKER_IP + ":" + MQTT_BROKER_PORT;
       }
-      Debugging::debug(msg);
+      if (!mqttInterval) Debugging::debug(debugMsg);
       mqttInterval = true;
    } 
    else if (mqttInterval) mqttInterval = false;
@@ -47,6 +47,8 @@ void wifiConnectedLoop(){
 
 
 void wifiDisConnectedLoop(){
+   if (subscriptionsSet) subscriptionsSet = false;
+ 
    if (mqttStatus == Communication::CONNECTED)
    {
       mqttClient.disconnect();
@@ -54,15 +56,72 @@ void wifiDisConnectedLoop(){
    }
    else if (millis() % MQTT_CONNECTION_INTERVAL < 50)
    {
-      if (!mqttInterval)
-      {
-         Debugging::debug("MQTT is disconnected due to WIFI being disconnected");
-         mqttInterval = true;
-      }
+      if (!mqttInterval) Debugging::debug("MQTT is disconnected due to WIFI being disconnected");
+      mqttInterval = true;
    }
    else if (mqttInterval) mqttInterval = false;
 }
 
+
+int* parseJson(uint8_t* dataAddr, unsigned int dataLen){
+   int maxCount = 6;
+   bool isJson = false;
+   String data[2][maxCount]; 
+   u_int32_t keyStart = -1;
+   u_int32_t valStart = 0;
+   u_int32_t valIndex = 0;
+   for (int i = 0; i < dataLen; i++)
+   {
+      char loopChar = (char)dataAddr[i];
+      if (loopChar == '{' && i < 2) isJson = true;
+      else if (!isJson) return (int*)"NON JSON DATA";
+      if (!data[0][valIndex]) //TODO fix this
+      {
+         if (loopChar == '\"' &! keyStart) keyStart = i + 1;
+         else if (i >= keyStart && loopChar != '\"')
+         {
+            data[0][valIndex] += loopChar;
+         }
+         else if (keyStart) keyStart = -1;
+      }
+      else if (!data[1][valIndex])
+      {
+         if (loopChar == '\"' ) valStart = i + 1;
+         else if (loopChar != ' ') valStart;
+         data[1][valIndex] += loopChar;
+      }
+      else if (valIndex < maxCount ) valIndex++;
+      else return (int*)data;
+   }
+}
+
+
+
+
+void onMqttReceive(char* topic, uint8_t* payload, unsigned int lenght){
+   String parsedPayload;
+
+   for (int i = 0; i < lenght; i++)
+   {
+      parsedPayload += (char)payload[i];
+   }
+   
+
+   Debugging::debug(parsedPayload);
+}
+
+
+
+void mqttDataHandeling(){
+   // After this handeling disconnection in MQTT::loop()
+   if (!subscriptionsSet)
+   {
+      for (char* topic : subdTopics) mqttClient.subscribe(topic);
+      mqttClient.subscribe("/devices/esp32/leds/white");
+      mqttClient.setCallback(onMqttReceive);
+      subscriptionsSet = true;
+   }
+}
 
 
 namespace MQTT{
@@ -75,7 +134,9 @@ namespace MQTT{
       switch (Wifi::getStatus())
       {
          case Communication::CONNECTED: 
-            wifiConnectedLoop();
+               mqttClient.loop();
+               if (mqttStatus == Communication::CONNECTED) mqttDataHandeling();  //This should be cleaned
+               connectBroker();               
             break;
          case Communication::DISCONNECTED: 
             wifiDisConnectedLoop();
@@ -83,14 +144,9 @@ namespace MQTT{
          default:
             break;
       }
-
-
    };
 
    Communication::Status getStatus(){
       return mqttStatus;
    };
-   
 }
-
-
