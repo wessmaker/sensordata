@@ -63,36 +63,59 @@ void wifiDisConnectedLoop(){
 }
 
 
-int* parseJson(uint8_t* dataAddr, unsigned int dataLen){
-   int maxCount = 6;
-   bool isJson = false;
-   String data[2][maxCount]; 
-   u_int32_t keyStart = -1;
-   u_int32_t valStart = 0;
-   u_int32_t valIndex = 0;
-   for (int i = 0; i < dataLen; i++)
+char*** parseJson(uint8_t* dataAddr){
+   if (dataAddr[0] != ('{')) return 0;   //Dumb way to check if not json as 
+
+   bool colonFound = false;
+   const int pairCount = 4;
+   const int pairSize = 2;
+   const int buffSize = 20;
+   int i = 0, j = 0, k = 0, itr = 0;
+   char* keyVal[pairCount][pairSize][buffSize]; // i, j, k
+
+   // Run until out of bounds 
+   while (i < pairCount || j < pairSize || k < buffSize)
    {
-      char loopChar = (char)dataAddr[i];
-      if (loopChar == '{' && i < 2) isJson = true;
-      else if (!isJson) return (int*)"NON JSON DATA";
-      if (!data[0][valIndex]) //TODO fix this
+      // Returning when finished parsing
+      if (dataAddr[itr] != '}') 
+
       {
-         if (loopChar == '\"' &! keyStart) keyStart = i + 1;
-         else if (i >= keyStart && loopChar != '\"')
-         {
-            data[0][valIndex] += loopChar;
-         }
-         else if (keyStart) keyStart = -1;
-      }
-      else if (!data[1][valIndex])
+         //TODO IIMPLEMENT RETURNING
+      }  
+
+      while (dataAddr[itr] != '\"') itr++;            //Find name starting "
+      itr++;                                          // Get index of names first char
+      while (dataAddr[itr] != '\"')
       {
-         if (loopChar == '\"' ) valStart = i + 1;
-         else if (loopChar != ' ') valStart;
-         data[1][valIndex] += loopChar;
+         keyVal[i][0][k] = (char*)(dataAddr + itr);   // Get the char address without dereferencing it in the process (not (*(dataAddr + itr)))
+         itr++;
+         k++;
       }
-      else if (valIndex < maxCount ) valIndex++;
-      else return (int*)data;
+      
+      // Name is stored and itr is now '"'
+      itr++;
+      while (dataAddr[itr] != '\"') {
+         itr++;
+         if (dataAddr[itr] == ':') colonFound = true;
+      }
+      
+      if (!colonFound) return 0;                      // Didn't found the ':' so returning error
+      
+      // Colon is found and itr is now '"' 
+      itr++;
+      while (dataAddr[itr] != '\"') itr++;
+
+      
+      itr++;   // Store the index of first char of value
+      k = 0;   // Reset keyVal string iterator 
+      while (dataAddr[itr] != '\"')
+      {
+         keyVal[i][1][k] = (char*)(dataAddr + itr);   // Get the char address without dereferencing it in the process (not (*(dataAddr + itr)))
+         itr++;
+         k++;
+      }
    }
+   return 0;
 }
 
 
