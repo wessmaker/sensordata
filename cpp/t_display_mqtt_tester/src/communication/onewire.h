@@ -11,9 +11,11 @@ namespace OneWire {
       TEMPERATURE
    };
 
+   void loop();
+
    void init();
 
-   char* readValue(OneWire::DataType );
+   char* getData(OneWire::DataType );
 
 }
 
