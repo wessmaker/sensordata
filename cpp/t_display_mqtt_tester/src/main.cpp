@@ -24,7 +24,7 @@ void setup() {
   RXTX          ::init();
   MQTT          ::init();
   Wifi          ::init();
-  OneWire       ::init();
+  // OneWire       ::init();
   LightSensor   ::init();
   TempSensor    ::init();
   Buttons       ::init();
@@ -32,7 +32,6 @@ void setup() {
   UI            ::init();
   Controller    ::init();
 }
-
 
 void loop() {
   // Testing     ::loop();

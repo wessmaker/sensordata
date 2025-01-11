@@ -28,7 +28,7 @@
          {
             if (!ledSet) 
             {
-               LEDS::invert(LEDS::LED::ASSERT);
+               LEDS::invert(LEDS::LED_PIN::ASSERT);
                ledSet = true;
             }
          } 

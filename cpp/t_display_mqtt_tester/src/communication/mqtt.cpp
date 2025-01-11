@@ -5,6 +5,7 @@
 #include <WiFi.h>
 #include "debug.h"
 #include "util/assertion.h"
+#include "actuators/leds.h"
 
 #define MQTT_CONNECTION_INTERVAL 2500
 
@@ -15,12 +16,13 @@ bool disconnectedInfoSent = false;
 bool subscriptionsSet = false;
 String debugMsg = "";
 Communication::Status mqttStatus = Communication::UNKNOWN;
-char* subdTopics[4] = {
-                        "/devices/esp32/leds/white",
-                        "/devices/esp32/leds/yellow",
-                        "/devices/esp32/leds/green",
-                        "/devices/esp32/leds/red"
-                     };
+char* topicList[4] = 
+   {
+      "/devices/lilygo/actuators/leds/yellow",
+      "/devices/lilygo/actuators/leds/red",
+      "/devices/lilygo/actuators/leds/blue",
+      "/devices/lilygo/actuators/leds/white",
+   };
 
 
 
@@ -48,7 +50,7 @@ void connectBroker(){
 
 void wifiDisConnectedLoop(){
    if (subscriptionsSet) subscriptionsSet = false;
- 
+
    if (mqttStatus == Communication::CONNECTED)
    {
       mqttClient.disconnect();
@@ -63,88 +65,33 @@ void wifiDisConnectedLoop(){
 }
 
 
-char*** parseJson(uint8_t* dataAddr){
-   if (dataAddr[0] != ('{')) return 0;   //Dumb way to check if not json as 
-
-   bool colonFound = false;
-   const int pairCount = 4;
-   const int pairSize = 2;
-   const int buffSize = 20;
-   int i = 0, j = 0, k = 0, itr = 0;
-   char* keyVal[pairCount][pairSize][buffSize]; // i, j, k
-
-   // Run until out of bounds 
-   while (i < pairCount || j < pairSize || k < buffSize)
-   {
-      // Returning when finished parsing
-      if (dataAddr[itr] != '}') 
-
-      {
-         //TODO IIMPLEMENT RETURNING
-      }  
-
-      while (dataAddr[itr] != '\"') itr++;            //Find name starting "
-      itr++;                                          // Get index of names first char
-      while (dataAddr[itr] != '\"')
-      {
-         keyVal[i][0][k] = (char*)(dataAddr + itr);   // Get the char address without dereferencing it in the process (not (*(dataAddr + itr)))
-         itr++;
-         k++;
-      }
-      
-      // Name is stored and itr is now '"'
-      itr++;
-      while (dataAddr[itr] != '\"') {
-         itr++;
-         if (dataAddr[itr] == ':') colonFound = true;
-      }
-      
-      if (!colonFound) return 0;                      // Didn't found the ':' so returning error
-      
-      // Colon is found and itr is now '"' 
-      itr++;
-      while (dataAddr[itr] != '\"') itr++;
-
-      
-      itr++;   // Store the index of first char of value
-      k = 0;   // Reset keyVal string iterator 
-      while (dataAddr[itr] != '\"')
-      {
-         keyVal[i][1][k] = (char*)(dataAddr + itr);   // Get the char address without dereferencing it in the process (not (*(dataAddr + itr)))
-         itr++;
-         k++;
-      }
-   }
-   return 0;
-}
 
 
-
-
-void onMqttReceive(char* topic, uint8_t* payload, unsigned int lenght){
-   String parsedPayload;
-
-   for (int i = 0; i < lenght; i++)
-   {
-      parsedPayload += (char)payload[i];
-   }
+void onDataReceive(char* topic, uint8_t* payload, unsigned int lenght){
+   if (!lenght) return;
    
-
-   Debugging::debug(parsedPayload);
+   std::string topicPath;
+   int i = 0;
+   while (topic[i])
+   {
+      topicPath += topic[i];
+      if (topicPath == "/devices/lilygo/actuators/leds/"){
+         LEDS::handleMQTTDataChange(topic, payload);
+         return;
+      }
+   }
 }
 
 
 
-void mqttDataHandeling(){
-   // After this handeling disconnection in MQTT::loop()
-   if (!subscriptionsSet)
-   {
-      for (char* topic : subdTopics) mqttClient.subscribe(topic);
-      mqttClient.subscribe("/devices/esp32/leds/white");
-      mqttClient.setCallback(onMqttReceive);
+void subscribeTopics(){
+      Debugging::debug("SETTING TOPICS TO SUB");
+      for (char* loopedTopic : topicList) mqttClient.subscribe(loopedTopic);
+      Debugging::debug("TOPICS ARE SET!");
+      mqttClient.setCallback(onDataReceive);
+      Debugging::debug("MQTT CALLBACK FUNCTION IS SET!");
       subscriptionsSet = true;
    }
-}
 
 
 namespace MQTT{
@@ -154,12 +101,26 @@ namespace MQTT{
    };
    
    void loop(){
+      if (mqttClient.connected())
+      {
+         Debugging::debug("MQTT BROKER CONNECTED!!!");
+
+      }
+      
       switch (Wifi::getStatus())
       {
+         
          case Communication::CONNECTED: 
+               Debugging::debug(1);
                mqttClient.loop();
-               if (mqttStatus == Communication::CONNECTED) mqttDataHandeling();  //This should be cleaned
-               connectBroker();               
+               Debugging::debug(2);
+
+               connectBroker();
+               Debugging::debug(3);
+
+               if (mqttStatus == Communication::CONNECTED && !subscriptionsSet) subscribeTopics();
+               Debugging::debug(4);
+
             break;
          case Communication::DISCONNECTED: 
             wifiDisConnectedLoop();

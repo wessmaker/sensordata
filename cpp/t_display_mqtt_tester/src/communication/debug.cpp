@@ -12,21 +12,12 @@ namespace Debugging{
 
    }
 
-   void debug(const String input){
-      if (debugging){
-         String output;
-         for (auto& looped : input)
-         {
-            output += looped;
-         }
-         Serial.println(output);
-      }
+   void debug(const String msg){
+      if (debugging) Serial.println(msg);
    }
 
-   void debug(const int message){
-      if (debugging){
-         Serial.println(message);
-      }
+   void debug(const int msg){
+      if (debugging) Serial.println(msg);
    }
    
 }

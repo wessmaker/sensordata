@@ -3,24 +3,21 @@
 #define LEDS_H
 #include "util/assertion.h"
 
-
-
-
 namespace LEDS{
 
-   enum LED{
+   enum LED_PIN{
       BLUE = 25,
       RED = 26,
       WHITE = 27,
       YELLOW = 33,
       ASSERT = 2,
-      LAST
    };
 
    void init();
    void loop();
-   void ON(LED);
-   void OFF(LED);
-   void invert(LED);
+   void ON(LED_PIN);
+   void OFF(LED_PIN);
+   void invert(LED_PIN);
+   void handleMQTTDataChange(char*, uint8_t*);
 }
 #endif
