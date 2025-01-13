@@ -58,10 +58,10 @@ void handleSwitching(){
 
 void handlePos1(){
    Debugging::debug("Switch position 1");
-   LEDS::ON(LEDS::BLUE);  
+   LEDS::set(LEDS::BLUE, HIGH);  
 }
 
 void handlePos2(){
    Debugging::debug("Switch position 2");
-   LEDS::OFF(LEDS::BLUE);  
+   LEDS::set(LEDS::BLUE, LOW);  
 }

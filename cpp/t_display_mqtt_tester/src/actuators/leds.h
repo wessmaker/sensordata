@@ -6,18 +6,17 @@
 namespace LEDS{
 
    enum LED_PIN{
-      BLUE = 25,
+      BLUE = 33,
       RED = 26,
-      WHITE = 27,
-      YELLOW = 33,
+      WHITE = 25,
+      YELLOW = 27,
       ASSERT = 2,
    };
 
    void init();
    void loop();
-   void ON(LED_PIN);
-   void OFF(LED_PIN);
+   void set(LED_PIN, bool state);
    void invert(LED_PIN);
-   void handleMQTTDataChange(char*, uint8_t*);
+   void ledMQTTCallback(char*, uint8_t*, unsigned int);
 }
 #endif

@@ -1,21 +1,18 @@
 #include "leds.h"
 #include <Arduino.h>
+#include "communication/debug.h"
 
-typedef struct coloredLed{
-   bool mode = 0;
+
+struct ColoredLed{
+   int mode = 0;
    u_int16_t blinkingInterval = 0;
    LEDS::LED_PIN ledPin;
-};
-
-coloredLed yellowLed;
-coloredLed redLed;
-coloredLed blueLed;
-coloredLed whiteLed;
-coloredLed assertLed;
-
-
+   bool inverted;
+}yellowLed, redLed, blueLed, whiteLed, assertLed;
 
 namespace LEDS{
+
+
    void init(){
       yellowLed.ledPin = LED_PIN::YELLOW;
       redLed.ledPin = LED_PIN::RED;
@@ -29,49 +26,104 @@ namespace LEDS{
       pinMode(assertLed.ledPin, OUTPUT);
    }
 
+
    void loop() {
-      if (yellowLed.mode == 2 && millis() % yellowLed.blinkingInterval == 0) invert(yellowLed.ledPin);
-      if (redLed.mode == 2 && millis() % redLed.blinkingInterval == 0) invert(redLed.ledPin);
-      if (blueLed.mode == 2 && millis() % blueLed.blinkingInterval == 0) invert(blueLed.ledPin);
-      if (whiteLed.mode == 2 && millis() % whiteLed.blinkingInterval == 0) invert(whiteLed.ledPin);
+      if (yellowLed.mode == 2 && millis() % yellowLed.blinkingInterval <= 10 ){
+         if (!yellowLed.inverted) {
+            LEDS::invert(yellowLed.ledPin);
+            yellowLed.inverted = true;
+         }
+      } 
+      else if (yellowLed.mode == 2) yellowLed.inverted = false;
+      else LEDS::set(yellowLed.ledPin, yellowLed.mode);
+
+
+      if (redLed.mode == 2 && millis() % redLed.blinkingInterval <= 10 ){
+         if (!redLed.inverted) {
+            LEDS::invert(redLed.ledPin);
+            redLed.inverted = true;
+         }
+      } 
+      else if (redLed.mode == 2) redLed.inverted = false;
+      else LEDS::set(redLed.ledPin, redLed.mode);
+
+
+      if (blueLed.mode == 2 && millis() % blueLed.blinkingInterval <= 10 ){
+         if (!blueLed.inverted) {
+            LEDS::invert(blueLed.ledPin);
+            blueLed.inverted = true;
+         }
+      } 
+      else if (blueLed.mode == 2) blueLed.inverted = false;
+      else LEDS::set(blueLed.ledPin, blueLed.mode);
+
+
+      if (whiteLed.mode == 2 && millis() % whiteLed.blinkingInterval <= 10 ){
+         if (!whiteLed.inverted) {
+            LEDS::invert(whiteLed.ledPin);
+            whiteLed.inverted = true;
+         }
+      } 
+      else if (whiteLed.mode == 2) whiteLed.inverted = false;
+      else LEDS::set(whiteLed.ledPin, whiteLed.mode);
    }
 
-   void ON(LED_PIN led){
-      digitalWrite(led, HIGH);
+
+
+   void set(LED_PIN led, bool state){
+      digitalWrite(led, state);
    }
 
-   void OFF(LED_PIN led){
-      digitalWrite(led, LOW);
-   }
 
    void invert(LED_PIN led){
+      Debugging::debug("INVERTED, DELETE THIS DEBUG");
       digitalWrite(led, !digitalRead(led));
    }
 
 
-   void handleMQTTDataChange(char* topic, uint8_t* payload){
-      if (payload[0] > 2) return;      // Payload syntax error
-      if (payload[1] != ',') return;   // Payload syntax error
-      if (!payload[2]) return;         // Payload syntax error
+   void ledMQTTCallback(char* topic, uint8_t* payload, unsigned int lenght){
+      // Error checks
+      if (!lenght) return;
+      if (!topic) return;
+      if (!payload) return;
+      if (!(char)payload[0]) return;
+      if (!std::isdigit((char)payload[0])) return;
+      if ((char)payload[1] != ',') return;
 
-      coloredLed led;
-      if (topic == "/devices/lilygo/actuators/leds/yellow") led = yellowLed;
-      else if (topic == "/devices/lilygo/actuators/leds/red") led = redLed;
-      else if (topic == "/devices/lilygo/actuators/leds/white") led = whiteLed;
-      else if (topic == "/devices/lilygo/actuators/leds/blue") led = blueLed;
-      else return; // Topic didn't match
+      String parsedTopic = "";
+      for (int i = 0; topic[i]; i++) parsedTopic += topic[i];
 
-      led.mode = payload[0];  //Mode: 0 = OFF, 1 = ON, 2 = BLINKING
-
-      std::string intervalString = "0";
-      int i = 2;
-      while (payload[i] && std::isdigit(payload[i]))
+      if 
+      (
+         parsedTopic == "/devices/lilygo/actuators/leds/yellow"   ||
+         parsedTopic == "/devices/lilygo/actuators/leds/red"      ||
+         parsedTopic == "/devices/lilygo/actuators/leds/blue"     ||
+         parsedTopic == "/devices/lilygo/actuators/leds/white"
+      )
       {
-         led.blinkingInterval += payload[i];
-         i++;
-      }
-      ASSERT(std::stoi(intervalString) < 65536, "intervalString was bigger than 65536");
-      led.blinkingInterval = std::stoi(intervalString);
-   }
+         String topicEnding = "";
+         for (int i = 0; parsedTopic[i]; i++) topicEnding += parsedTopic[i + 30]; //Index of 30 is last slash
 
+         ColoredLed* targetLed;
+         if (topicEnding == "/yellow") targetLed = &yellowLed;
+         if (topicEnding == "/red") targetLed = &redLed;
+         if (topicEnding == "/blue") targetLed = &blueLed;
+         if (topicEnding == "/white") targetLed = &whiteLed;
+
+         std::string intervalString = "";
+         for (int i = 2; i < lenght; i++)
+         {
+            if (!std::isdigit((char)payload[i])) return; //Syntax error
+            intervalString += (char)payload[i];
+         }
+
+         if      ((char)payload[0] == '0') targetLed->mode = 0;
+         else if ((char)payload[0] == '1') targetLed->mode = 1;
+         else if ((char)payload[0] == '2') targetLed->mode = 2;
+         else return;
+
+         targetLed->blinkingInterval = std::stoi(intervalString);
+         Debugging::debug("LED state was set using MQTT");
+      }
+   }
 }

@@ -16,6 +16,7 @@ bool disconnectedInfoSent = false;
 bool subscriptionsSet = false;
 String debugMsg = "";
 Communication::Status mqttStatus = Communication::UNKNOWN;
+
 char* topicList[4] = 
    {
       "/devices/lilygo/actuators/leds/yellow",
@@ -23,7 +24,6 @@ char* topicList[4] =
       "/devices/lilygo/actuators/leds/blue",
       "/devices/lilygo/actuators/leds/white",
    };
-
 
 
 void connectBroker(){
@@ -65,23 +65,23 @@ void wifiDisConnectedLoop(){
 }
 
 
-
-
+/*
+   Note! 
+   This function will be called by default (PubSubClient propably) once initial subscriptions
+   done, that will make sure to syncronize existing data in broker. That's why there is no initial
+   data fetching from broker implemented.
+*/
 void onDataReceive(char* topic, uint8_t* payload, unsigned int lenght){
-   if (!lenght) return;
-   
    std::string topicPath;
-   int i = 0;
-   while (topic[i])
+   for (int i = 0; topic[i]; i++)
    {
       topicPath += topic[i];
       if (topicPath == "/devices/lilygo/actuators/leds/"){
-         LEDS::handleMQTTDataChange(topic, payload);
+         LEDS::ledMQTTCallback(topic, payload, lenght);
          return;
       }
    }
 }
-
 
 
 void subscribeTopics(){
@@ -101,26 +101,12 @@ namespace MQTT{
    };
    
    void loop(){
-      if (mqttClient.connected())
-      {
-         Debugging::debug("MQTT BROKER CONNECTED!!!");
-
-      }
-      
       switch (Wifi::getStatus())
       {
-         
          case Communication::CONNECTED: 
-               Debugging::debug(1);
                mqttClient.loop();
-               Debugging::debug(2);
-
                connectBroker();
-               Debugging::debug(3);
-
                if (mqttStatus == Communication::CONNECTED && !subscriptionsSet) subscribeTopics();
-               Debugging::debug(4);
-
             break;
          case Communication::DISCONNECTED: 
             wifiDisConnectedLoop();
