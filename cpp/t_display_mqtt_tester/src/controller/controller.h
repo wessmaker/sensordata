@@ -6,7 +6,7 @@
       void loop();
       void start(bool firstRun = false);
       void stop();
-      void backLight(bool);
+      void setBackLight(bool);
       bool isRunning();
    }
 

@@ -8,12 +8,16 @@
 #include "actuators/leds.h"
 
 #define MQTT_CONNECTION_INTERVAL 2500
+#define MQTT_WATCHDOG_INTERVAL 1000
 
 WiFiClient wifiClient;
 PubSubClient mqttClient = PubSubClient(wifiClient);
 bool mqttInterval = false;
 bool disconnectedInfoSent = false;
 bool subscriptionsSet = false;
+bool watchDogSent = false;
+bool watchDogBit = false;
+const char* watchDogTopic = "/devices/lilygo/watchdog";
 String debugMsg = "";
 Communication::Status mqttStatus = Communication::UNKNOWN;
 
@@ -56,7 +60,7 @@ void wifiDisConnectedLoop(){
       mqttClient.disconnect();
       mqttStatus = Communication::DISCONNECTED;
    }
-   else if (millis() % MQTT_CONNECTION_INTERVAL < 50)
+   else if (millis() % MQTT_CONNECTION_INTERVAL < 10)
    {
       if (!mqttInterval) Debugging::debug("MQTT is disconnected due to WIFI being disconnected");
       mqttInterval = true;
@@ -85,13 +89,30 @@ void onDataReceive(char* topic, uint8_t* payload, unsigned int lenght){
 
 
 void subscribeTopics(){
-      Debugging::debug("SETTING TOPICS TO SUB");
-      for (char* loopedTopic : topicList) mqttClient.subscribe(loopedTopic);
-      Debugging::debug("TOPICS ARE SET!");
-      mqttClient.setCallback(onDataReceive);
-      Debugging::debug("MQTT CALLBACK FUNCTION IS SET!");
-      subscriptionsSet = true;
+   Debugging::debug("SETTING TOPICS TO SUB");
+   for (char* loopedTopic : topicList) mqttClient.subscribe(loopedTopic);
+   Debugging::debug("TOPICS ARE SET!");
+   mqttClient.setCallback(onDataReceive);
+   Debugging::debug("MQTT CALLBACK FUNCTION IS SET!");
+   subscriptionsSet = true;
+}
+
+
+/*
+   Sends 1 or 0 to broker to indicate that device is can transmit data
+*/
+void watchDogLoop(){
+   if (millis() % MQTT_WATCHDOG_INTERVAL < 10)
+   {
+      if (!watchDogSent){
+         MQTT::publish(watchDogTopic, watchDogBit ? "0" : "1", false);
+         watchDogBit = !watchDogBit;
+         watchDogSent = true;
+      }
    }
+   else if (watchDogSent) watchDogSent = false;
+}
+
 
 
 namespace MQTT{
@@ -107,6 +128,7 @@ namespace MQTT{
                mqttClient.loop();
                connectBroker();
                if (mqttStatus == Communication::CONNECTED && !subscriptionsSet) subscribeTopics();
+               if (mqttStatus == Communication::CONNECTED) watchDogLoop();
             break;
          case Communication::DISCONNECTED: 
             wifiDisConnectedLoop();
@@ -115,6 +137,10 @@ namespace MQTT{
             break;
       }
    };
+
+   void publish(const char *topic, const char *payload, bool retained){
+      if (MQTT::getStatus() == Communication::CONNECTED) mqttClient.publish(topic, payload, retained);
+   }
 
    Communication::Status getStatus(){
       return mqttStatus;

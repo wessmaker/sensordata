@@ -321,31 +321,31 @@ namespace UI{
       {
          switch (nextState){
             case MENU:
-               Controller::backLight(true);
+               Controller::setBackLight(true);
                focusedIndex = 1; //This could be done better, for now cannot go to last focused index
                drawMenu();
                Debugging::debug("UI STATE: MENU");
                break;
             case ITEM:
-               Controller::backLight(true);
+               Controller::setBackLight(true);
                Debugging::debug("UI STATE: ITEM");
                openItem(focusedIndex);
                break;
             case STARTING:
                clearScreen();
-               Controller::backLight(true);
+               Controller::setBackLight(true);
                drawFullScreenText("STARTING");
                Debugging::debug("UI STATE: STARTING");
                break;
             case STOPPING:
                clearScreen();
-               Controller::backLight(true);
+               Controller::setBackLight(true);
                drawFullScreenText("STOPPING");
                Debugging::debug("UI STATE: STOPPING");
                break;
             case OFF:
                clearScreen();
-               Controller::backLight(false);
+               Controller::setBackLight(false);
                Debugging::debug("UI STATE: OFF");
                break;
             default:

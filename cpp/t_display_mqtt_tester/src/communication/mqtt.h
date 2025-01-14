@@ -8,6 +8,7 @@
 namespace MQTT{
    void init();
    void loop();
+   void publish(const char*, const char*, bool);
    Communication::Status getStatus();
 }
 

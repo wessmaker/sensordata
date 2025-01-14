@@ -16,7 +16,7 @@ namespace Controller {
    void loop(){
    }
 
-   void backLight(bool mode){
+   void setBackLight(bool mode){
       digitalWrite(TFT_BL, mode);
    }
 
