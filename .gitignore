@@ -2,3 +2,4 @@
 **/target
 **/.pio
 /testings/**
+node_modules
