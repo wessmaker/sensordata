@@ -253,7 +253,7 @@ function LayoutContainer() {
           textAlign: "center",
           color: FontColor,
           fontSize: 40,
-          fontFamily: "Inter",
+          fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
         }}
@@ -285,7 +285,7 @@ function LayoutContainer() {
           textAlign: "center",
           color: FontColor,
           fontSize: 20,
-          fontFamily: "Inter",
+          fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
         }}
