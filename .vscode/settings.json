@@ -10,7 +10,7 @@
 	"java.format.settings.url": ".vscode/java-formatter.xml",
 	"java.debug.settings.onBuildFailureProceed": true,
 	"java.configuration.updateBuildConfiguration": "disabled",
-	"editor.fontFamily": "Fira Code Font ",
+	"editor.fontFamily": "Jetbrains Mono",
 	"java.compile.nullAnalysis.mode": "disabled",
 	"explorer.compactFolders": false,
 	"files.associations": {
