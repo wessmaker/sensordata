@@ -126,7 +126,7 @@ function SettingsDialog() {
           position: "absolute",
           textAlign: "right",
           color: FontWhite,
-          fontSize: 17,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "bold",
           wordWrap: "break-word",
