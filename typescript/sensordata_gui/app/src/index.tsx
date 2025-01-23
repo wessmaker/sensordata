@@ -3,6 +3,5 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import SettingsDialog from "./components/SettingsDialog.tsx";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  // <App />
-  <SettingsDialog></SettingsDialog>
+  <App />
 );

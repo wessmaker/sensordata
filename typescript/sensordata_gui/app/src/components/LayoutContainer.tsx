@@ -4,25 +4,42 @@ import { FunctionComponent } from "react";
 import MarkerIcon from "../img/markericon.png";
 import CloudIcon from "../img/cloudicon.png";
 import CloseIcon from "../img/closeicon.png";
-import MenuIcon from "../img/menuicon.png";
+import SettingsIcon from "../img/settingsicon.png";
 import ImageIcon from "../img/imageicon.png";
-
+import SettingsDialog from "./SettingsDialog.tsx";
 import {
   DarkGray,
   LightGray,
   HoverGray,
   Orange,
   HoverOrange,
-  FontColor,
+  FontBlack,
 } from "./common/Colors.ts";
 
 function LayoutContainer() {
-  const [menuIconBg, setMenuIconBg] = useState(LightGray);
+  const [settingsIconBg, setSettingsIconBg] = useState(LightGray);
   const [cloudIconBg, setCloudIconBg] = useState(LightGray);
   const [markerIconBg, setMarkerIconBg] = useState(LightGray);
   const [selectImageBg, setSelectImageBg] = useState(LightGray);
-  const [closeIconBg, setCCloseIconBg] = useState(Orange);
+  const [closeIconBg, setCloseIconBg] = useState(Orange);
   const [imageIconBg, setImageIconBg] = useState(Orange);
+
+  const onSettingsIconClick = () => {
+    console.log("SETTINGS BUTTON CLICK!");
+    return (
+      <dialog
+        style={{
+          width: 1920,
+          height: 1080,
+          left: 0,
+          top: 0,
+          position: "absolute",
+          background: DarkGray,
+        }}
+      ></dialog>
+    );
+  };
+
   return (
     <div
       style={{
@@ -157,8 +174,8 @@ function LayoutContainer() {
           background: closeIconBg,
           borderRadius: 20,
         }}
-        onMouseEnter={() => setCCloseIconBg(HoverOrange)}
-        onMouseLeave={() => setCCloseIconBg(Orange)}
+        onMouseEnter={() => setCloseIconBg(HoverOrange)}
+        onMouseLeave={() => setCloseIconBg(Orange)}
       />
       <img
         className="CloseIcon"
@@ -170,8 +187,8 @@ function LayoutContainer() {
           position: "absolute",
         }}
         src={CloseIcon}
-        onMouseEnter={() => setCCloseIconBg(HoverOrange)}
-        onMouseLeave={() => setCCloseIconBg(Orange)}
+        onMouseEnter={() => setCloseIconBg(HoverOrange)}
+        onMouseLeave={() => setCloseIconBg(Orange)}
       />
       <div
         className="ImageIconContainer"
@@ -201,21 +218,22 @@ function LayoutContainer() {
         onMouseLeave={() => setImageIconBg(Orange)}
       />
       <div
-        className="MenuIconContainer"
+        className="SettingsIconContainer"
         style={{
           width: 56,
           height: 56,
           left: 22,
           top: 60,
           position: "absolute",
-          background: menuIconBg,
+          background: settingsIconBg,
           borderRadius: 10,
         }}
-        onMouseEnter={() => setMenuIconBg(HoverGray)}
-        onMouseLeave={() => setMenuIconBg(LightGray)}
+        onMouseEnter={() => setSettingsIconBg(HoverGray)}
+        onMouseLeave={() => setSettingsIconBg(LightGray)}
+        onClick={onSettingsIconClick}
       />
       <img
-        className="MenuIcon"
+        className="SettingsIcon"
         style={{
           width: 58,
           height: 58,
@@ -223,9 +241,10 @@ function LayoutContainer() {
           top: 59,
           position: "absolute",
         }}
-        src={MenuIcon}
-        onMouseEnter={() => setMenuIconBg(HoverGray)}
-        onMouseLeave={() => setMenuIconBg(LightGray)}
+        src={SettingsIcon}
+        onMouseEnter={() => setSettingsIconBg(HoverGray)}
+        onMouseLeave={() => setSettingsIconBg(LightGray)}
+        onClick={onSettingsIconClick}
       />
       <div
         className="SelectImageContainer"
@@ -250,7 +269,7 @@ function LayoutContainer() {
           top: 508,
           position: "absolute",
           textAlign: "center",
-          color: FontColor,
+          color: FontBlack,
           fontSize: 40,
           fontFamily: "Arial",
           fontWeight: "500",
@@ -282,7 +301,7 @@ function LayoutContainer() {
           top: 1031,
           position: "absolute",
           textAlign: "center",
-          color: FontColor,
+          color: FontBlack,
           fontSize: 20,
           fontFamily: "Arial",
           fontWeight: "500",

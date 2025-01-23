@@ -16,7 +16,7 @@ export {
   HoverGray,
   Orange,
   HoverOrange,
-  FontBlack as FontColor,
+  FontBlack,
   ConnectedGreen,
   DisconnectedRed,
   ConnectingYellow,
