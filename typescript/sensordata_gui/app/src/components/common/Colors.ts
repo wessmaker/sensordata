@@ -1,12 +1,14 @@
 const DarkGray = "#252525";
 const LightGray = "#434343";
 const Orange = "#FF6709";
-const FontColor = "black";
+const FontBlack = "black";
+const FontWhite = "white";
 const HoverGray = "#636363";
 const HoverOrange = "#D15102";
 const ConnectedGreen = "#0AD000";
 const DisconnectedRed = "#FF0000";
 const ConnectingYellow = "#EEFF00";
+const UnknownGray = "gray";
 
 export {
   DarkGray,
@@ -14,8 +16,10 @@ export {
   HoverGray,
   Orange,
   HoverOrange,
-  FontColor,
+  FontBlack as FontColor,
   ConnectedGreen,
   DisconnectedRed,
   ConnectingYellow,
+  UnknownGray,
+  FontWhite,
 };

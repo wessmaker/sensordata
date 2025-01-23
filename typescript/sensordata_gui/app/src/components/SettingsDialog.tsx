@@ -4,39 +4,36 @@ import "./common/Colors.ts";
 import CloseIcon from "../img/closeicon.png";
 import "./common/ConnectionStatus.ts";
 import {
-  ConnectionStatus,
   getBrokerDetails,
   getServerDetails,
+  getStatusColor,
+  getStatusText,
 } from "./common/ConnectionStatus.ts";
-import {
-  ConnectedGreen,
-  ConnectingYellow,
-  DisconnectedRed,
-} from "./common/Colors.ts";
-
-const getStatusAsColor = (status: ConnectionStatus) => {
-  switch (status) {
-    case ConnectionStatus.CONNECTED:
-      return ConnectedGreen;
-    case ConnectionStatus.DISCONNECTED:
-      return DisconnectedRed;
-    case ConnectionStatus.CONNECTING:
-      return ConnectingYellow;
-  }
-};
+import { DarkGray, LightGray, Orange, FontWhite } from "./common/Colors.ts";
 
 function SettingsDialog() {
-  //Add some checking to this to update to correct color when connectionstatus changes
+  const [serverStatusColor, setServerStatusColor] = useState(
+    getStatusColor(getServerDetails().connectionStatus)
+  );
+  const [serverStatusText, setServerStatusText] = useState(
+    getStatusText(getServerDetails().connectionStatus)
+  );
+  const [brokerStatusColor, setBrokerStatusColor] = useState(
+    getStatusColor(getBrokerDetails().connectionStatus)
+  );
+  const [brokerStatusText, setBrokerStatusText] = useState(
+    getStatusText(getBrokerDetails().connectionStatus)
+  );
   const onServerStatusClick = () => {
-    console.log("SERVER STATUS CLICK");
-    setServerStatusColor(getStatusAsColor(getServerDetails().connectionStatus));
+    setServerStatusColor(getStatusColor(getServerDetails().connectionStatus));
+    setServerStatusText(getStatusText(getServerDetails().connectionStatus));
   };
   const onBrokerStatusClick = () => {
-    console.log("BROKER STATUS CLICK");
-    setServerStatusColor(getStatusAsColor(getServerDetails().connectionStatus));
+    setBrokerStatusColor(getStatusColor(getBrokerDetails().connectionStatus));
+    setBrokerStatusText(getStatusText(getBrokerDetails().connectionStatus));
   };
-  const [serverStatusColor, setServerStatusColor] = useState(DisconnectedRed);
-  const [brokerStatusColor, setBrokerStatusColor] = useState(DisconnectedRed);
+  const onCloseIconClick = () => {};
+
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
       <div
@@ -47,7 +44,7 @@ function SettingsDialog() {
           left: 0,
           top: 0,
           position: "absolute",
-          background: "#252525",
+          background: DarkGray,
           borderRadius: 10,
         }}
       />
@@ -59,7 +56,7 @@ function SettingsDialog() {
           left: 3,
           top: 3,
           position: "absolute",
-          background: "#434343",
+          background: LightGray,
           borderRadius: 10,
         }}
       />
@@ -71,7 +68,7 @@ function SettingsDialog() {
           left: 480,
           top: 0,
           position: "absolute",
-          background: "#252525",
+          background: DarkGray,
           borderBottomLeftRadius: 10,
           borderTopRightRadius: 10,
         }}
@@ -84,9 +81,10 @@ function SettingsDialog() {
           left: 485,
           top: 4,
           position: "absolute",
-          background: "#FF6709",
+          background: Orange,
           borderRadius: 10,
         }}
+        onClick={onCloseIconClick}
       />
       <img
         className="CloseIcon"
@@ -98,6 +96,7 @@ function SettingsDialog() {
           position: "absolute",
         }}
         src={CloseIcon}
+        onClick={onCloseIconClick}
       />
       <div
         className="BrokerText"
@@ -108,10 +107,10 @@ function SettingsDialog() {
           top: 39,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 15,
+          color: FontWhite,
+          fontSize: 16,
           fontFamily: "Arial",
-          fontWeight: "500",
+          fontWeight: "bold",
           wordWrap: "break-word",
         }}
       >
@@ -126,10 +125,10 @@ function SettingsDialog() {
           top: 39,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 15,
+          color: FontWhite,
+          fontSize: 17,
           fontFamily: "Arial",
-          fontWeight: "500",
+          fontWeight: "bold",
           wordWrap: "break-word",
         }}
       >
@@ -144,8 +143,8 @@ function SettingsDialog() {
           top: 85,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 12,
+          color: FontWhite,
+          fontSize: 13,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -162,8 +161,8 @@ function SettingsDialog() {
           top: 131,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 12,
+          color: FontWhite,
+          fontSize: 13,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -180,8 +179,8 @@ function SettingsDialog() {
           top: 85,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 12,
+          color: FontWhite,
+          fontSize: 13,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -198,8 +197,8 @@ function SettingsDialog() {
           top: 131,
           position: "absolute",
           textAlign: "right",
-          color: "white",
-          fontSize: 12,
+          color: FontWhite,
+          fontSize: 13,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -215,7 +214,7 @@ function SettingsDialog() {
           left: 94,
           top: 203,
           position: "absolute",
-          background: "#252525",
+          background: DarkGray,
           borderRadius: 20,
         }}
         onClick={onBrokerStatusClick}
@@ -226,18 +225,18 @@ function SettingsDialog() {
           width: 160,
           height: 30,
           left: 94,
-          top: 210,
+          top: 209,
           position: "absolute",
           textAlign: "center",
           color: brokerStatusColor,
-          fontSize: 14,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
         }}
         onClick={onBrokerStatusClick}
       >
-        {getBrokerDetails().connectionStatus}
+        {brokerStatusText}
       </div>
       <div
         className="ServerStatusContainer"
@@ -247,7 +246,7 @@ function SettingsDialog() {
           left: 342,
           top: 203,
           position: "absolute",
-          background: "#252525",
+          background: DarkGray,
           borderRadius: 20,
         }}
         onClick={onServerStatusClick}
@@ -258,18 +257,18 @@ function SettingsDialog() {
           width: 160,
           height: 30,
           left: 342,
-          top: 210,
+          top: 209,
           position: "absolute",
           textAlign: "center",
           color: serverStatusColor,
-          fontSize: 14,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
         }}
         onClick={onServerStatusClick}
       >
-        {getServerDetails().connectionStatus}
+        {serverStatusText}
       </div>
     </div>
   );

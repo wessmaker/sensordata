@@ -1,7 +1,15 @@
+import {
+  ConnectedGreen,
+  ConnectingYellow,
+  DisconnectedRed,
+  UnknownGray,
+} from "./Colors.ts";
+
 export enum ConnectionStatus {
-  DISCONNECTED = "DISCONNECTED",
-  CONNECTED = "CONNECTED",
-  CONNECTING = "CONNECTING",
+  DISCONNECTED,
+  CONNECTED,
+  CONNECTING,
+  UNKNOWN,
 }
 type ConnectionDetails = {
   IP: String;
@@ -12,12 +20,12 @@ type ConnectionDetails = {
 const brokerDetails: ConnectionDetails = {
   IP: "localhost",
   port: "1883",
-  connectionStatus: ConnectionStatus.DISCONNECTED,
+  connectionStatus: ConnectionStatus.UNKNOWN,
 };
 const serverDetails: ConnectionDetails = {
   IP: "localhost",
   port: "8101",
-  connectionStatus: ConnectionStatus.CONNECTING,
+  connectionStatus: ConnectionStatus.UNKNOWN,
 };
 
 const setServerIP = (IP: String) => {
@@ -39,4 +47,31 @@ const getBrokerDetails = () => {
 const getServerDetails = () => {
   return serverDetails;
 };
-export { getBrokerDetails, getServerDetails };
+
+const getStatusColor = (status: ConnectionStatus) => {
+  switch (status) {
+    case ConnectionStatus.CONNECTED:
+      return ConnectedGreen;
+    case ConnectionStatus.DISCONNECTED:
+      return DisconnectedRed;
+    case ConnectionStatus.CONNECTING:
+      return ConnectingYellow;
+    case ConnectionStatus.UNKNOWN:
+      return UnknownGray;
+  }
+};
+
+const getStatusText = (status: ConnectionStatus) => {
+  switch (status) {
+    case ConnectionStatus.CONNECTED:
+      return "CONNECTED";
+    case ConnectionStatus.DISCONNECTED:
+      return "DISCONNECTED";
+    case ConnectionStatus.CONNECTING:
+      return "CONNECTING";
+    case ConnectionStatus.UNKNOWN:
+      return "UNKNOWN";
+  }
+};
+
+export { getBrokerDetails, getServerDetails, getStatusColor, getStatusText };

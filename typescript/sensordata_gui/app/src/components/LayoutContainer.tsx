@@ -6,7 +6,6 @@ import CloudIcon from "../img/cloudicon.png";
 import CloseIcon from "../img/closeicon.png";
 import MenuIcon from "../img/menuicon.png";
 import ImageIcon from "../img/imageicon.png";
-import styles from "./Layout.module.css";
 
 import {
   DarkGray,
