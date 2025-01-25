@@ -1,17 +1,44 @@
 import React, { useState } from "react";
-import "reactjs-popup";
+
 import "./common/Colors.ts";
+
 import CloseIcon from "../img/closeicon.png";
-import "./common/ConnectionStatus.ts";
+
 import {
+  DarkGray,
+  LightGray,
+  Orange,
+  FontWhite,
+  HoverOrange,
+  FontBlack,
+  HoverDarkGray,
+  HoverLightGray,
+} from "./common/Colors.ts";
+
+import {
+  fetchBroker,
   getBrokerDetails,
+  setBrokerIP,
+  setBrokerPort,
+} from "./MQTT.ts";
+
+import {
+  fetchServer,
   getServerDetails,
+  setServerIP,
+  setServerPort,
+} from "./Server.ts";
+
+import {
   getStatusColor,
   getStatusText,
-} from "./common/ConnectionStatus.ts";
-import { DarkGray, LightGray, Orange, FontWhite } from "./common/Colors.ts";
+  ConnectionStatus,
+} from "./common/Connections.ts";
 
-function SettingsDialog() {
+function SettingsDialog({ isOpen, onCloseButtonClick }) {
+  const [closeIconBg, setCloseIconBg] = useState(Orange);
+  const [brokerStatusBg, setBrokerStatusBg] = useState(DarkGray);
+  const [serverStatusBg, setServerStatusBg] = useState(DarkGray);
   const [serverStatusColor, setServerStatusColor] = useState(
     getStatusColor(getServerDetails().connectionStatus)
   );
@@ -25,17 +52,27 @@ function SettingsDialog() {
     getStatusText(getBrokerDetails().connectionStatus)
   );
   const onServerStatusClick = () => {
-    setServerStatusColor(getStatusColor(getServerDetails().connectionStatus));
-    setServerStatusText(getStatusText(getServerDetails().connectionStatus));
+    // const connectionStatus = fetchServer();
+    // setServerStatusColor(getStatusColor(connectionStatus));
+    // setServerStatusText(getStatusText(connectionStatus));
   };
   const onBrokerStatusClick = () => {
-    setBrokerStatusColor(getStatusColor(getBrokerDetails().connectionStatus));
-    setBrokerStatusText(getStatusText(getBrokerDetails().connectionStatus));
+    const connectionStatus: ConnectionStatus = fetchBroker();
+    setBrokerStatusColor(getStatusColor(connectionStatus));
+    setBrokerStatusText(getStatusText(connectionStatus));
   };
-  const onCloseIconClick = () => {};
 
+  if (!isOpen) return null;
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        left: 750,
+        top: 400,
+      }}
+    >
       <div
         className="Background"
         style={{
@@ -81,10 +118,15 @@ function SettingsDialog() {
           left: 485,
           top: 4,
           position: "absolute",
-          background: Orange,
+          background: closeIconBg,
           borderRadius: 10,
         }}
-        onClick={onCloseIconClick}
+        onMouseEnter={() => setCloseIconBg(HoverOrange)}
+        onMouseLeave={() => setCloseIconBg(Orange)}
+        onClick={() => {
+          setCloseIconBg(Orange);
+          onCloseButtonClick();
+        }}
       />
       <img
         className="CloseIcon"
@@ -96,19 +138,24 @@ function SettingsDialog() {
           position: "absolute",
         }}
         src={CloseIcon}
-        onClick={onCloseIconClick}
+        onMouseEnter={() => setCloseIconBg(HoverOrange)}
+        onMouseLeave={() => setCloseIconBg(Orange)}
+        onClick={() => {
+          setCloseIconBg(Orange);
+          onCloseButtonClick();
+        }}
       />
       <div
         className="BrokerText"
         style={{
           width: 70,
           height: 30,
-          left: 24,
+          left: 50,
           top: 39,
           position: "absolute",
-          textAlign: "right",
+          textAlign: "center",
           color: FontWhite,
-          fontSize: 16,
+          fontSize: 18,
           fontFamily: "Arial",
           fontWeight: "bold",
           wordWrap: "break-word",
@@ -121,12 +168,12 @@ function SettingsDialog() {
         style={{
           width: 70,
           height: 30,
-          left: 272,
+          left: 298,
           top: 39,
           position: "absolute",
-          textAlign: "right",
+          textAlign: "center",
           color: FontWhite,
-          fontSize: 16,
+          fontSize: 18,
           fontFamily: "Arial",
           fontWeight: "bold",
           wordWrap: "break-word",
@@ -144,7 +191,7 @@ function SettingsDialog() {
           position: "absolute",
           textAlign: "right",
           color: FontWhite,
-          fontSize: 13,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -162,7 +209,7 @@ function SettingsDialog() {
           position: "absolute",
           textAlign: "right",
           color: FontWhite,
-          fontSize: 13,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -180,7 +227,7 @@ function SettingsDialog() {
           position: "absolute",
           textAlign: "right",
           color: FontWhite,
-          fontSize: 13,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -198,7 +245,7 @@ function SettingsDialog() {
           position: "absolute",
           textAlign: "right",
           color: FontWhite,
-          fontSize: 13,
+          fontSize: 16,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
@@ -206,6 +253,73 @@ function SettingsDialog() {
       >
         Port
       </div>
+      <input
+        className="BrokerIPInput"
+        defaultValue={getBrokerDetails().IP}
+        style={{
+          width: 140,
+          height: 15,
+          left: 102,
+          top: 84,
+          position: "absolute",
+          textAlign: "left",
+          color: FontBlack,
+          fontSize: 15,
+          fontFamily: "Arial",
+        }}
+        onChange={(e) => setBrokerIP(e.target.value)}
+      ></input>
+
+      <input
+        className="BrokerPortInput"
+        defaultValue={getBrokerDetails().port}
+        style={{
+          width: 140,
+          height: 15,
+          left: 102,
+          top: 130,
+          position: "absolute",
+          textAlign: "left",
+          color: FontBlack,
+          fontSize: 15,
+          fontFamily: "Arial",
+        }}
+        onChange={(e) => setBrokerPort(e.target.value)}
+      ></input>
+
+      <input
+        className="ServerIPInput"
+        defaultValue={getServerDetails().IP}
+        style={{
+          width: 140,
+          height: 15,
+          left: 350,
+          top: 84,
+          position: "absolute",
+          textAlign: "left",
+          color: FontBlack,
+          fontSize: 15,
+          fontFamily: "Arial",
+        }}
+        onChange={(e) => setServerIP(e.target.value)}
+      ></input>
+
+      <input
+        className="ServerPortInput"
+        defaultValue={getServerDetails().port}
+        style={{
+          width: 140,
+          height: 15,
+          left: 350,
+          top: 130,
+          position: "absolute",
+          textAlign: "left",
+          color: FontBlack,
+          fontSize: 15,
+          fontFamily: "Arial",
+        }}
+        onChange={(e) => setServerPort(e.target.value)}
+      ></input>
       <div
         className="BrokerStatusContainer"
         style={{
@@ -214,10 +328,16 @@ function SettingsDialog() {
           left: 94,
           top: 203,
           position: "absolute",
-          background: DarkGray,
+          background: brokerStatusBg,
           borderRadius: 20,
         }}
-        onClick={onBrokerStatusClick}
+        onMouseEnter={() => setBrokerStatusBg(HoverDarkGray)}
+        onMouseLeave={() => setBrokerStatusBg(DarkGray)}
+        onClick={() => {
+          console.log(getBrokerDetails().IP, getBrokerDetails().port);
+          onBrokerStatusClick();
+          setBrokerStatusBg(DarkGray);
+        }}
       />
       <div
         className="BrokerStatusText"
@@ -234,7 +354,13 @@ function SettingsDialog() {
           fontWeight: "500",
           wordWrap: "break-word",
         }}
-        onClick={onBrokerStatusClick}
+        onMouseEnter={() => setBrokerStatusBg(HoverDarkGray)}
+        onMouseLeave={() => setBrokerStatusBg(DarkGray)}
+        onClick={() => {
+          console.log(getBrokerDetails().IP, getBrokerDetails().port);
+          onBrokerStatusClick();
+          setBrokerStatusBg(DarkGray);
+        }}
       >
         {brokerStatusText}
       </div>
@@ -246,10 +372,16 @@ function SettingsDialog() {
           left: 342,
           top: 203,
           position: "absolute",
-          background: DarkGray,
+          background: serverStatusBg,
           borderRadius: 20,
         }}
-        onClick={onServerStatusClick}
+        onMouseEnter={() => setServerStatusBg(HoverDarkGray)}
+        onMouseLeave={() => setServerStatusBg(DarkGray)}
+        onClick={() => {
+          console.log(serverIP);
+          onServerStatusClick();
+          setServerStatusBg(DarkGray);
+        }}
       />
       <div
         className="ServerStatusText"
@@ -266,7 +398,17 @@ function SettingsDialog() {
           fontWeight: "500",
           wordWrap: "break-word",
         }}
-        onClick={onServerStatusClick}
+        onMouseEnter={() => setServerStatusBg(HoverDarkGray)}
+        onMouseLeave={() => setServerStatusBg(DarkGray)}
+        onClick={() => {
+          console.log(
+            "Server IP " + getServerDetails().IP,
+            "Server PORT " + getServerDetails().port
+          );
+
+          onServerStatusClick();
+          setServerStatusBg(DarkGray);
+        }}
       >
         {serverStatusText}
       </div>

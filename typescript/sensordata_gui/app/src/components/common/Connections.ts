@@ -5,48 +5,17 @@ import {
   UnknownGray,
 } from "./Colors.ts";
 
-export enum ConnectionStatus {
+enum ConnectionStatus {
   DISCONNECTED,
   CONNECTED,
   CONNECTING,
   UNKNOWN,
 }
-type ConnectionDetails = {
-  IP: String;
-  port: String;
+interface ConnectionDetails {
+  IP: string;
+  port: string;
   connectionStatus: ConnectionStatus;
-};
-
-const brokerDetails: ConnectionDetails = {
-  IP: "localhost",
-  port: "1883",
-  connectionStatus: ConnectionStatus.UNKNOWN,
-};
-const serverDetails: ConnectionDetails = {
-  IP: "localhost",
-  port: "8101",
-  connectionStatus: ConnectionStatus.UNKNOWN,
-};
-
-const setServerIP = (IP: String) => {
-  serverDetails.IP = IP;
-};
-const setBrokerIP = (IP: String) => {
-  brokerDetails.IP = IP;
-};
-const setServerPort = (port: String) => {
-  serverDetails.port = port;
-};
-const setBrokerPort = (port: String) => {
-  brokerDetails.port = port;
-};
-
-const getBrokerDetails = () => {
-  return brokerDetails;
-};
-const getServerDetails = () => {
-  return serverDetails;
-};
+}
 
 const getStatusColor = (status: ConnectionStatus) => {
   switch (status) {
@@ -74,4 +43,4 @@ const getStatusText = (status: ConnectionStatus) => {
   }
 };
 
-export { getBrokerDetails, getServerDetails, getStatusColor, getStatusText };
+export { ConnectionStatus, ConnectionDetails, getStatusColor, getStatusText };

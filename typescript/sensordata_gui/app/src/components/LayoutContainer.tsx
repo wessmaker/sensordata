@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FunctionComponent } from "react";
 
 import MarkerIcon from "../img/markericon.png";
 import CloudIcon from "../img/cloudicon.png";
@@ -10,13 +9,15 @@ import SettingsDialog from "./SettingsDialog.tsx";
 import {
   DarkGray,
   LightGray,
-  HoverGray,
+  HoverLightGray,
   Orange,
   HoverOrange,
   FontBlack,
 } from "./common/Colors.ts";
 
 function LayoutContainer() {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   const [settingsIconBg, setSettingsIconBg] = useState(LightGray);
   const [cloudIconBg, setCloudIconBg] = useState(LightGray);
   const [markerIconBg, setMarkerIconBg] = useState(LightGray);
@@ -24,22 +25,19 @@ function LayoutContainer() {
   const [closeIconBg, setCloseIconBg] = useState(Orange);
   const [imageIconBg, setImageIconBg] = useState(Orange);
 
-  const onSettingsIconClick = () => {
-    console.log("SETTINGS BUTTON CLICK!");
-    return (
-      <dialog
-        style={{
-          width: 1920,
-          height: 1080,
-          left: 0,
-          top: 0,
-          position: "absolute",
-          background: DarkGray,
-        }}
-      ></dialog>
-    );
+  const openSettingsDialog = () => {
+    setSettingsOpen(true);
   };
 
+  const closeSettingsDialog = () => {
+    setSettingsOpen(false);
+  };
+
+  const onCloudIconClick = () => {};
+  const onMarkerIconClick = () => {};
+  const onSelectImageClick = () => {};
+  const closeIconClick = () => {};
+  const imageIconClick = () => {};
   return (
     <div
       style={{
@@ -120,8 +118,9 @@ function LayoutContainer() {
           background: markerIconBg,
           borderRadius: 10,
         }}
-        onMouseEnter={() => setMarkerIconBg(HoverGray)}
+        onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
         onMouseLeave={() => setMarkerIconBg(LightGray)}
+        onClick={onMarkerIconClick}
       />
       <img
         className="MarkerIcon"
@@ -133,8 +132,9 @@ function LayoutContainer() {
           position: "absolute",
         }}
         src={MarkerIcon}
-        onMouseEnter={() => setMarkerIconBg(HoverGray)}
+        onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
         onMouseLeave={() => setMarkerIconBg(LightGray)}
+        onClick={onMarkerIconClick}
       />
       <div
         className="CloudIconContainer"
@@ -147,8 +147,9 @@ function LayoutContainer() {
           background: cloudIconBg,
           borderRadius: 10,
         }}
-        onMouseEnter={() => setCloudIconBg(HoverGray)}
+        onMouseEnter={() => setCloudIconBg(HoverLightGray)}
         onMouseLeave={() => setCloudIconBg(LightGray)}
+        onClick={onCloudIconClick}
       />
       <img
         className="CloudIcon"
@@ -160,8 +161,9 @@ function LayoutContainer() {
           position: "absolute",
         }}
         src={CloudIcon}
-        onMouseEnter={() => setCloudIconBg(HoverGray)}
+        onMouseEnter={() => setCloudIconBg(HoverLightGray)}
         onMouseLeave={() => setCloudIconBg(LightGray)}
+        onClick={onCloudIconClick}
       />
       <div
         className="CloseIconContainer"
@@ -176,6 +178,7 @@ function LayoutContainer() {
         }}
         onMouseEnter={() => setCloseIconBg(HoverOrange)}
         onMouseLeave={() => setCloseIconBg(Orange)}
+        onClick={closeIconClick}
       />
       <img
         className="CloseIcon"
@@ -189,6 +192,7 @@ function LayoutContainer() {
         src={CloseIcon}
         onMouseEnter={() => setCloseIconBg(HoverOrange)}
         onMouseLeave={() => setCloseIconBg(Orange)}
+        onClick={closeIconClick}
       />
       <div
         className="ImageIconContainer"
@@ -203,6 +207,7 @@ function LayoutContainer() {
         }}
         onMouseEnter={() => setImageIconBg(HoverOrange)}
         onMouseLeave={() => setImageIconBg(Orange)}
+        onClick={imageIconClick}
       />
       <img
         className="ImageIcon"
@@ -216,6 +221,7 @@ function LayoutContainer() {
         src={ImageIcon}
         onMouseEnter={() => setImageIconBg(HoverOrange)}
         onMouseLeave={() => setImageIconBg(Orange)}
+        onClick={imageIconClick}
       />
       <div
         className="SettingsIconContainer"
@@ -228,9 +234,9 @@ function LayoutContainer() {
           background: settingsIconBg,
           borderRadius: 10,
         }}
-        onMouseEnter={() => setSettingsIconBg(HoverGray)}
+        onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
         onMouseLeave={() => setSettingsIconBg(LightGray)}
-        onClick={onSettingsIconClick}
+        onClick={openSettingsDialog}
       />
       <img
         className="SettingsIcon"
@@ -242,9 +248,9 @@ function LayoutContainer() {
           position: "absolute",
         }}
         src={SettingsIcon}
-        onMouseEnter={() => setSettingsIconBg(HoverGray)}
+        onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
         onMouseLeave={() => setSettingsIconBg(LightGray)}
-        onClick={onSettingsIconClick}
+        onClick={openSettingsDialog}
       />
       <div
         className="SelectImageContainer"
@@ -257,8 +263,9 @@ function LayoutContainer() {
           background: selectImageBg,
           borderRadius: 20,
         }}
-        onMouseEnter={() => setSelectImageBg(HoverGray)}
+        onMouseEnter={() => setSelectImageBg(HoverLightGray)}
         onMouseLeave={() => setSelectImageBg(LightGray)}
+        onClick={onSelectImageClick}
       />
       <div
         className="SelectImageText"
@@ -266,7 +273,7 @@ function LayoutContainer() {
           width: 297,
           height: 80,
           left: 889,
-          top: 508,
+          top: 513,
           position: "absolute",
           textAlign: "center",
           color: FontBlack,
@@ -275,7 +282,7 @@ function LayoutContainer() {
           fontWeight: "500",
           wordWrap: "break-word",
         }}
-        onMouseEnter={() => setSelectImageBg(HoverGray)}
+        onMouseEnter={() => setSelectImageBg(HoverLightGray)}
         onMouseLeave={() => setSelectImageBg(LightGray)}
       >
         Select image
@@ -310,6 +317,10 @@ function LayoutContainer() {
       >
         Version UNKNOWN
       </div>
+      <SettingsDialog
+        isOpen={settingsOpen}
+        onCloseButtonClick={closeSettingsDialog}
+      ></SettingsDialog>
     </div>
   );
 }
