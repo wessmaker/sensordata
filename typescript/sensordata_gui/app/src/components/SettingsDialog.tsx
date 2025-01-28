@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-import "./common/Colors.ts";
+import "../utils/Colors.ts";
 
-import CloseIcon from "../img/closeicon.png";
+import CloseIcon from "../assets/closeicon.png";
 
 import {
   DarkGray,
@@ -13,27 +13,27 @@ import {
   FontBlack,
   HoverDarkGray,
   HoverLightGray,
-} from "./common/Colors.ts";
+} from "../utils/Colors.ts";
 
 import {
   fetchBroker,
   getBrokerDetails,
   setBrokerIP,
   setBrokerPort,
-} from "./MQTT.ts";
+} from "../services/MQTT.ts";
 
 import {
   fetchServer,
   getServerDetails,
   setServerIP,
   setServerPort,
-} from "./Server.ts";
+} from "../services/Server.ts";
 
 import {
   getStatusColor,
   getStatusText,
   ConnectionStatus,
-} from "./common/Connections.ts";
+} from "../utils/Connections.ts";
 
 function SettingsDialog({ isOpen, onCloseButtonClick }) {
   const [closeIconBg, setCloseIconBg] = useState(Orange);
@@ -289,7 +289,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
 
       <input
         className="ServerIPInput"
-        defaultValue={getServerDetails().IP}
+        // defaultValue={getServerDetails().IP}
         style={{
           width: 140,
           height: 15,
@@ -306,7 +306,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
 
       <input
         className="ServerPortInput"
-        defaultValue={getServerDetails().port}
+        // defaultValue={getServerDetails().port}
         style={{
           width: 140,
           height: 15,
@@ -378,7 +378,6 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
         onMouseEnter={() => setServerStatusBg(HoverDarkGray)}
         onMouseLeave={() => setServerStatusBg(DarkGray)}
         onClick={() => {
-          console.log(serverIP);
           onServerStatusClick();
           setServerStatusBg(DarkGray);
         }}

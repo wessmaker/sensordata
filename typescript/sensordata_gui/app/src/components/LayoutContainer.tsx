@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import MarkerIcon from "../img/markericon.png";
-import CloudIcon from "../img/cloudicon.png";
-import CloseIcon from "../img/closeicon.png";
-import SettingsIcon from "../img/settingsicon.png";
-import ImageIcon from "../img/imageicon.png";
+import MarkerIcon from "../assets/markericon.png";
+import CloudIcon from "../assets/cloudicon.png";
+import CloseIcon from "../assets/closeicon.png";
+import SettingsIcon from "../assets/settingsicon.png";
+import ImageIcon from "../assets/imageicon.png";
 import SettingsDialog from "./SettingsDialog.tsx";
 import {
   DarkGray,
@@ -13,7 +13,7 @@ import {
   Orange,
   HoverOrange,
   FontBlack,
-} from "./common/Colors.ts";
+} from "../utils/Colors.ts";
 
 function LayoutContainer() {
   const [settingsOpen, setSettingsOpen] = useState(false);

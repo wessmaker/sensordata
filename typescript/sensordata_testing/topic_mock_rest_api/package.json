@@ -1,0 +1,17 @@
+{
+	"name": "topic_mock_rest_api",
+	"version": "1.0.0",
+	"description": "Mock REST api for testing purposes",
+	"main": "index.js",
+	"scripts": {
+		"test": "test"
+	},
+	"author": "wessmaker",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.21.2"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.0"
+	}
+}

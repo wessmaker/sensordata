@@ -3,18 +3,13 @@ import {
   ConnectingYellow,
   DisconnectedRed,
   UnknownGray,
-} from "./Colors.ts";
+} from "../utils/Colors.ts";
 
 enum ConnectionStatus {
   DISCONNECTED,
   CONNECTED,
   CONNECTING,
   UNKNOWN,
-}
-interface ConnectionDetails {
-  IP: string;
-  port: string;
-  connectionStatus: ConnectionStatus;
 }
 
 const getStatusColor = (status: ConnectionStatus) => {
@@ -43,4 +38,4 @@ const getStatusText = (status: ConnectionStatus) => {
   }
 };
 
-export { ConnectionStatus, ConnectionDetails, getStatusColor, getStatusText };
+export { ConnectionStatus, getStatusColor, getStatusText };
