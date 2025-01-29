@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "../utils/Colors.ts";
 
@@ -51,15 +51,23 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
   const [brokerStatusText, setBrokerStatusText] = useState(
     getStatusText(getBrokerDetails().connectionStatus)
   );
+  //Server status state
+  useEffect(() => {
+    setServerStatusColor(getStatusColor(getServerDetails().connectionStatus));
+    setServerStatusText(getStatusText(getServerDetails().connectionStatus));
+  }, [getServerDetails().connectionStatus]);
+
+  //Broker status state
+  useEffect(() => {
+    setBrokerStatusColor(getStatusColor(getBrokerDetails().connectionStatus));
+    setBrokerStatusText(getStatusText(getBrokerDetails().connectionStatus));
+  }, [getBrokerDetails().connectionStatus]);
+
   const onServerStatusClick = () => {
-    // const connectionStatus = fetchServer();
-    // setServerStatusColor(getStatusColor(connectionStatus));
-    // setServerStatusText(getStatusText(connectionStatus));
+    fetchServer();
   };
   const onBrokerStatusClick = () => {
-    const connectionStatus: ConnectionStatus = fetchBroker();
-    setBrokerStatusColor(getStatusColor(connectionStatus));
-    setBrokerStatusText(getStatusText(connectionStatus));
+    fetchBroker();
   };
 
   if (!isOpen) return null;
@@ -267,7 +275,11 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontSize: 15,
           fontFamily: "Arial",
         }}
-        onChange={(e) => setBrokerIP(e.target.value)}
+        onChange={(e) => {
+          setBrokerIP(e.target.value);
+          setBrokerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
+          setBrokerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+        }}
       ></input>
 
       <input
@@ -284,12 +296,16 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontSize: 15,
           fontFamily: "Arial",
         }}
-        onChange={(e) => setBrokerPort(e.target.value)}
+        onChange={(e) => {
+          setBrokerPort(e.target.value);
+          setBrokerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
+          setBrokerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+        }}
       ></input>
 
       <input
         className="ServerIPInput"
-        // defaultValue={getServerDetails().IP}
+        defaultValue={getServerDetails().IP}
         style={{
           width: 140,
           height: 15,
@@ -301,12 +317,16 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontSize: 15,
           fontFamily: "Arial",
         }}
-        onChange={(e) => setServerIP(e.target.value)}
+        onChange={(e) => {
+          setServerPort(e.target.value);
+          setServerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
+          setServerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+        }}
       ></input>
 
       <input
         className="ServerPortInput"
-        // defaultValue={getServerDetails().port}
+        defaultValue={getServerDetails().port}
         style={{
           width: 140,
           height: 15,
@@ -318,7 +338,11 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontSize: 15,
           fontFamily: "Arial",
         }}
-        onChange={(e) => setServerPort(e.target.value)}
+        onChange={(e) => {
+          setServerPort(e.target.value);
+          setServerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
+          setServerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+        }}
       ></input>
       <div
         className="BrokerStatusContainer"
@@ -400,11 +424,6 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
         onMouseEnter={() => setServerStatusBg(HoverDarkGray)}
         onMouseLeave={() => setServerStatusBg(DarkGray)}
         onClick={() => {
-          console.log(
-            "Server IP " + getServerDetails().IP,
-            "Server PORT " + getServerDetails().port
-          );
-
           onServerStatusClick();
           setServerStatusBg(DarkGray);
         }}

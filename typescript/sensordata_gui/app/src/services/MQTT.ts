@@ -50,8 +50,6 @@ const onConnectionFail = () => {
   console.log("MQTT CONNECTION TO BROKER FAILED");
 };
 
-const onDisconnect = () => {};
-
 const onSubscriptionSuccess = () => {
   console.log("Subscription success!");
 };
@@ -69,25 +67,31 @@ const client = new PahoMQTT.Client(
   Number.parseInt(getBrokerDetails().port),
   getBrokerDetails().clientID
 );
-client.onConnectionLost = () => {
+
+client.onConnectionLost = (error: PahoMQTT.MQTTError) => {
+  console.log("Broker connection lost!");
   brokerDetails.connectionStatus = ConnectionStatus.DISCONNECTED;
 };
 
 export const connectBroker = () => {
-  client.connect({
-    onSuccess: onConnection,
-    onFailure: onConnectionFail,
-    useSSL: false,
-    userName: getBrokerDetails().username,
-    password: getBrokerDetails().password,
-    keepAliveInterval: 120,
-    timeout: 15,
-    reconnect: true,
-  });
+  if (!client.isConnected()) {
+    console.log("Broker is DISCONNECTED, trying to connect");
+    client.connect({
+      onSuccess: onConnection,
+      onFailure: onConnectionFail,
+      useSSL: false,
+      userName: getBrokerDetails().username,
+      password: getBrokerDetails().password,
+      keepAliveInterval: 120,
+      timeout: 15,
+      reconnect: true,
+    });
+  }
 };
 
 export const disconnectBroker = () => {
   client.disconnect();
+  brokerDetails.connectionStatus = ConnectionStatus.DISCONNECTED;
 };
 
 export const publish = (topic: string, payload: string, retained?: boolean) => {
@@ -116,11 +120,12 @@ export const unsubscribe = (
   });
 };
 
-/**
- * Fetches MQTT broker and returns the result of the connection after finishing processing
- * @returns CONNECTED | DISCONNECTED | CONNECTING | UNKOWN
- */
-export const fetchBroker = (): ConnectionStatus => {
-  const result: ConnectionStatus = ConnectionStatus.UNKNOWN;
-  return result;
+export const fetchBroker = () => {
+  //TODO FIX THIS
+  if (brokerDetails.connectionStatus != ConnectionStatus.CONNECTED) {
+    connectBroker();
+    brokerDetails.connectionStatus = client.isConnected()
+      ? ConnectionStatus.CONNECTED
+      : ConnectionStatus.DISCONNECTED;
+  }
 };
