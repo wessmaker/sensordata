@@ -14,6 +14,7 @@ import {
   HoverOrange,
   FontBlack,
 } from "../utils/Colors.ts";
+import { MarkerList } from "./MarkerList.tsx";
 
 function LayoutContainer() {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -24,18 +25,29 @@ function LayoutContainer() {
   const [selectImageBg, setSelectImageBg] = useState(LightGray);
   const [closeIconBg, setCloseIconBg] = useState(Orange);
   const [imageIconBg, setImageIconBg] = useState(Orange);
+  const [closeButtonVisible, setCloseButtonVisible] = useState(false);
+  const [markerListOpen, setMarkerListOpen] = useState(true);
 
-  const openSettingsDialog = () => {
-    setSettingsOpen(true);
+  const onSettingsIconClick = () => {
+    setSettingsOpen(!settingsOpen);
   };
 
   const closeSettingsDialog = () => {
     setSettingsOpen(false);
   };
 
+  const onMarkerIconClick = () => {
+    setMarkerListOpen(!markerListOpen);
+  };
+  const closeMarkerList = () => {
+    setMarkerListOpen(false);
+  };
+
   const onCloudIconClick = () => {};
-  const onMarkerIconClick = () => {};
-  const onSelectImageClick = () => {};
+
+  const onSelectImageClick = () => {
+    setCloseButtonVisible(!closeButtonVisible);
+  };
   const closeIconClick = () => {};
   const imageIconClick = () => {};
   return (
@@ -43,15 +55,17 @@ function LayoutContainer() {
       style={{
         width: "100%",
         height: "100%",
-        position: "relative",
+        left: 0,
+        top: 0,
+        position: "absolute",
         background: DarkGray,
       }}
     >
       <div
         className="Background"
         style={{
-          width: 1920,
-          height: 1080,
+          width: "100%",
+          height: "100%",
           left: 0,
           top: 0,
           position: "absolute",
@@ -79,7 +93,6 @@ function LayoutContainer() {
           top: 38,
           position: "absolute",
           background: Orange,
-          boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
           borderRadius: 20,
         }}
       />
@@ -87,85 +100,128 @@ function LayoutContainer() {
         className="LeftPanel"
         style={{
           width: 260,
-          height: 1080,
+          height: 1000,
           left: 0,
           top: 0,
           position: "absolute",
           background: DarkGray,
         }}
-      />
+      >
+        <MarkerList
+          x={15}
+          y={167}
+          w={242}
+          h={840}
+          isOpen={markerListOpen}
+          onCloseButtonClick={closeMarkerList}
+        ></MarkerList>
+      </div>
       <div
         className="LeftPanelIconContainer"
         style={{
           width: 260,
           height: 100,
           left: 0,
-          top: 38,
+          top: 50,
           position: "absolute",
           background: Orange,
-          borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
+          borderBottomRightRadius: 20,
         }}
-      />
+      >
+        <div
+          className="MarkerIconContainer"
+          style={{
+            width: 60,
+            height: 60,
+            left: 180,
+            top: 23,
+            position: "absolute",
+            background: markerIconBg,
+            borderRadius: 10,
+          }}
+          onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
+          onMouseLeave={() => setMarkerIconBg(LightGray)}
+          onClick={onMarkerIconClick}
+        />
+        <img
+          className="MarkerIcon"
+          style={{
+            width: 60,
+            height: 60,
+            left: 180,
+            top: 24,
+            position: "absolute",
+            borderRadius: 10,
+          }}
+          src={MarkerIcon}
+          onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
+          onMouseLeave={() => setMarkerIconBg(LightGray)}
+          onClick={onMarkerIconClick}
+        />
+        <div
+          className="CloudIconContainer"
+          style={{
+            width: 56,
+            height: 56,
+            left: 102,
+            top: 23,
+            position: "absolute",
+            background: cloudIconBg,
+            borderRadius: 10,
+          }}
+          onMouseEnter={() => setCloudIconBg(HoverLightGray)}
+          onMouseLeave={() => setCloudIconBg(LightGray)}
+          onClick={onCloudIconClick}
+        />
+        <img
+          className="CloudIcon"
+          style={{
+            width: 47,
+            height: 47,
+            left: 107,
+            top: 28,
+            position: "absolute",
+            borderRadius: 10,
+          }}
+          src={CloudIcon}
+          onMouseEnter={() => setCloudIconBg(HoverLightGray)}
+          onMouseLeave={() => setCloudIconBg(LightGray)}
+          onClick={onCloudIconClick}
+        />
+        <div
+          className="SettingsIconContainer"
+          style={{
+            width: 56,
+            height: 56,
+            left: 22,
+            top: 23,
+            position: "absolute",
+            background: settingsIconBg,
+            borderRadius: 10,
+          }}
+          onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
+          onMouseLeave={() => setSettingsIconBg(LightGray)}
+          onClick={onSettingsIconClick}
+        />
+        <img
+          className="SettingsIcon"
+          style={{
+            width: 58,
+            height: 58,
+            left: 21,
+            top: 22,
+            position: "absolute",
+            borderRadius: 10,
+          }}
+          src={SettingsIcon}
+          onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
+          onMouseLeave={() => setSettingsIconBg(LightGray)}
+          onClick={onSettingsIconClick}
+        />
+      </div>
       <div
-        className="MarkerIconContainer"
-        style={{
-          width: 60,
-          height: 60,
-          left: 180,
-          top: 58,
-          position: "absolute",
-          background: markerIconBg,
-          borderRadius: 10,
-        }}
-        onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
-        onMouseLeave={() => setMarkerIconBg(LightGray)}
-        onClick={onMarkerIconClick}
-      />
-      <img
-        className="MarkerIcon"
-        style={{
-          width: 60,
-          height: 60,
-          left: 180,
-          top: 58,
-          position: "absolute",
-        }}
-        src={MarkerIcon}
-        onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
-        onMouseLeave={() => setMarkerIconBg(LightGray)}
-        onClick={onMarkerIconClick}
-      />
-      <div
-        className="CloudIconContainer"
-        style={{
-          width: 56,
-          height: 56,
-          left: 102,
-          top: 60,
-          position: "absolute",
-          background: cloudIconBg,
-          borderRadius: 10,
-        }}
-        onMouseEnter={() => setCloudIconBg(HoverLightGray)}
-        onMouseLeave={() => setCloudIconBg(LightGray)}
-        onClick={onCloudIconClick}
-      />
-      <img
-        className="CloudIcon"
-        style={{
-          width: 46,
-          height: 46,
-          left: 107,
-          top: 65,
-          position: "absolute",
-        }}
-        src={CloudIcon}
-        onMouseEnter={() => setCloudIconBg(HoverLightGray)}
-        onMouseLeave={() => setCloudIconBg(LightGray)}
-        onClick={onCloudIconClick}
-      />
-      <div
+        hidden={!closeButtonVisible}
         className="CloseIconContainer"
         style={{
           width: 96,
@@ -181,6 +237,7 @@ function LayoutContainer() {
         onClick={closeIconClick}
       />
       <img
+        hidden={!closeButtonVisible}
         className="CloseIcon"
         style={{
           width: 96,
@@ -188,6 +245,7 @@ function LayoutContainer() {
           left: 1792,
           top: 38,
           position: "absolute",
+          borderRadius: 20,
         }}
         src={CloseIcon}
         onMouseEnter={() => setCloseIconBg(HoverOrange)}
@@ -208,50 +266,23 @@ function LayoutContainer() {
         onMouseEnter={() => setImageIconBg(HoverOrange)}
         onMouseLeave={() => setImageIconBg(Orange)}
         onClick={imageIconClick}
-      />
-      <img
-        className="ImageIcon"
-        style={{
-          width: 86,
-          height: 86,
-          left: 1797,
-          top: 947,
-          position: "absolute",
-        }}
-        src={ImageIcon}
-        onMouseEnter={() => setImageIconBg(HoverOrange)}
-        onMouseLeave={() => setImageIconBg(Orange)}
-        onClick={imageIconClick}
-      />
-      <div
-        className="SettingsIconContainer"
-        style={{
-          width: 56,
-          height: 56,
-          left: 22,
-          top: 60,
-          position: "absolute",
-          background: settingsIconBg,
-          borderRadius: 10,
-        }}
-        onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
-        onMouseLeave={() => setSettingsIconBg(LightGray)}
-        onClick={openSettingsDialog}
-      />
-      <img
-        className="SettingsIcon"
-        style={{
-          width: 58,
-          height: 58,
-          left: 21,
-          top: 59,
-          position: "absolute",
-        }}
-        src={SettingsIcon}
-        onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
-        onMouseLeave={() => setSettingsIconBg(LightGray)}
-        onClick={openSettingsDialog}
-      />
+      >
+        <img
+          className="ImageIcon"
+          style={{
+            width: "90%",
+            height: "90%",
+            left: 5,
+            top: 6,
+            position: "absolute",
+            borderRadius: 20,
+          }}
+          src={ImageIcon}
+          onMouseEnter={() => setImageIconBg(HoverOrange)}
+          onMouseLeave={() => setImageIconBg(Orange)}
+          onClick={imageIconClick}
+        />
+      </div>
       <div
         className="SelectImageContainer"
         style={{
@@ -266,61 +297,95 @@ function LayoutContainer() {
         onMouseEnter={() => setSelectImageBg(HoverLightGray)}
         onMouseLeave={() => setSelectImageBg(LightGray)}
         onClick={onSelectImageClick}
-      />
-      <div
-        className="SelectImageText"
-        style={{
-          width: 297,
-          height: 80,
-          left: 889,
-          top: 513,
-          position: "absolute",
-          textAlign: "center",
-          color: FontBlack,
-          fontSize: 40,
-          fontFamily: "Arial",
-          fontWeight: "500",
-          wordWrap: "break-word",
-        }}
-        onMouseEnter={() => setSelectImageBg(HoverLightGray)}
-        onMouseLeave={() => setSelectImageBg(LightGray)}
       >
-        Select image
+        <div
+          className="SelectImageText"
+          style={{
+            width: "100%",
+            height: "100%",
+            left: 0,
+            top: 42,
+            position: "absolute",
+            textAlign: "center",
+            color: FontBlack,
+            fontSize: 40,
+            fontFamily: "Arial",
+            fontWeight: "500",
+            wordWrap: "break-word",
+            cursor: "default",
+            borderRadius: 20,
+          }}
+          onClick={onSelectImageClick}
+          onMouseEnter={() => setSelectImageBg(HoverLightGray)}
+          onMouseLeave={() => setSelectImageBg(LightGray)}
+        >
+          Select image
+        </div>
       </div>
       <div
         className="VersionContainer"
         style={{
           width: 260,
-          height: 70,
+          height: 50,
           left: 0,
-          top: 1010,
+          top: 1030,
           position: "absolute",
           background: "#FF6200",
-          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
         }}
       />
       <div
         className="VersionText"
         style={{
           width: 260,
-          height: 27,
+          height: 25,
           left: 0,
-          top: 1031,
+          top: 1040,
           position: "absolute",
           textAlign: "center",
           color: FontBlack,
-          fontSize: 20,
+          fontSize: 25,
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
         }}
       >
-        Version UNKNOWN
+        {require("../../package.json").version}
+      </div>{" "}
+      <div
+        className="AppNameContainer"
+        style={{
+          width: 260,
+          height: 32,
+          left: 0,
+          top: 0,
+          position: "absolute",
+          background: Orange,
+          borderBottomRightRadius: 20,
+        }}
+      >
+        <div
+          className="AppNameText"
+          style={{
+            width: 260,
+            height: 35,
+            left: 0,
+            top: 0,
+            position: "absolute",
+            textAlign: "center",
+            color: FontBlack,
+            fontSize: 24,
+            fontFamily: "Arial",
+            wordWrap: "break-word",
+          }}
+        >
+          {require("../../package.json").name}
+        </div>
+        <SettingsDialog
+          isOpen={settingsOpen}
+          onCloseButtonClick={closeSettingsDialog}
+        ></SettingsDialog>
       </div>
-      <SettingsDialog
-        isOpen={settingsOpen}
-        onCloseButtonClick={closeSettingsDialog}
-      ></SettingsDialog>
     </div>
   );
 }

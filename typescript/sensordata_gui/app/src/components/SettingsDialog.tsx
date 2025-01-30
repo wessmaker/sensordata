@@ -13,17 +13,23 @@ import {
   FontBlack,
   HoverDarkGray,
   HoverLightGray,
+  UnknownGray,
+  DisconnectedRed,
 } from "../utils/Colors.ts";
 
 import {
+  connectBroker,
+  disconnectBroker,
   fetchBroker,
   getBrokerDetails,
   setBrokerIP,
   setBrokerPort,
+  getBrokerConnectionStatus,
 } from "../services/MQTT.ts";
 
 import {
   fetchServer,
+  getServerConnectionStatus,
   getServerDetails,
   setServerIP,
   setServerPort,
@@ -36,39 +42,56 @@ import {
 } from "../utils/Connections.ts";
 
 function SettingsDialog({ isOpen, onCloseButtonClick }) {
+  const [brokerIPInput, setBrokerIPInput] = useState(getBrokerDetails().IP);
+  const [brokerPortInput, setBrokerPortInput] = useState(
+    getBrokerDetails().port
+  );
+  const [serverIPInput, setServerIPInput] = useState(getBrokerDetails().IP);
+  const [serverPortInput, setServerPortInput] = useState(
+    getServerDetails().port
+  );
   const [closeIconBg, setCloseIconBg] = useState(Orange);
   const [brokerStatusBg, setBrokerStatusBg] = useState(DarkGray);
   const [serverStatusBg, setServerStatusBg] = useState(DarkGray);
   const [serverStatusColor, setServerStatusColor] = useState(
-    getStatusColor(getServerDetails().connectionStatus)
+    getStatusColor(getServerConnectionStatus())
   );
   const [serverStatusText, setServerStatusText] = useState(
-    getStatusText(getServerDetails().connectionStatus)
+    getStatusText(getServerConnectionStatus())
   );
   const [brokerStatusColor, setBrokerStatusColor] = useState(
-    getStatusColor(getBrokerDetails().connectionStatus)
+    getStatusColor(getBrokerConnectionStatus())
   );
   const [brokerStatusText, setBrokerStatusText] = useState(
-    getStatusText(getBrokerDetails().connectionStatus)
+    getStatusText(getBrokerConnectionStatus())
   );
-  //Server status state
-  useEffect(() => {
-    setServerStatusColor(getStatusColor(getServerDetails().connectionStatus));
-    setServerStatusText(getStatusText(getServerDetails().connectionStatus));
-  }, [getServerDetails().connectionStatus]);
-
-  //Broker status state
-  useEffect(() => {
-    setBrokerStatusColor(getStatusColor(getBrokerDetails().connectionStatus));
-    setBrokerStatusText(getStatusText(getBrokerDetails().connectionStatus));
-  }, [getBrokerDetails().connectionStatus]);
 
   const onServerStatusClick = () => {
     fetchServer();
   };
+
   const onBrokerStatusClick = () => {
-    fetchBroker();
+    if (
+      getBrokerConnectionStatus() === ConnectionStatus.CONNECTED &&
+      (getBrokerDetails().IP !== brokerIPInput ||
+        getBrokerDetails().port !== brokerPortInput)
+    ) {
+      setBrokerIP(brokerIPInput);
+      setBrokerPort(brokerPortInput);
+      fetchBroker();
+    }
+    if (getBrokerConnectionStatus() === ConnectionStatus.DISCONNECTED) {
+      setBrokerIP(brokerIPInput);
+      setBrokerPort(brokerPortInput);
+      connectBroker();
+    }
   };
+  setInterval(() => {
+    setBrokerStatusText(getStatusText(getBrokerConnectionStatus()));
+    setBrokerStatusColor(getStatusColor(getBrokerConnectionStatus()));
+    setServerStatusText(getStatusText(getServerConnectionStatus()));
+    setServerStatusColor(getStatusColor(getServerConnectionStatus()));
+  }, 1000);
 
   if (!isOpen) return null;
   return (
@@ -76,7 +99,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
       style={{
         width: "100%",
         height: "100%",
-        position: "absolute",
+        position: "relative",
         left: 750,
         top: 400,
       }}
@@ -91,6 +114,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           position: "absolute",
           background: DarkGray,
           borderRadius: 10,
+          boxShadow: "0 0 5px black",
         }}
       />
       <div
@@ -263,7 +287,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
       </div>
       <input
         className="BrokerIPInput"
-        defaultValue={getBrokerDetails().IP}
+        defaultValue={brokerIPInput}
         style={{
           width: 140,
           height: 15,
@@ -276,15 +300,19 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
         }}
         onChange={(e) => {
-          setBrokerIP(e.target.value);
-          setBrokerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
-          setBrokerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+          setBrokerIPInput(e.target.value);
+          console.log("BROKER INPUT CHANGE");
+          if (getBrokerConnectionStatus() === ConnectionStatus.CONNECTED) {
+            disconnectBroker();
+            setBrokerStatusColor(getStatusColor(getBrokerConnectionStatus()));
+            setBrokerStatusText(getStatusText(getBrokerConnectionStatus()));
+          }
         }}
       ></input>
 
       <input
         className="BrokerPortInput"
-        defaultValue={getBrokerDetails().port}
+        defaultValue={brokerPortInput}
         style={{
           width: 140,
           height: 15,
@@ -297,15 +325,18 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
         }}
         onChange={(e) => {
-          setBrokerPort(e.target.value);
-          setBrokerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
-          setBrokerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+          setBrokerPortInput(e.target.value);
+          if (getBrokerConnectionStatus() === ConnectionStatus.CONNECTED) {
+            disconnectBroker();
+            setBrokerStatusColor(getStatusColor(getBrokerConnectionStatus()));
+            setBrokerStatusText(getStatusText(getBrokerConnectionStatus()));
+          }
         }}
       ></input>
 
       <input
         className="ServerIPInput"
-        defaultValue={getServerDetails().IP}
+        defaultValue={serverIPInput}
         style={{
           width: 140,
           height: 15,
@@ -318,15 +349,13 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
         }}
         onChange={(e) => {
-          setServerPort(e.target.value);
-          setServerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
-          setServerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+          setServerIPInput(e.target.value);
         }}
       ></input>
 
       <input
         className="ServerPortInput"
-        defaultValue={getServerDetails().port}
+        defaultValue={serverPortInput}
         style={{
           width: 140,
           height: 15,
@@ -339,9 +368,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
         }}
         onChange={(e) => {
-          setServerPort(e.target.value);
-          setServerStatusColor(getStatusColor(ConnectionStatus.UNKNOWN));
-          setServerStatusText(getStatusText(ConnectionStatus.UNKNOWN));
+          setServerPortInput(e.target.value);
         }}
       ></input>
       <div
@@ -358,7 +385,6 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
         onMouseEnter={() => setBrokerStatusBg(HoverDarkGray)}
         onMouseLeave={() => setBrokerStatusBg(DarkGray)}
         onClick={() => {
-          console.log(getBrokerDetails().IP, getBrokerDetails().port);
           onBrokerStatusClick();
           setBrokerStatusBg(DarkGray);
         }}
@@ -377,11 +403,11 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
+          cursor: "default",
         }}
         onMouseEnter={() => setBrokerStatusBg(HoverDarkGray)}
         onMouseLeave={() => setBrokerStatusBg(DarkGray)}
         onClick={() => {
-          console.log(getBrokerDetails().IP, getBrokerDetails().port);
           onBrokerStatusClick();
           setBrokerStatusBg(DarkGray);
         }}
@@ -420,6 +446,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
           fontFamily: "Arial",
           fontWeight: "500",
           wordWrap: "break-word",
+          cursor: "default",
         }}
         onMouseEnter={() => setServerStatusBg(HoverDarkGray)}
         onMouseLeave={() => setServerStatusBg(DarkGray)}

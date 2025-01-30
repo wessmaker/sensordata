@@ -3,51 +3,102 @@ import PahoMQTT, {
   OnSubscribeSuccessCallback,
   OnSuccessCallback,
 } from "paho-mqtt";
+import mqttBrokerOptions from "../json/mqttBrokerOptions.json";
 
 import { Topic } from "../types/Topic";
-import { ConnectionStatus } from "../utils/Connections.ts";
-import ConnectionDetails from "../types/ConnectionDetails.ts";
+import { ConnectionStatus, getStatusText } from "../utils/Connections.ts";
+import ConnectionOptions from "../types/ConnectionDetails.ts";
 
-interface BrokerDetails extends ConnectionDetails {
+interface BrokerOptions extends ConnectionOptions {
   IP: string;
   port: string;
   clientID: string;
   username: string;
   password: string;
-  connectionStatus: ConnectionStatus;
-  topics?: Topic[] | (() => Topic[]);
 }
 
-let brokerDetails: BrokerDetails = {
-  IP: "127.0.0.1",
-  port: "8083",
-  connectionStatus: ConnectionStatus.UNKNOWN,
-  clientID: "testingfrontend",
-  username: "admin",
-  password: "public",
-  // topics: () => {},
+let brokerOptions: BrokerOptions = {
+  IP: mqttBrokerOptions.IP,
+  port: String(mqttBrokerOptions.wsPort),
+  clientID: mqttBrokerOptions.clientID,
+  username: mqttBrokerOptions.username,
+  password: mqttBrokerOptions.password,
 };
 
 export const setBrokerIP = (IP: string) => {
-  brokerDetails.IP = IP;
+  brokerOptions.IP = IP;
 };
 
 export const setBrokerPort = (port: string) => {
-  brokerDetails.port = port;
+  brokerOptions.port = port;
 };
 
 export const getBrokerDetails = () => {
-  return brokerDetails;
+  return brokerOptions;
 };
 
+export const getBrokerConnectionStatus = () => {
+  return client.isConnected()
+    ? ConnectionStatus.CONNECTED
+    : ConnectionStatus.DISCONNECTED;
+};
+
+let client = new PahoMQTT.Client(
+  getBrokerDetails().IP,
+  Number.parseInt(getBrokerDetails().port),
+  getBrokerDetails().clientID
+);
+
 const onConnection = () => {
-  brokerDetails.connectionStatus = ConnectionStatus.CONNECTED;
-  console.log("MQTT CLIENT HAS BEEN CONNECTED TO BROKER");
+  console.log("MQTT CLIENT CONNECTED TO " + client.host + ", " + client.port);
 };
 
 const onConnectionFail = () => {
-  brokerDetails.connectionStatus = ConnectionStatus.DISCONNECTED;
-  console.log("MQTT CONNECTION TO BROKER FAILED");
+  console.log("MQTT CONNECTION FAILED TO: " + client.host + ", " + client.port);
+};
+
+const connectionCredentials: PahoMQTT.ConnectionOptions = {
+  onSuccess: onConnection,
+  onFailure: onConnectionFail,
+  userName: getBrokerDetails().username,
+  password: getBrokerDetails().password,
+  reconnect: true,
+  timeout: 10,
+};
+
+export const connectBroker = () => {
+  client = new PahoMQTT.Client(
+    getBrokerDetails().IP,
+    Number.parseInt(getBrokerDetails().port),
+    getBrokerDetails().clientID
+  );
+  try {
+    console.log(
+      "Connecting to broker with : " + client.host + ", " + client.port
+    );
+
+    client.connect(connectionCredentials);
+  } catch (error) {
+    console.log("Error happened when connecting to MQTT broker: " + error);
+  } finally {
+    console.log("CONNECTING TO BROKER ENDING");
+  }
+};
+
+client.onConnectionLost = (error: PahoMQTT.MQTTError) => {
+  console.log(
+    "Lost connection to MQTT broker, errorcode: " +
+      error.errorCode +
+      ", errorMessage: " +
+      error.errorMessage
+  );
+};
+
+export const disconnectBroker = () => {
+  if (client.isConnected()) {
+    client.disconnect();
+    console.log("Disconnecting MQTT");
+  }
 };
 
 const onSubscriptionSuccess = () => {
@@ -56,46 +107,6 @@ const onSubscriptionSuccess = () => {
 
 const onSubscriptionFail = () => {
   console.log("Subscription failed!");
-};
-
-export const initMQTTConnection = () => {
-  connectBroker();
-};
-
-const client = new PahoMQTT.Client(
-  getBrokerDetails().IP,
-  Number.parseInt(getBrokerDetails().port),
-  getBrokerDetails().clientID
-);
-
-client.onConnectionLost = (error: PahoMQTT.MQTTError) => {
-  console.log("Broker connection lost!");
-  brokerDetails.connectionStatus = ConnectionStatus.DISCONNECTED;
-};
-
-export const connectBroker = () => {
-  if (!client.isConnected()) {
-    console.log("Broker is DISCONNECTED, trying to connect");
-    client.connect({
-      onSuccess: onConnection,
-      onFailure: onConnectionFail,
-      useSSL: false,
-      userName: getBrokerDetails().username,
-      password: getBrokerDetails().password,
-      keepAliveInterval: 120,
-      timeout: 15,
-      reconnect: true,
-    });
-  }
-};
-
-export const disconnectBroker = () => {
-  client.disconnect();
-  brokerDetails.connectionStatus = ConnectionStatus.DISCONNECTED;
-};
-
-export const publish = (topic: string, payload: string, retained?: boolean) => {
-  client.send(topic, payload, 0, retained);
 };
 
 export const subscribe = (
@@ -120,12 +131,12 @@ export const unsubscribe = (
   });
 };
 
+export const publish = (topic: string, payload: string, retained?: boolean) => {
+  client.send(topic, payload, 0, retained);
+};
+
 export const fetchBroker = () => {
-  //TODO FIX THIS
-  if (brokerDetails.connectionStatus != ConnectionStatus.CONNECTED) {
-    connectBroker();
-    brokerDetails.connectionStatus = client.isConnected()
-      ? ConnectionStatus.CONNECTED
-      : ConnectionStatus.DISCONNECTED;
-  }
+  console.log("FETCHING BROKER");
+  if (client.isConnected()) disconnectBroker();
+  connectBroker();
 };

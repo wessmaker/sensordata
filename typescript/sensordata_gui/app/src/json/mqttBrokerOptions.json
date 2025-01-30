@@ -1,0 +1,8 @@
+{
+  "IP": "mosquitto.com",
+  "mqttPort": 1883,
+  "wsPort": 8083,
+  "clientID": "testingfrontend",
+  "username": "admin",
+  "password": "public"
+}
