@@ -99,7 +99,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
       style={{
         width: "100%",
         height: "100%",
-        position: "relative",
+        position: "absolute",
         left: 750,
         top: 400,
       }}

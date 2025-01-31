@@ -73,6 +73,7 @@ function LayoutContainer() {
         }}
       />
       <div
+        role="button"
         className="ImageContainerContainer"
         style={{
           width: 1630,
