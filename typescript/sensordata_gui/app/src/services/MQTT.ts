@@ -9,6 +9,10 @@ import { Topic } from "../types/Topic";
 import { ConnectionStatus, getStatusText } from "../utils/Connections.ts";
 import ConnectionOptions from "../types/ConnectionDetails.ts";
 
+let topicList: Topic[] = [];
+
+const getSubscibedTopics = () => {};
+
 interface BrokerOptions extends ConnectionOptions {
   IP: string;
   port: string;

@@ -9,7 +9,7 @@ const client = axios.create({
   baseURL: baseUrl,
 });
 
-const getTopicsFromServer = async (): Promise<Topic[]> => {
+const fetchTopicsFromServer = async (): Promise<Topic[]> => {
   const topicPathList: Topic[] = [];
   try {
     const response = await client.get(baseUrl + topicPath, {
@@ -29,4 +29,8 @@ const getTopicsFromServer = async (): Promise<Topic[]> => {
 const addTopicToServer = (topic: Topic) => {};
 const removeTopicFromServer = (topic: Topic) => {};
 
-export { getTopicsFromServer, addTopicToServer, removeTopicFromServer };
+export {
+  fetchTopicsFromServer as getTopicsFromServer,
+  addTopicToServer,
+  removeTopicFromServer,
+};

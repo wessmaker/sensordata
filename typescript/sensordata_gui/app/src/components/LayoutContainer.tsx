@@ -14,7 +14,15 @@ import {
   HoverOrange,
   FontBlack,
 } from "../utils/Colors.ts";
-import { MarkerList } from "./MarkerList.tsx";
+import { MarkerList } from "./markers/MarkerList.tsx";
+import { Marker } from "./markers/Marker.tsx";
+import { RefreshButton } from "./RefreshButton.tsx";
+
+const leftPanelProps = {
+  //Also controls marker width
+  width: 250,
+  height: 815,
+};
 
 function LayoutContainer() {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -26,8 +34,11 @@ function LayoutContainer() {
   const [closeIconBg, setCloseIconBg] = useState(Orange);
   const [imageIconBg, setImageIconBg] = useState(Orange);
   const [closeButtonVisible, setCloseButtonVisible] = useState(false);
-  const [markerListOpen, setMarkerListOpen] = useState(true);
+  const [markerListOpen, setMarkerListOpen] = useState(false);
 
+  const onRefreshButtonClick = () => {
+    console.log("REFRESHING");
+  };
   const onSettingsIconClick = () => {
     setSettingsOpen(!settingsOpen);
   };
@@ -100,19 +111,19 @@ function LayoutContainer() {
       <div
         className="LeftPanel"
         style={{
-          width: 260,
-          height: 1000,
+          width: leftPanelProps.width,
+          height: leftPanelProps.height,
           left: 0,
-          top: 0,
+          top: 167,
           position: "absolute",
           background: DarkGray,
         }}
       >
         <MarkerList
-          x={15}
-          y={167}
-          w={242}
-          h={840}
+          x={10}
+          y={0}
+          width={leftPanelProps.width}
+          height={leftPanelProps.height}
           isOpen={markerListOpen}
           onCloseButtonClick={closeMarkerList}
         ></MarkerList>
@@ -352,7 +363,15 @@ function LayoutContainer() {
         }}
       >
         {require("../../package.json").version}
-      </div>{" "}
+      </div>
+      <RefreshButton
+        visible={markerListOpen}
+        onButtonClick={onRefreshButtonClick}
+        x={5}
+        y={991}
+        height={30}
+        width={leftPanelProps.width}
+      ></RefreshButton>
       <div
         className="AppNameContainer"
         style={{
