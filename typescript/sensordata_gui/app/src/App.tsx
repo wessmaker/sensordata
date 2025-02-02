@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import LayoutContainer from "./components/LayoutContainer.tsx";
-import { connectBroker } from "./services/MQTT.ts";
-import { getTopicsFromServer } from "./services/RestService.ts";
 import { Marker } from "./components/markers/Marker.tsx";
 import { RefreshButton } from "./components/RefreshButton.tsx";
+import { connectBroker, subscribe } from "./services/MQTT.ts";
 function App() {
-  // console.log(getTopicsFromServer());
-  // connectBroker();
-  // console.log(getTopicsFromServer());
-
+  connectBroker();
+  setTimeout(() => {
+    console.log("NOW IT RUNS THE NEW TOPICS");
+    subscribe({ path: "/test/testings" });
+  }, 2000);
   return (
     <>
       <LayoutContainer></LayoutContainer>

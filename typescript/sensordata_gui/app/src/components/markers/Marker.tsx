@@ -111,6 +111,7 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
           }}
         >
           <img
+            alt="icon"
             className="EditIcon"
             style={{
               width: 25,
@@ -147,6 +148,7 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
           }}
         >
           <img
+            alt="icon"
             className="CloseIcon"
             style={{
               width: 25,

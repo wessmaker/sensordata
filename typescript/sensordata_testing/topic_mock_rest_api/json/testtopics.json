@@ -1,3 +1,29 @@
 {
-	"topics": ["/testing", "/testing/anotherone", "/testing/thirdone"]
+	"topics": [
+		"/server/watchdog",
+		"/devices/lilygo/watchdog",
+		"/devices/lilygo/actuators/leds/yellow",
+		"/devices/lilygo/actuators/leds/red",
+		"/devices/lilygo/actuators/leds/blue",
+		"/devices/lilygo/actuators/leds/blue",
+		"/testing/testing1",
+		"/testing/testing2",
+		"/testing/testing3",
+		"/testing/testing4",
+		"/testing/testing5",
+		"/testing/testing6",
+		"/testing/testing7",
+		"/testing/testing8",
+		"/testing/testing9",
+		"/testing/testing10",
+		"/testing/testing11",
+		"/testing/testing12",
+		"/testing/testing13",
+		"/testing/testing14",
+		"/testing/testing15",
+		"/testing/testing16",
+		"/testing/testing18",
+		"/testing/testing19",
+		"/testing/testing20"
+	]
 }

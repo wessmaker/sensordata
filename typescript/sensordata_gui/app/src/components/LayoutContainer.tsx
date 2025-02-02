@@ -6,6 +6,7 @@ import CloseIcon from "../assets/closeicon.png";
 import SettingsIcon from "../assets/settingsicon.png";
 import ImageIcon from "../assets/imageicon.png";
 import SettingsDialog from "./SettingsDialog.tsx";
+
 import {
   DarkGray,
   LightGray,
@@ -17,11 +18,13 @@ import {
 import { MarkerList } from "./markers/MarkerList.tsx";
 import { Marker } from "./markers/Marker.tsx";
 import { RefreshButton } from "./RefreshButton.tsx";
+import { refreshTopics } from "../services/RestService.ts";
+import { disconnectBroker } from "../services/MQTT.ts";
 
 const leftPanelProps = {
   //Also controls marker width
   width: 250,
-  height: 815,
+  height: 805,
 };
 
 function LayoutContainer() {
@@ -37,7 +40,11 @@ function LayoutContainer() {
   const [markerListOpen, setMarkerListOpen] = useState(false);
 
   const onRefreshButtonClick = () => {
-    console.log("REFRESHING");
+    refreshTopics();
+    setMarkerListOpen(false);
+    setTimeout(() => {
+      setMarkerListOpen(true);
+    }, 1);
   };
   const onSettingsIconClick = () => {
     setSettingsOpen(!settingsOpen);
@@ -48,19 +55,23 @@ function LayoutContainer() {
   };
 
   const onMarkerIconClick = () => {
+    if (!markerListOpen) refreshTopics();
     setMarkerListOpen(!markerListOpen);
   };
   const closeMarkerList = () => {
     setMarkerListOpen(false);
   };
 
-  const onCloudIconClick = () => {};
+  const onCloudIconClick = () => {
+    disconnectBroker();
+  };
 
   const onSelectImageClick = () => {
     setCloseButtonVisible(!closeButtonVisible);
   };
   const closeIconClick = () => {};
   const imageIconClick = () => {};
+
   return (
     <div
       style={{
@@ -155,22 +166,25 @@ function LayoutContainer() {
           onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
           onMouseLeave={() => setMarkerIconBg(LightGray)}
           onClick={onMarkerIconClick}
-        />
-        <img
-          className="MarkerIcon"
-          style={{
-            width: 60,
-            height: 60,
-            left: 180,
-            top: 24,
-            position: "absolute",
-            borderRadius: 10,
-          }}
-          src={MarkerIcon}
-          onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
-          onMouseLeave={() => setMarkerIconBg(LightGray)}
-          onClick={onMarkerIconClick}
-        />
+        >
+          <img
+            className="MarkerIcon"
+            alt="icon"
+            style={{
+              width: 60,
+              height: 60,
+              left: 0,
+              top: 0,
+              position: "absolute",
+              borderRadius: 10,
+            }}
+            src={MarkerIcon}
+            onMouseEnter={() => setMarkerIconBg(HoverLightGray)}
+            onMouseLeave={() => setMarkerIconBg(LightGray)}
+            onClick={onMarkerIconClick}
+          />
+        </div>
+
         <div
           className="CloudIconContainer"
           style={{
@@ -185,22 +199,22 @@ function LayoutContainer() {
           onMouseEnter={() => setCloudIconBg(HoverLightGray)}
           onMouseLeave={() => setCloudIconBg(LightGray)}
           onClick={onCloudIconClick}
-        />
-        <img
-          className="CloudIcon"
-          style={{
-            width: 47,
-            height: 47,
-            left: 107,
-            top: 28,
-            position: "absolute",
-            borderRadius: 10,
-          }}
-          src={CloudIcon}
-          onMouseEnter={() => setCloudIconBg(HoverLightGray)}
-          onMouseLeave={() => setCloudIconBg(LightGray)}
-          onClick={onCloudIconClick}
-        />
+        >
+          <img
+            className="CloudIcon"
+            alt="icon"
+            style={{
+              width: 47,
+              height: 47,
+              left: 4,
+              top: 4,
+              position: "absolute",
+              borderRadius: 10,
+            }}
+            src={CloudIcon}
+          />
+        </div>
+
         <div
           className="SettingsIconContainer"
           style={{
@@ -215,22 +229,24 @@ function LayoutContainer() {
           onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
           onMouseLeave={() => setSettingsIconBg(LightGray)}
           onClick={onSettingsIconClick}
-        />
-        <img
-          className="SettingsIcon"
-          style={{
-            width: 58,
-            height: 58,
-            left: 21,
-            top: 22,
-            position: "absolute",
-            borderRadius: 10,
-          }}
-          src={SettingsIcon}
-          onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
-          onMouseLeave={() => setSettingsIconBg(LightGray)}
-          onClick={onSettingsIconClick}
-        />
+        >
+          <img
+            className="SettingsIcon"
+            alt="icon"
+            style={{
+              width: 58,
+              height: 58,
+              left: -1,
+              top: -1,
+              position: "absolute",
+              borderRadius: 10,
+            }}
+            src={SettingsIcon}
+            onMouseEnter={() => setSettingsIconBg(HoverLightGray)}
+            onMouseLeave={() => setSettingsIconBg(LightGray)}
+            onClick={onSettingsIconClick}
+          />
+        </div>
       </div>
       <div
         hidden={!closeButtonVisible}
@@ -249,6 +265,7 @@ function LayoutContainer() {
         onClick={closeIconClick}
       />
       <img
+        alt="icon"
         hidden={!closeButtonVisible}
         className="CloseIcon"
         style={{
@@ -277,9 +294,10 @@ function LayoutContainer() {
         }}
         onMouseEnter={() => setImageIconBg(HoverOrange)}
         onMouseLeave={() => setImageIconBg(Orange)}
-        onClick={imageIconClick}
+        onClick={imageIconClick()}
       >
         <img
+          alt="icon"
           className="ImageIcon"
           style={{
             width: "90%",
@@ -290,9 +308,6 @@ function LayoutContainer() {
             borderRadius: 20,
           }}
           src={ImageIcon}
-          onMouseEnter={() => setImageIconBg(HoverOrange)}
-          onMouseLeave={() => setImageIconBg(Orange)}
-          onClick={imageIconClick}
         />
       </div>
       <div
@@ -327,9 +342,6 @@ function LayoutContainer() {
             cursor: "default",
             borderRadius: 20,
           }}
-          onClick={onSelectImageClick}
-          onMouseEnter={() => setSelectImageBg(HoverLightGray)}
-          onMouseLeave={() => setSelectImageBg(LightGray)}
         >
           Select image
         </div>
@@ -366,9 +378,11 @@ function LayoutContainer() {
       </div>
       <RefreshButton
         visible={markerListOpen}
-        onButtonClick={onRefreshButtonClick}
-        x={5}
-        y={991}
+        onButtonClick={() => {
+          onRefreshButtonClick();
+        }}
+        x={10}
+        y={986}
         height={30}
         width={leftPanelProps.width}
       ></RefreshButton>

@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import RefreshIcon from "../assets/refreshicon.png";
 import { HoverOrange, Orange } from "../utils/Colors.ts";
 
+import "./Style.css";
+
 const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
   const buttonProps = {
     width: width,
@@ -12,27 +14,18 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
     y: y,
   };
   const [refreshRectangleBg, setRefreshRectangleBg] = useState(Orange);
+  const [refreshIconClassName, setRefreshIconClassName] =
+    useState("RefreshIcon");
 
-  const [refreshIconRotation, setRefreshIconRotation] = useState(0);
-
-  let spinning = false;
-
-  const refreshIconAnimation = () => {
-    if (spinning) return;
-    let newRotation = 0;
-    spinning = true;
-    const rotationInterval = setInterval(() => {
-      newRotation += refreshIconRotation + 3;
-      setRefreshIconRotation(newRotation);
-      if (refreshIconRotation == 180) setRefreshIconRotation(0);
-      console.log(refreshIconRotation);
-    }, 1);
-
-    setTimeout(() => {
-      clearInterval(rotationInterval);
-      setRefreshIconRotation(0);
-      spinning = false;
-    }, 370 * 5);
+  const handleClick = () => {
+    console.log(refreshIconClassName);
+    if (refreshIconClassName !== "RefreshIconAnimated") {
+      setRefreshIconClassName("RefreshIconAnimated");
+      setTimeout(() => {
+        setRefreshIconClassName("RefreshIcon");
+      }, 1500);
+      onButtonClick();
+    }
   };
 
   if (!visible) return null;
@@ -43,6 +36,10 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
         width: buttonProps.width,
         height: buttonProps.height,
         position: "relative",
+      }}
+      onClick={() => {
+        if (onButtonClick) handleClick();
+        else console.log("Refresh button doesn't have click handler");
       }}
     >
       <div
@@ -58,10 +55,6 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
         }}
         onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
         onMouseLeave={() => setRefreshRectangleBg(Orange)}
-        onClick={() => {
-          refreshIconAnimation();
-          if (onButtonClick) onButtonClick();
-        }}
       >
         <div
           className="RefreshText"
@@ -81,14 +74,12 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
           }}
           onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
           onMouseLeave={() => setRefreshRectangleBg(Orange)}
-          onClick={() => {
-            refreshIconAnimation();
-            if (onButtonClick) onButtonClick();
-          }}
         >
           REFRESH
         </div>
         <img
+          alt="icon"
+          className={refreshIconClassName}
           style={{
             width: buttonProps.height,
             height: buttonProps.height,
@@ -96,15 +87,10 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
             top: 0,
             position: "absolute",
             borderRadius: 10,
-            rotate: "0 0 1 " + refreshIconRotation + "deg",
           }}
           src={RefreshIcon}
           onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
           onMouseLeave={() => setRefreshRectangleBg(Orange)}
-          onClick={() => {
-            refreshIconAnimation();
-            if (onButtonClick) onButtonClick();
-          }}
         />
       </div>
     </div>
@@ -112,53 +98,3 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
 };
 
 export { RefreshButton };
-
-// import React, { useState } from "react";
-// import RefreshIcon from "../assets/refreshicon.png";
-
-// const RefreshButton = () => {
-//   const [rotation, setRotation] = useState(0);
-//   const [spinning, setSpinning] = useState(false);
-
-//   const handleClick = () => {
-//     if (!spinning) {
-//       setSpinning(true);
-//       let newRotation = rotation;
-
-//       const rotateInterval = setInterval(() => {
-//         newRotation += 5; // Adjust this to control the speed of rotation
-//         setRotation(newRotation);
-
-//         if (newRotation >= 270) {
-//           newRotation = 0; // Reset rotation to keep it going smoothly
-//         }
-//       }, 30); // Adjust this interval for smoother animation
-
-//       // Stop the spinning after 3 seconds
-//       setTimeout(() => {
-//         clearInterval(rotateInterval);
-//         setSpinning(false);
-//       }, 10000); // Spin for 3 seconds (can be adjusted)
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <button onClick={handleClick} disabled={spinning}>
-//         Rotate Image
-//       </button>
-//       <img
-//         src={RefreshIcon}
-//         alt="Spinning"
-//         style={{
-//           width: "150px",
-//           height: "150px",
-//           transform: `rotate(${rotation}deg)`,
-//           transition: "transform 0.1s ease-out",
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export { RefreshButton };

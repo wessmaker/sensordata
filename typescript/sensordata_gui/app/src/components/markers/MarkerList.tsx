@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { DarkGray, FontBlack, LightGray, Orange } from "../../utils/Colors.ts";
 import { Marker } from "./Marker.tsx";
 import ReactDOM, { render } from "react-dom";
+import { getTopicList } from "../../services/MQTT.ts";
 
 const MarkerList = ({ isOpen, onCloseButtonClick, x, y, width, height }) => {
   const dimmingProps = {
@@ -12,10 +13,23 @@ const MarkerList = ({ isOpen, onCloseButtonClick, x, y, width, height }) => {
     opacity: 0.5,
   };
 
+  const markerTextProps = {
+    maxCharCount: 19,
+  };
+
+  const getCroppedTopicPath = (path: string) => {
+    let croppedPath: string = path;
+    if (path.length > markerTextProps.maxCharCount - 2) {
+      croppedPath = path.slice(0, markerTextProps.maxCharCount);
+      croppedPath += "...";
+    }
+    return croppedPath;
+  };
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [topScrollDimming, setTopScrollDimming] = useState(false);
   const [bottomScrollDimming, setBottomScrollDimming] = useState(true);
-
+  const [markerTopicList, setMarkerTopicList] = useState(getTopicList());
   const container = scrollContainerRef.current;
   let atTop: boolean = false;
   let atBottom: boolean = false;
@@ -31,7 +45,7 @@ const MarkerList = ({ isOpen, onCloseButtonClick, x, y, width, height }) => {
     setTopScrollDimming(!atTop);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (container !== null) {
       container.addEventListener("scroll", handleScrolling);
     }
@@ -40,8 +54,16 @@ const MarkerList = ({ isOpen, onCloseButtonClick, x, y, width, height }) => {
   useEffect(() => {
     //Restore to default when opening
     setTopScrollDimming(false);
-    setBottomScrollDimming(true);
+    if (markerTopicList.length > 9) setBottomScrollDimming(true);
   }, [isOpen]);
+  setInterval(() => {
+    setMarkerTopicList(getTopicList());
+    console.log("INTERVALTOPICS");
+  }, 1000);
+  useEffect(() => {
+    console.log("TOPIC LIST CHANGED");
+    setMarkerTopicList(getTopicList());
+  }, getTopicList());
 
   if (!isOpen) return null;
 
@@ -62,19 +84,21 @@ const MarkerList = ({ isOpen, onCloseButtonClick, x, y, width, height }) => {
           scrollbarWidth: "none",
         }}
       >
-        {[...Array(50)].map(() => (
+        {getTopicList().map((topic) => (
           <>
             <div
               style={{
                 display: "block",
                 height: 90,
                 textAlign: "left",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               <Marker
                 w={width}
                 visible={true}
-                name={"dsadasdasd"}
+                name={getCroppedTopicPath(topic.path)}
                 value={"dsadasds"}
                 handleMarkerCloseFunction={() => {
                   console.log("Closed marker in list!");

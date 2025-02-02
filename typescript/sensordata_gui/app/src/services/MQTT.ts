@@ -8,10 +8,13 @@ import mqttBrokerOptions from "../json/mqttBrokerOptions.json";
 import { Topic } from "../types/Topic";
 import { ConnectionStatus, getStatusText } from "../utils/Connections.ts";
 import ConnectionOptions from "../types/ConnectionDetails.ts";
+import { refreshTopics } from "./RestService.ts";
 
-let topicList: Topic[] = [];
+let topicList: Topic[] = []; //Every topic in the list are subscribed
 
-const getSubscibedTopics = () => {};
+export const getTopicList = (): Topic[] => {
+  return topicList;
+};
 
 interface BrokerOptions extends ConnectionOptions {
   IP: string;
@@ -55,6 +58,7 @@ let client = new PahoMQTT.Client(
 
 const onConnection = () => {
   console.log("MQTT CLIENT CONNECTED TO " + client.host + ", " + client.port);
+  refreshTopics();
 };
 
 const onConnectionFail = () => {
@@ -66,7 +70,7 @@ const connectionCredentials: PahoMQTT.ConnectionOptions = {
   onFailure: onConnectionFail,
   userName: getBrokerDetails().username,
   password: getBrokerDetails().password,
-  reconnect: true,
+  reconnect: false, //This will create spam if TRUE
   timeout: 10,
 };
 
@@ -84,8 +88,6 @@ export const connectBroker = () => {
     client.connect(connectionCredentials);
   } catch (error) {
     console.log("Error happened when connecting to MQTT broker: " + error);
-  } finally {
-    console.log("CONNECTING TO BROKER ENDING");
   }
 };
 
@@ -113,15 +115,18 @@ const onSubscriptionFail = () => {
   console.log("Subscription failed!");
 };
 
-export const subscribe = (
-  topic: Topic,
-  onSubscriptionSuccess?: OnSubscribeSuccessCallback,
-  onSubscriptionFail?: OnFailureCallback
-) => {
-  client.subscribe(topic.path, {
-    onSuccess: onSubscriptionSuccess,
-    onFailure: onSubscriptionFail,
-  });
+export const subscribe = (topic: Topic) => {
+  if (client.isConnected()) {
+    try {
+      client.subscribe(topic.path, {
+        onSuccess: onSubscriptionSuccess,
+        onFailure: onSubscriptionFail,
+      });
+      topicList.push(topic);
+    } catch (error) {
+      console.log("Error happened when subscribing to topics: " + error);
+    }
+  }
 };
 
 export const unsubscribe = (
@@ -129,10 +134,18 @@ export const unsubscribe = (
   onSubscriptionSuccess?: OnSuccessCallback,
   onSubscriptionFail?: OnFailureCallback
 ) => {
-  client.unsubscribe(topic.path, {
-    onSuccess: onSubscriptionSuccess,
-    onFailure: onSubscriptionFail,
-  });
+  try {
+    client.unsubscribe(topic.path, {
+      onSuccess: onSubscriptionSuccess,
+      onFailure: onSubscriptionFail,
+    });
+    topicList.forEach((loopedTopic) => {
+      if (loopedTopic.path === topic.path)
+        topicList.splice(topicList.indexOf(loopedTopic), 1);
+    });
+  } catch (error) {
+    console.log("Error happened when subscribing to topics: " + error);
+  }
 };
 
 export const publish = (topic: string, payload: string, retained?: boolean) => {

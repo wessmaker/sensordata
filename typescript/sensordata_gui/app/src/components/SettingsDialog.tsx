@@ -161,6 +161,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
         }}
       />
       <img
+        alt="icon"
         className="CloseIcon"
         style={{
           width: 56,

@@ -5,12 +5,12 @@ const client = axios.create({
 });
 
 const getTopicsFromServer = async () => {
-	const response = await client.get("http://localhost:3002/", {
+	const response = await client.get("http://localhost:3002/topics", {
 		headers: {
 			Accept: "application/json",
 		},
 	});
 
-	console.log(response.data.topics[2]);
+	console.log(response.data.topics);
 };
 getTopicsFromServer();
