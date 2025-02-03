@@ -3,12 +3,13 @@ import LayoutContainer from "./components/LayoutContainer.tsx";
 import { Marker } from "./components/markers/Marker.tsx";
 import { RefreshButton } from "./components/RefreshButton.tsx";
 import { connectBroker, subscribe } from "./services/MQTT.ts";
+import { FileImportTest } from "./components/FileImportTest.tsx";
 function App() {
-  connectBroker();
-  setTimeout(() => {
-    console.log("NOW IT RUNS THE NEW TOPICS");
-    subscribe({ path: "/test/testings" });
-  }, 2000);
+  // connectBroker();
+  // setTimeout(() => {
+  //   console.log("NOW IT RUNS THE NEW TOPICS");
+  //   subscribe({ path: "/test/testings" });
+  // }, 2000);
   return (
     <>
       <LayoutContainer></LayoutContainer>
