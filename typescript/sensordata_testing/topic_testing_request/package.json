@@ -1,0 +1,16 @@
+{
+	"name": "topic_testing_request",
+	"version": "1.0.0",
+	"description": "Testing requesting the mock api",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js"
+	},
+	"author": "wessmaker",
+	"license": "ISC",
+	"dependencies": {
+		"@types/axios": "^0.9.36",
+		"axios": "^1.7.9"
+	}
+}

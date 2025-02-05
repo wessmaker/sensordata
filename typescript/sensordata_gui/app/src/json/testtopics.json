@@ -1,0 +1,10 @@
+{
+  "topics": [
+    "/server/watchdog",
+    "/devices/lilygo/watchdog",
+    "/devices/lilygo/actuators/leds/yellow",
+    "/devices/lilygo/actuators/leds/red",
+    "/devices/lilygo/actuators/leds/blue",
+    "/devices/lilygo/actuators/leds/white"
+  ]
+}

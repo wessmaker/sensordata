@@ -1,0 +1,5 @@
+{
+  "baseUrl": "localhost:8082/testing",
+  "topics": "/topics",
+  "timestamp": "/timestamp"
+}

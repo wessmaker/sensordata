@@ -1,0 +1,8 @@
+{
+  "IP": "127.0.0.1",
+  "mqttPort": 1883,
+  "wsPort": 8083,
+  "clientID": "testingfrontend",
+  "username": "admin",
+  "password": "public"
+}
