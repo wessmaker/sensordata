@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CloseIcon from "../assets/closeicon.png";
+import closeIcon from "../assets/closeicon.png";
 import { getImageSize, useImageSize } from "react-image-size";
 import {
   FontBlack,
@@ -11,99 +11,102 @@ import {
 
 const ImageContainer = () => {
   const onSelectImageClick = () => {};
-
   const [selectImageBg, setSelectImageBg] = useState(LightGray);
-  const [selectImageVisible, setSelectImageVisible] = useState(true);
-  const [closeButtonVisible, setCloseButtonVisible] = useState(false);
-
-  const [image, setImage] = useState();
-  const onCloseButtonClick = () => {
-    setImage(undefined);
-    setCloseButtonBg(Orange);
+  const [imageSrc, setImageSrc] = useState("");
+  const [image, setImage] = useState(new Image());
+  const onCloseButtonMouseEnter = () => {
+    setCloseButtonProps({
+      width: 80,
+      height: 80,
+      top: 0,
+      right: 0,
+      borderRadius: "0px 20px 0px 20px",
+      background: HoverOrange,
+      showIcon: true,
+    });
   };
-  const [closeButtonBg, setCloseButtonBg] = useState(Orange);
+  const onCloseButtonMouseLeave = () => {
+    setCloseButtonProps(initialCloseButtonProps);
+  };
 
-  let imageProps = {
+  const initialCloseButtonProps = {
+    width: 40,
+    height: 40,
+    top: 0,
+    right: 0,
+    borderRadius: "0px 20px 0px 20px",
+    background: Orange,
+    showIcon: false,
+  };
+
+  const [closeButtonProps, setCloseButtonProps] = useState(
+    initialCloseButtonProps
+  );
+
+  const imageContainerProps = {
+    width: 1600,
+    height: 1000,
+    x: 15,
+    y: 15,
+    position: "absolute",
+    borderRadius: 20,
+  };
+  const initialImageProps = {
     width: 50,
     height: 50,
     top: 50,
     left: 50,
-  };
-
-  const handleImageChange = (e) => {
-    console.log(e.target.files[0]);
-    const newImage = URL.createObjectURL(e.target.files[0]);
-    setImage(newImage);
-  };
-
-  const onImageLoad = (e) => {
-    console.log(e);
-
-    // let scaledHeight = 0;
-    // let scaledWidth = 0;
-    // if (img.height > img.width) {
-    //   scaledHeight = imageContainerProps.height;
-    //   scaledWidth = (img.height * img.width) / scaledHeight;
-    // } else if (img.height <= img.width) {
-    //   scaledWidth = imageContainerProps.width;
-    //   scaledHeight = (img.height * img.width) / scaledWidth;
-    // }
-    // imageProps = {
-    //   width: scaledWidth,
-    //   height: scaledHeight,
-    //   top: imageContainerProps.height / 2 - scaledHeight / 2,
-    //   left: imageContainerProps.width / 2 - scaledWidth / 2,
-    // };
-    // console.log(imageProps);
-    // setImage(newImage); //Error squiqles don't matter
-  };
-
-  const imageContainerProps = {
-    width: 1500,
-    height: 1000,
-    x: 12,
-    y: 23,
-    position: "absolute",
     borderRadius: 20,
   };
+  const [imageProps, setImageProps] = useState(initialImageProps);
+  const onCloseButtonClick = () => {
+    setImageSrc("");
+    setCloseButtonProps(initialCloseButtonProps);
+  };
 
-  if (image) {
+  const onImageInput = (e) => {
+    const src = URL.createObjectURL(e.target.files[0]);
+    setImageSrc(src);
+    let img = new Image();
+    img.src = src;
+    setImage(img);
+  };
+
+  const onImageLoad = () => {
+    if (image) {
+      image.src = imageSrc;
+      let scaledHeight = 0;
+      let scaledWidth = 0;
+      if (image.height > image.width) {
+        scaledHeight = imageContainerProps.height;
+        scaledWidth = (scaledHeight * image.width) / image.height;
+      } else if (image.height < image.width) {
+        scaledWidth = imageContainerProps.width;
+        scaledHeight = (scaledWidth * image.height) / image.width;
+      } else {
+        scaledHeight = imageContainerProps.height;
+        scaledWidth = imageContainerProps.width;
+      }
+      let newProps = {
+        width: scaledWidth,
+        height: scaledHeight,
+        top:
+          Math.floor(imageContainerProps.height / 2 - scaledHeight / 2) +
+          imageContainerProps.y,
+        left:
+          Math.floor(imageContainerProps.width / 2 - scaledWidth / 2) +
+          imageContainerProps.x,
+        borderRadius: 20,
+      };
+      setImageProps(newProps);
+    }
+  };
+
+  if (imageSrc) {
     return (
       <>
-        <div
-          className="CloseButton"
-          style={{
-            width: 96,
-            height: 96,
-            right: imageContainerProps.y / 2,
-            top: imageContainerProps.y,
-            position: "absolute",
-            background: closeButtonBg,
-            borderRadius: 20,
-          }}
-          onMouseEnter={() => setCloseButtonBg(HoverOrange)}
-          onMouseLeave={() => setCloseButtonBg(Orange)}
-          onClick={onCloseButtonClick}
-        >
-          <img
-            alt="icon"
-            className="CloseButtonIcon"
-            style={{
-              width: 96,
-              height: 96,
-              left: 0,
-              top: 0,
-              position: "absolute",
-              borderRadius: 20,
-            }}
-            src={CloseIcon}
-            onMouseEnter={() => setCloseButtonBg(HoverOrange)}
-            onMouseLeave={() => setCloseButtonBg(Orange)}
-            onClick={onCloseButtonClick}
-          />
-        </div>
         <img
-          src={image}
+          src={imageSrc}
           alt="img"
           style={{
             width: imageProps.width,
@@ -112,13 +115,40 @@ const ImageContainer = () => {
             top: imageProps.top,
             justifyContent: "center",
             position: "absolute",
-            borderRadius: 200,
-            objectFit: "contain",
-
-            // background: "red",
+            borderRadius: imageProps.borderRadius,
           }}
           onLoad={onImageLoad}
         />
+        <div
+          className="CloseButton"
+          style={{
+            width: closeButtonProps.width,
+            height: closeButtonProps.height,
+            right: closeButtonProps.right,
+            top: closeButtonProps.top,
+            position: "absolute",
+            background: closeButtonProps.background,
+            borderRadius: closeButtonProps.borderRadius,
+          }}
+          onMouseEnter={onCloseButtonMouseEnter}
+          onMouseLeave={onCloseButtonMouseLeave}
+          onClick={onCloseButtonClick}
+        >
+          <img
+            alt="icon"
+            className="CloseButtonIcon"
+            hidden={!closeButtonProps.showIcon}
+            style={{
+              width: "100%",
+              height: "100%",
+              left: 0,
+              top: 0,
+              position: "absolute",
+              borderRadius: 20,
+            }}
+            src={closeIcon}
+          />
+        </div>
       </>
     );
   }
@@ -138,7 +168,6 @@ const ImageContainer = () => {
       >
         <div
           className="SelectButtonContainer"
-          hidden={!selectImageVisible}
           style={{
             width: 297,
             height: 135,
@@ -184,7 +213,7 @@ const ImageContainer = () => {
               borderRadius: 20,
               opacity: 0, //Hack that makes input hidden but clickable
             }}
-            onChange={(e) => handleImageChange(e)}
+            onChange={onImageInput}
           ></input>
         </div>
       </div>

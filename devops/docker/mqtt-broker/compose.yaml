@@ -1,0 +1,9 @@
+services:
+  emqx:
+    image: emqx:latest
+    container_name: emqx
+    ports:
+      - "18083:18083"
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"

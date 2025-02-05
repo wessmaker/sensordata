@@ -7,38 +7,43 @@ import { ConnectionStatus } from "../utils/Connections.ts";
 
 const baseUrl: string = endpoints.baseUrl; //TODO Make this dynamic
 const topicPath: string = endpoints.topics;
-const testingTopics = testTopicPAths.topics; //FOR TESTING PURPOSES
 
 const client = axios.create({
   baseURL: "localhost",
 });
 
 const refreshTopics = async () => {
-  if (getBrokerConnectionStatus() === ConnectionStatus.DISCONNECTED) return;
+  if (getBrokerConnectionStatus() === ConnectionStatus.DISCONNECTED) {
+    console.log(
+      "ERROR: Not refreshing topics due to broker being disconnected!"
+    );
+    return;
+  }
   let newTopics: Topic[] = [];
   try {
-    const response = await client.get("http://localhost:3002/topics", {
+    const response = await client.get(baseUrl + topicPath, {
       headers: {
         Accept: "application/json",
       },
     });
+
     Array(...response.data.topics).map((newPath) => {
-      let exists: boolean = false;
+      let topicExsists: boolean = false;
+      //Check if topic already exists
       for (var i = 0; i < getTopicList().length; i++) {
-        if (newPath == getTopicList()[i].path) exists = true;
+        if (newPath == getTopicList()[i].path) topicExsists = true;
       }
-      if (!exists) {
+      //Add topic to list
+      if (!topicExsists) {
         let topic: Topic = {
           path: newPath,
         };
         newTopics.push(topic);
       }
-      exists = false;
+      topicExsists = false;
     });
-    console.log(getTopicList());
-  } catch (error) {
-    console.log("Error happened when fetching topics from server: " + error);
-  }
+  } catch (error) {}
+  //Subscribe all new topics and add to public list (inside subscibe())
   for (var topic of newTopics) {
     subscribe(topic);
   }

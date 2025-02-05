@@ -27,7 +27,7 @@ const MarkerEditWindow = ({ open }) => {
         }}
       />
       <div
-        className="EditWindowRectangle"
+        className="EditWindowContainer"
         style={{
           width: 538,
           height: 261,

@@ -13,7 +13,7 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
     x: x,
     y: y,
   };
-  const [refreshRectangleBg, setRefreshRectangleBg] = useState(Orange);
+  const [refreshContainerBg, setRefreshContainerBg] = useState(Orange);
   const [refreshIconClassName, setRefreshIconClassName] =
     useState("RefreshIcon");
 
@@ -39,22 +39,21 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
       }}
       onClick={() => {
         if (onButtonClick) handleClick();
-        else console.log("Refresh button doesn't have click handler");
       }}
     >
       <div
-        className="RefreshRectangle"
+        className="RefreshContainer"
         style={{
           width: buttonProps.width,
           height: buttonProps.height,
           left: buttonProps.x,
           top: buttonProps.y,
           position: "absolute",
-          background: refreshRectangleBg,
+          background: refreshContainerBg,
           borderRadius: 20,
         }}
-        onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
-        onMouseLeave={() => setRefreshRectangleBg(Orange)}
+        onMouseEnter={() => setRefreshContainerBg(HoverOrange)}
+        onMouseLeave={() => setRefreshContainerBg(Orange)}
       >
         <div
           className="RefreshText"
@@ -72,8 +71,8 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
             verticalAlign: "middle",
             cursor: "default",
           }}
-          onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
-          onMouseLeave={() => setRefreshRectangleBg(Orange)}
+          onMouseEnter={() => setRefreshContainerBg(HoverOrange)}
+          onMouseLeave={() => setRefreshContainerBg(Orange)}
         >
           REFRESH
         </div>
@@ -89,8 +88,8 @@ const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
             borderRadius: 10,
           }}
           src={RefreshIcon}
-          onMouseEnter={() => setRefreshRectangleBg(HoverOrange)}
-          onMouseLeave={() => setRefreshRectangleBg(Orange)}
+          onMouseEnter={() => setRefreshContainerBg(HoverOrange)}
+          onMouseLeave={() => setRefreshContainerBg(Orange)}
         />
       </div>
     </div>

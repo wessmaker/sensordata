@@ -57,13 +57,10 @@ let client = new PahoMQTT.Client(
 );
 
 const onConnection = () => {
-  console.log("MQTT CLIENT CONNECTED TO " + client.host + ", " + client.port);
   refreshTopics();
 };
 
-const onConnectionFail = () => {
-  console.log("MQTT CONNECTION FAILED TO: " + client.host + ", " + client.port);
-};
+const onConnectionFail = () => {};
 
 const connectionCredentials: PahoMQTT.ConnectionOptions = {
   onSuccess: onConnection,
@@ -86,9 +83,7 @@ export const connectBroker = () => {
     );
 
     client.connect(connectionCredentials);
-  } catch (error) {
-    console.log("Error happened when connecting to MQTT broker: " + error);
-  }
+  } catch (error) {}
 };
 
 client.onConnectionLost = (error: PahoMQTT.MQTTError) => {
@@ -103,17 +98,12 @@ client.onConnectionLost = (error: PahoMQTT.MQTTError) => {
 export const disconnectBroker = () => {
   if (client.isConnected()) {
     client.disconnect();
-    console.log("Disconnecting MQTT");
   }
 };
 
-const onSubscriptionSuccess = () => {
-  console.log("Subscription success!");
-};
+const onSubscriptionSuccess = () => {};
 
-const onSubscriptionFail = () => {
-  console.log("Subscription failed!");
-};
+const onSubscriptionFail = () => {};
 
 export const subscribe = (topic: Topic) => {
   if (client.isConnected()) {
@@ -123,9 +113,7 @@ export const subscribe = (topic: Topic) => {
         onFailure: onSubscriptionFail,
       });
       topicList.push(topic);
-    } catch (error) {
-      console.log("Error happened when subscribing to topics: " + error);
-    }
+    } catch (error) {}
   }
 };
 
@@ -143,9 +131,7 @@ export const unsubscribe = (
       if (loopedTopic.path === topic.path)
         topicList.splice(topicList.indexOf(loopedTopic), 1);
     });
-  } catch (error) {
-    console.log("Error happened when subscribing to topics: " + error);
-  }
+  } catch (error) {}
 };
 
 export const publish = (topic: string, payload: string, retained?: boolean) => {
@@ -153,7 +139,6 @@ export const publish = (topic: string, payload: string, retained?: boolean) => {
 };
 
 export const fetchBroker = () => {
-  console.log("FETCHING BROKER");
   if (client.isConnected()) disconnectBroker();
   connectBroker();
 };

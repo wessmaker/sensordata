@@ -302,7 +302,7 @@ function SettingsDialog({ isOpen, onCloseButtonClick }) {
         }}
         onChange={(e) => {
           setBrokerIPInput(e.target.value);
-          console.log("BROKER INPUT CHANGE");
+
           if (getBrokerConnectionStatus() === ConnectionStatus.CONNECTED) {
             disconnectBroker();
             setBrokerStatusColor(getStatusColor(getBrokerConnectionStatus()));

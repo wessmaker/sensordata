@@ -18,7 +18,7 @@ import { MarkerList } from "./markers/MarkerList.tsx";
 import { Marker } from "./markers/Marker.tsx";
 import { RefreshButton } from "./RefreshButton.tsx";
 import { refreshTopics } from "../services/RestService.ts";
-import { disconnectBroker } from "../services/MQTT.ts";
+import { disconnectBroker, getTopicList } from "../services/MQTT.ts";
 import { ImageContainer } from "./ImageContainer.tsx";
 
 const leftPanelProps = {
@@ -35,13 +35,14 @@ function LayoutContainer() {
   const [markerIconBg, setMarkerIconBg] = useState(LightGray);
   const [imageIconBg, setImageIconBg] = useState(Orange);
   const [markerListOpen, setMarkerListOpen] = useState(false);
+  const [refreshButtonVisible, setRefreshButtonVisible] = useState(false);
 
   const onRefreshButtonClick = () => {
-    refreshTopics();
     setMarkerListOpen(false);
+    refreshTopics();
     setTimeout(() => {
       setMarkerListOpen(true);
-    }, 1);
+    }, 1500);
   };
   const onSettingsIconClick = () => {
     setSettingsOpen(!settingsOpen);
@@ -52,11 +53,10 @@ function LayoutContainer() {
   };
 
   const onMarkerIconClick = () => {
-    if (!markerListOpen) refreshTopics();
-    setMarkerListOpen(!markerListOpen);
-  };
-  const closeMarkerList = () => {
-    setMarkerListOpen(false);
+    refreshTopics();
+    let isOpen: boolean = !markerListOpen;
+    setMarkerListOpen(isOpen);
+    setRefreshButtonVisible(isOpen);
   };
 
   const onCloudButtonClick = () => {
@@ -92,7 +92,7 @@ function LayoutContainer() {
         className="ImageContainerContainer"
         style={{
           width: 1630,
-          height: 1050,
+          height: 1030,
           left: 275,
           top: 15,
           position: "absolute",
@@ -119,7 +119,6 @@ function LayoutContainer() {
           width={leftPanelProps.width}
           height={leftPanelProps.height}
           isOpen={markerListOpen}
-          onCloseButtonClick={closeMarkerList}
         ></MarkerList>
       </div>
       <div
@@ -295,7 +294,7 @@ function LayoutContainer() {
         {require("../../package.json").version}
       </div>
       <RefreshButton
-        visible={markerListOpen}
+        visible={refreshButtonVisible}
         onButtonClick={() => {
           onRefreshButtonClick();
         }}

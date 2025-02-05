@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import closeIcon from "../../assets/markercloseicon.png";
+import placeMarkerIcon from "../../assets/placemarkericon.png";
 import editIcon from "../../assets/markerediticon.png";
 import { MarkerEditWindow } from "./MarkerEditWindow.tsx";
 import {
@@ -10,9 +10,10 @@ import {
   Orange,
 } from "../../utils/Colors.ts";
 
-const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
-  const [editRectangleBg, setEditRectangleBg] = useState(LightGray);
-  const [closeRectangleBg, setCloseRectangleBg] = useState(LightGray);
+const Marker = ({ w, visible, value, name, handlePlaceMarker }) => {
+  const [editContainerBg, setEditContainerBg] = useState(LightGray);
+  const [placeMarkerContainerBg, setPlaceMarkerContainerBg] =
+    useState(LightGray);
   const [nameText, setNameText] = useState("");
   const [valueText, setValueText] = useState("");
   const [markerEditWindowOpen, setMarkerEditWindowOpen] = useState(false);
@@ -26,14 +27,13 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
 
   const openMarkerEditWindow = () => {
     setMarkerEditWindowOpen(!markerEditWindowOpen);
-    console.log("OPEN MARKER SETTINGS");
   };
 
   if (!visible) return null;
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
       <div
-        className="MarkerContentRectangle"
+        className="MarkerContentContainer"
         style={{
           width: w,
           height: 76,
@@ -45,7 +45,7 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
         }}
       >
         <div
-          className="MarkerTextRectangle"
+          className="MarkerTextContainer"
           style={{
             width: 201,
             height: 64,
@@ -56,56 +56,53 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
             borderRadius: 10,
           }}
         />
-        <div
-          style={{
-            width: 202,
-            height: 32,
-            left: 6,
-            top: 39,
-            position: "absolute",
-            textAlign: "center",
-            color: FontBlack,
-            fontSize: 20,
-            fontFamily: "Arial",
-            fontWeight: "500",
-            wordWrap: "break-word",
-            cursor: "default",
-          }}
-        >
-          {valueText}
-        </div>
+
         <div
           className="NameText"
           style={{
             width: 202,
             height: 33,
             left: 6,
-            top: 6,
+            top: 8,
             position: "absolute",
             textAlign: "center",
             color: FontBlack,
             fontSize: 20,
             fontFamily: "Arial",
-            fontWeight: "500",
-            wordWrap: "break-word",
             cursor: "default",
           }}
         >
           {nameText}
         </div>
         <div
-          className="EditRectangle"
+          style={{
+            width: 202,
+            height: 32,
+            left: 6,
+            top: 37,
+            position: "absolute",
+            textAlign: "center",
+            color: FontBlack,
+            fontSize: 20,
+            fontFamily: "Arial",
+            cursor: "default",
+          }}
+        >
+          {valueText}
+        </div>
+        <div
+          className="EditContainer"
           style={{
             width: 29,
             height: 29,
             left: 214,
             top: 6,
             position: "absolute",
-            background: editRectangleBg,
+            background: editContainerBg,
             borderRadius: 10,
           }}
-          onMouseEnter={() => setEditRectangleBg(HoverLightGray)}
-          onMouseLeave={() => setEditRectangleBg(LightGray)}
+          onMouseEnter={() => setEditContainerBg(HoverLightGray)}
+          onMouseLeave={() => setEditContainerBg(LightGray)}
           onClick={() => {
             openMarkerEditWindow();
           }}
@@ -122,8 +119,8 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
               borderRadius: 10,
             }}
             src={editIcon}
-            onMouseEnter={() => setEditRectangleBg(HoverLightGray)}
-            onMouseLeave={() => setEditRectangleBg(LightGray)}
+            onMouseEnter={() => setEditContainerBg(HoverLightGray)}
+            onMouseLeave={() => setEditContainerBg(LightGray)}
             onClick={() => {
               openMarkerEditWindow();
             }}
@@ -131,25 +128,25 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
         </div>
 
         <div
-          className="CloseRectangle"
+          className="PlaceMarkerContainer"
           style={{
             width: 29,
             height: 29,
             left: 214,
             top: 41,
             position: "absolute",
-            background: closeRectangleBg,
+            background: placeMarkerContainerBg,
             borderRadius: 10,
           }}
-          onMouseEnter={() => setCloseRectangleBg(HoverLightGray)}
-          onMouseLeave={() => setCloseRectangleBg(LightGray)}
+          onMouseEnter={() => setPlaceMarkerContainerBg(HoverLightGray)}
+          onMouseLeave={() => setPlaceMarkerContainerBg(LightGray)}
           onClick={() => {
-            handleMarkerCloseFunction();
+            handlePlaceMarker();
           }}
         >
           <img
             alt="icon"
-            className="CloseIcon"
+            className="PlaceMarkerIcon"
             style={{
               width: 25,
               height: 25,
@@ -158,11 +155,11 @@ const Marker = ({ w, visible, value, name, handleMarkerCloseFunction }) => {
               position: "absolute",
               borderRadius: 10,
             }}
-            src={closeIcon}
-            onMouseEnter={() => setCloseRectangleBg(HoverLightGray)}
-            onMouseLeave={() => setCloseRectangleBg(LightGray)}
+            src={placeMarkerIcon}
+            onMouseEnter={() => setPlaceMarkerContainerBg(HoverLightGray)}
+            onMouseLeave={() => setPlaceMarkerContainerBg(LightGray)}
             onClick={() => {
-              handleMarkerCloseFunction();
+              handlePlaceMarker();
             }}
           />
         </div>
