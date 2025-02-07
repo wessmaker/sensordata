@@ -5,10 +5,12 @@ import { RefreshButton } from "./components/RefreshButton.tsx";
 import { connectBroker, subscribe } from "./services/MQTT.ts";
 import { FileImportTest } from "./components/FileImportTest.tsx";
 import { getAdapter } from "axios";
+import { MarkerSettings } from "./components/markers/MarkerSettings.tsx";
 function App() {
   return (
     <>
-      <LayoutContainer></LayoutContainer>
+      <LayoutContainer></LayoutContainer> */
+      {/* <MarkerSettings></MarkerSettings> */}
     </>
   );
 }

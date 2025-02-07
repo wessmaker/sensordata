@@ -9,6 +9,7 @@ import {
   LightGray,
   Orange,
 } from "../../utils/Colors.ts";
+import { getTopicDetailWithPath } from "../../services/MQTT.ts";
 
 const Marker = ({ w, visible, value, name, handlePlaceMarker }) => {
   const [editContainerBg, setEditContainerBg] = useState(LightGray);
@@ -16,6 +17,9 @@ const Marker = ({ w, visible, value, name, handlePlaceMarker }) => {
     useState(LightGray);
   const [nameText, setNameText] = useState("");
   const [valueText, setValueText] = useState("");
+  // const topicDetails: TopicDetails | null =
+  //   getTopicDetailWithPath(targetTopicPath);
+
   const [markerEditWindowOpen, setMarkerEditWindowOpen] = useState(false);
   useEffect(() => {
     setValueText(value !== "" ? value : "VALUE_NOT_FOUND");

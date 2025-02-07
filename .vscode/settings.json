@@ -3,7 +3,7 @@
 	"[java]": {
 		"editor.formatOnSave": true,
 		"editor.insertSpaces": false,
-		"editor.tabSize": 4,
+		"editor.tabSize": 2,
 		"editor.useTabStops": true,
 		"editor.formatOnSaveMode": "file"
 	},

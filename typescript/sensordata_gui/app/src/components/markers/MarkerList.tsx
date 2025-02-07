@@ -7,7 +7,7 @@ import {
 } from "../../utils/Colors.ts";
 import { Marker } from "./Marker.tsx";
 import ReactDOM, { render } from "react-dom";
-import { getTopicList } from "../../services/MQTT.ts";
+import { getTopicDetailList } from "../../services/MQTT.ts";
 import { refreshTopics } from "../../services/RestService.ts";
 
 const TopicErrorBox = ({ x, y }) => {
@@ -72,7 +72,7 @@ const MarkerList = ({ isOpen, x, width, y, height }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [topScrollDimming, setTopScrollDimming] = useState(false);
   const [bottomScrollDimming, setBottomScrollDimming] = useState(true);
-  const [markerTopicList, setMarkerTopicList] = useState(getTopicList());
+  const [markerTopicList, setMarkerTopicList] = useState(getTopicDetailList());
   const container = scrollContainerRef.current;
   let atTop: boolean = false;
   let atBottom: boolean = false;
@@ -101,8 +101,8 @@ const MarkerList = ({ isOpen, x, width, y, height }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    setMarkerTopicList(getTopicList());
-  }, [getTopicList()]);
+    setMarkerTopicList(getTopicDetailList());
+  }, [getTopicDetailList()]);
 
   if (!isOpen) return null;
   return (
@@ -122,8 +122,8 @@ const MarkerList = ({ isOpen, x, width, y, height }) => {
           scrollbarWidth: "none",
         }}
       >
-        {getTopicList().length !== 0 ? (
-          getTopicList().map((topic) => (
+        {getTopicDetailList().length !== 0 ? (
+          getTopicDetailList().map((topic) => (
             <>
               <div
                 style={{

@@ -18,7 +18,7 @@ import { MarkerList } from "./markers/MarkerList.tsx";
 import { Marker } from "./markers/Marker.tsx";
 import { RefreshButton } from "./RefreshButton.tsx";
 import { refreshTopics } from "../services/RestService.ts";
-import { disconnectBroker, getTopicList } from "../services/MQTT.ts";
+import { disconnectBroker, getTopicDetailList } from "../services/MQTT.ts";
 import { ImageContainer } from "./ImageContainer.tsx";
 
 const leftPanelProps = {

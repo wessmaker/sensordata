@@ -1,8 +1,11 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import endpoints from "../json/serverEndpoint.json";
-import testTopicPAths from "../json/testtopics.json"; //FOR TESTING PURPOSES
-import { Topic } from "../types/Topic";
-import { getBrokerConnectionStatus, getTopicList, subscribe } from "./MQTT.ts";
+import { TopicDetails } from "../types/TopicDetails.ts";
+import {
+  getBrokerConnectionStatus,
+  getTopicDetailList,
+  subscribe,
+} from "./MQTT.ts";
 import { ConnectionStatus } from "../utils/Connections.ts";
 
 const baseUrl: string = endpoints.baseUrl; //TODO Make this dynamic
@@ -19,7 +22,7 @@ const refreshTopics = async () => {
     );
     return;
   }
-  let newTopics: Topic[] = [];
+  let newTopics: TopicDetails[] = [];
   try {
     const response = await client.get(baseUrl + topicPath, {
       headers: {
@@ -30,12 +33,12 @@ const refreshTopics = async () => {
     Array(...response.data.topics).map((newPath) => {
       let topicExsists: boolean = false;
       //Check if topic already exists
-      for (var i = 0; i < getTopicList().length; i++) {
-        if (newPath == getTopicList()[i].path) topicExsists = true;
+      for (var i = 0; i < getTopicDetailList().length; i++) {
+        if (newPath == getTopicDetailList()[i].path) topicExsists = true;
       }
       //Add topic to list
       if (!topicExsists) {
-        let topic: Topic = {
+        let topic: TopicDetails = {
           path: newPath,
         };
         newTopics.push(topic);
@@ -49,7 +52,7 @@ const refreshTopics = async () => {
   }
 };
 
-const addTopicToServer = (topic: Topic) => {};
-const removeTopicFromServer = (topic: Topic) => {};
+const addTopicToServer = (topic: TopicDetails) => {};
+const removeTopicFromServer = (topic: TopicDetails) => {};
 
 export { refreshTopics, addTopicToServer, removeTopicFromServer };

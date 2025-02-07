@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import RefreshIcon from "../assets/refreshicon.png";
 import { HoverOrange, Orange } from "../utils/Colors.ts";
 
-import "./Style.css";
+import "./RefreshAnimation.css";
 
 const RefreshButton = ({ visible, onButtonClick, x, y, height, width }) => {
   const buttonProps = {

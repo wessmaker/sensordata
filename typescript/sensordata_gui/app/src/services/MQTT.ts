@@ -1,19 +1,32 @@
 import PahoMQTT, {
+  Message,
   OnFailureCallback,
   OnSubscribeSuccessCallback,
   OnSuccessCallback,
 } from "paho-mqtt";
 import mqttBrokerOptions from "../json/mqttBrokerOptions.json";
 
-import { Topic } from "../types/Topic";
+import { TopicDetails } from "../types/TopicDetails.ts";
 import { ConnectionStatus, getStatusText } from "../utils/Connections.ts";
 import ConnectionOptions from "../types/ConnectionDetails.ts";
 import { refreshTopics } from "./RestService.ts";
+import MQTT from "paho-mqtt";
 
-let topicList: Topic[] = []; //Every topic in the list are subscribed
+let topicDetailList: TopicDetails[] = []; //Every topicDetails in the list are subscribed
 
-export const getTopicList = (): Topic[] => {
-  return topicList;
+export const getTopicDetailList = (): TopicDetails[] => {
+  return topicDetailList;
+};
+
+export const getTopicDetailWithPath = (
+  searchPath: string
+): TopicDetails | null => {
+  getTopicDetailList().forEach((loopedTopicDetails) => {
+    if (loopedTopicDetails.path === searchPath) {
+      return loopedTopicDetails;
+    }
+  });
+  return null;
 };
 
 interface BrokerOptions extends ConnectionOptions {
@@ -101,43 +114,53 @@ export const disconnectBroker = () => {
   }
 };
 
-const onSubscriptionSuccess = () => {};
+//TODO Fix this and add some listener to GUI after filtering correct paths
+client.onMessageArrived = function (message: Message) {
+  console.log(message);
+  console.log("MESSAGE ARRIVED");
+};
 
-const onSubscriptionFail = () => {};
+const onSubscriptionFail = () => {
+  console.log("MQTT Error: Subscription failed!");
+};
 
-export const subscribe = (topic: Topic) => {
+export const subscribe = (topicDetails: TopicDetails) => {
   if (client.isConnected()) {
     try {
-      client.subscribe(topic.path, {
-        onSuccess: onSubscriptionSuccess,
+      client.subscribe(topicDetails.path, {
         onFailure: onSubscriptionFail,
       });
-      topicList.push(topic);
+      topicDetailList.push(topicDetails);
+      console.log("SUBBED TO " + topicDetails.path);
     } catch (error) {}
   }
 };
 
 export const unsubscribe = (
-  topic: Topic,
-  onSubscriptionSuccess?: OnSuccessCallback,
+  topicDetails: TopicDetails,
   onSubscriptionFail?: OnFailureCallback
 ) => {
   try {
-    client.unsubscribe(topic.path, {
-      onSuccess: onSubscriptionSuccess,
+    client.unsubscribe(topicDetails.path, {
       onFailure: onSubscriptionFail,
     });
-    topicList.forEach((loopedTopic) => {
-      if (loopedTopic.path === topic.path)
-        topicList.splice(topicList.indexOf(loopedTopic), 1);
+    topicDetailList.forEach((loopedDetails) => {
+      if (loopedDetails.path === topicDetails.path)
+        //Delete one topicDetail from list with given index
+        topicDetailList.splice(topicDetailList.indexOf(loopedDetails), 1);
     });
   } catch (error) {}
 };
 
-export const publish = (topic: string, payload: string, retained?: boolean) => {
-  client.send(topic, payload, 0, retained);
+export const publish = (
+  topicDetails: string,
+  payload: string,
+  retained?: boolean
+) => {
+  client.send(topicDetails, payload, 0, retained);
 };
 
+// Will disconnect and reconnect to broker
 export const fetchBroker = () => {
   if (client.isConnected()) disconnectBroker();
   connectBroker();

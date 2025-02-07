@@ -1,6 +1,6 @@
 import { ConnectionStatus } from "../utils/Connections.ts";
 import ConnectionOptions from "../types/ConnectionDetails.ts";
-import { Topic } from "../types/Topic.ts";
+import { TopicDetails } from "../types/TopicDetails.ts";
 
 let connection: boolean = false;
 
